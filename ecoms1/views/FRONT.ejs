@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>UYIR ORGANIC</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .app-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 60px;
+            width: 100%;
+            background-color: rgb(4 43 17);
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: auto;
+            height: 130px;
+            margin-right: 10px;
+        }
+
+        .login-button {
+            padding: 1px 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-right: 100px;
+            cursor: pointer;
+            width: 80px;
+            height: 40px;
+            font-size: 18px;
+            font-family: cursive;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #5dbe61;
+            border-radius: 8px;
+            min-width: 120px;
+            z-index: 1;
+            font-size: 20px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #386b7e;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .animationBC {
+            width: 100%;
+            height: calc(100vh - 50px);
+            overflow: hidden;
+            position: inherit;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: relative;
+            text-align: center;
+            justify-content: center;
+            animation: fadeInOut 15s infinite;
+            border-radius: 20px;
+        }
+
+        .material-icons {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                background-image: url('images/Organics2.jpg');
+                border-radius: 20px;
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            25% {
+                background-image: url('images/b-2.jpg');
+                transform: scale(1.1);
+                border-radius: 20px;
+                opacity: 1;
+            }
+
+            50% {
+                background-image: url('images/w4.jpg');
+                transform: scale(1.2);
+                border-radius: 20px;
+                opacity: 1;
+            }
+
+            75% {
+                background-image: url('images/b-1.jpg');
+                transform: scale(1.1);
+                border-radius: 20px;
+                opacity: 1;
+            }
+
+            100% {
+                background-image: url('images/Organics2.jpg');
+                transform: scale(1);
+                border-radius: 20px;
+                opacity: 1;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        #first {
+            height: 900px;
+            width: -webkit-fill-available;
+            margin-top: 100px;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .image-gallery .image-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .image-gallery img {
+            flex-basis: 50%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .image-gallery .content {
+            flex-basis: 50%;
+            text-align: center;
+            font-style: oblique;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 25px;
+            color: #333;
+            font-weight: bold;
+            padding: 0 20px;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer li {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .dialog-box {
+            display: none;
+        }
+
+        .dialog-content {
+            padding: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-to-top-button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            cursor: pointer;
+            padding: 10px 15px;
+            background-color: #21742c;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+        }
+
+        @media only screen and (max-width: 768px) {
+           
+            .logo img {
+                align-items: center;
+                width: 100px;
+                height: auto;
+            }
+
+            .login-button {
+                margin-bottom: 10px;
+                margin-right: 50px;
+            }
+
+            .image-gallery img {
+                height: auto;
+                width: 200px;
+                border-radius: 8px;
+            }
+
+            .image-gallery .content {
+                font-size: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .footer-section h4,
+            .footer h3 {
+                font-size: 12px;
+            }
+
+            .footer-section ul {
+                padding-left: 20px;
+            }
+
+            .footer li {
+                margin-bottom: 10px;
+                font-size: 10px;
+            }
+
+            .footer a {
+                font-size: 10px;
+            }
+
+            .back-to-top-button {
+                bottom: 60px;
+                right: 15px;
+                padding: 5px 10px;
+                font-size: 8px;
+            }
+        }
+
+        @media only screen and (max-width: 500px) {
+            .app-bar {
+                height: 20px;
+                justify-content: last baseline;
+            }
+
+            .logo {
+                display: fixed;
+                align-items: center;
+                margin-top: 60px;
+
+            }
+
+            .logo img {
+                width: 70px;
+                height: 60px;
+                margin-top: -50px;
+            }
+
+            .login-button {
+                font-size: 15px;
+                padding: 5px 10px;
+                margin-bottom: 70px;
+                width: 70px;
+                height: 40px;
+                margin-top: 80px;
+            }
+
+            .image-gallery {
+                display: flex;
+                flex-direction: column;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+             .image-content {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+            }
+
+            .image-content img {
+                width: 360px;
+                object-fit: cover;
+                border-radius: 2%;
+            }
+
+           .content {
+                flex-basis: 50%;
+                font-family: 'Times New Roman', Times, serif;
+                font-size: 12px;
+                padding: 0 10px;
+            }
+
+            #con2 {
+                order: 2;
+            }
+            #img2{
+                order: 1;
+            }
+
+            #con4 {
+                order: 2;
+            }
+            #img4{
+                order: 1;
+            }
+
+            #con6 {
+                order: 2;
+            }
+            #img6{
+                order: 1;
+            }
+
+            .footer {
+                display: flex;
+                flex-direction: column;
+                font-size: 10px;
+                padding:0 10% ;
+                width: auto;
+            }
+
+            .footer-section {
+                flex: 1;
+                padding: 0px;
+            }
+
+
+            .footer ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .footer li {
+                margin-bottom: 10px;
+            }
+
+            .dialog-box {
+                display: none;
+            }
+
+            .dialog-content {
+                padding: 10px;
+            }
+
+            .back-to-top-button {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui-dist/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui-dist/jquery-ui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+</head>
+
+<body>
+    <div class="animationBC"></div>
+
+    <div class="app-bar">
+        <div class="logo">
+            <img src="images/ll.png" alt="Company Logo">
+        </div>
+        <div class="dropdown">
+            <a href="http://localhost:7777/login">
+                <button class="login-button">Login</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="image-gallery" >
+        <div class="image-content image-left">
+            <img src="images/w1.jpg" alt="Image 1">
+            <div class="content">
+                <b>Concern for Safety:</b> You care about the well-being of your family and the environment and you want
+                to do everything you can to ensure the safety of both. Because preservatives and additives are
+                potentially harmful, you should buy organic food.
+            </div>
+        </div>
+        <div class="image-content image-right">
+            <div class="content" id="con2">
+                <b>Need to Nurture:</b><i> You want to provide an easy and quick snack for your children, but don’t want
+                    to expose them to potentially harmful additives. Buy Coleman organic chicken breast strips to take
+                    care of your kids in a responsible way.</i>
+            </div>
+            <img src="images/w2.jpg" alt="Image 2" id="img2">
+        </div>
+        <div class="image-content image-left">
+            <img src="images/c.jpg" alt="Image 3">
+            <div class="content">
+                <b>Egocentric Fulfillment:</b><br><i> You understand the importance of avoiding additives, and want to
+                    “feel good” about yourself. By shopping at Whole Foods, you eat healthier and maintain a high level
+                    of quality.</i>
+            </div>
+        </div>
+        <div class="image-content image-right">
+            <div class="content" id="con4">
+                <i>By purchasing food that reflects their values and lifestyles, consumers in turn fulfill egocentric
+                    needs that make them feel good about themselves. In this respect, buying organic food isn’t only
+                    about making a tasty dinner for two later in the evening, but expressing support for a movement or
+                    cause.</i>
+            </div>
+            <img src="images/w3.jpg" alt="Image 4" id="img4">
+        </div>
+        <div class="image-content image-left">
+            <img src="images/ph2.jpg" alt="Image 5">
+            <div class="content">
+                <i>Consumers have positive attitudes toward organic goods and wish to purchase them, they might be
+                    turned off by the high prices. The study concludes that the best way to increase motivation to
+                    purchase goods is to engage in strategic educational marketing campaigns that emphasize the positive
+                    attributes of organic goods to the masses.</i>
+            </div>
+        </div>
+        <div class="image-content image-right">
+            <div class="content" id="con6">
+                <i>Overall, organic food has grown in popularity, as consumers have increasingly sought and purchased
+                    foods that they perceive as being healthier and grown in ways that benefit the environment.</i>
+            </div>
+            <img src="images/b8.jpg" alt="Image 6" id="img6">
+        </div>
+    </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-section">
+            <h4><b>Eat Organic Food</b></h4>
+            <ul>
+                <li>Organic food is grown without polluting the soil by chemicals and also the air through spraying
+                    pesticides, both of these can cause severe health issues for living beings.</li>
+              
+                <li>Organic food will enhance the Immune System of our body.</li>
+                <li>Organic food will Reduce the risk of various Disease.</li>
+                <li>All the products which are sold here are produced or value-added by Uyir Organic Farmers, the best
+                    and experienced farmers from south India.</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3><b>Shipping Policy</b></h3>
+            <ul>
+                <li><a href="#replacement-return-dialog">Replacement & Return Policy</a></li>
+                <li><a href="#terms-conditions-dialog">Terms and Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3><b>Charges</b></h3>
+            <ul>
+                <li><a href="#packing-charges-dialog">Packing Charges</a></li>
+                <li><a href="#shipping-charges-dialog">Shipping Charges</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <div id="replacement-return-dialog" class="dialog-box" title="Replacement & Return Policy">
+        <div class="dialog-content">
+            <p>Shipping Policy:
+
+                Thank you for shopping with [Your Company Name]! We are committed to delivering your order in the best
+                possible condition and as quickly as possible.
+            </p>
+        </div>
+    </div>
+
+    <div id="terms-conditions-dialog" class="dialog-box" title="Terms and Conditions">
+        <div class="dialog-content">
+            <p>Details about the terms and conditions go here...</p>
+        </div>
+    </div>
+
+    <div id="packing-charges-dialog" class="dialog-box" title="Packing Charges">
+        <div class="dialog-content">
+            <p>Shipping Charges:
+
+                Shipping charges are calculated based on the shipping method selected and the destination address.
+                Additional fees may apply for expedited or international shipping.
+                Shipping Restrictions:
+
+                We currently ship to addresses within [list of countries/regions].
+                Please note that we do not ship to P.O. boxes or APO/FPO addresses.
+                Damaged or Lost Shipments:
+
+                In the event that your order arrives damaged or is lost during transit, please contact our customer
+                support within [X] days of receipt</p>
+        </div>
+    </div>
+
+    <div id="shipping-charges-dialog" class="dialog-box" title="Shipping Charges">
+        <div class="dialog-content">
+            <p>Details about the shipping charges go here...</p>
+        </div>
+    </div>
+
+
+    <button id="backToTopBtn" class="back-to-top-button">
+        <span class="material-icons">arrow_upward</span>
+    </button>
+
+</body>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+            checkTokenAndRedirect();
+            initializeDropdown();
+            initializeDialogBoxes();
+            initializeBackToTopButton();
+            preventBackNavigation(); 
+        });
+
+        function preventBackNavigation() {
+        history.pushState(null, document.title, location.href);
+
+        window.addEventListener('popstate', function () {
+            history.pushState(null, document.title, location.href);
+        });
+    }
+        function checkTokenAndRedirect() {
+            console.log("Checking token and redirecting...");
+            const token = getCookie("token");
+            console.log("Token:", token);
+
+            if (token) {
+                try {
+                    const decoded = jwt_decode(token);
+                    console.log("Decoded Payload:", decoded);
+
+                    const { userType, userId, storeId } = decoded;
+                    console.log("User Type:", userType);
+                    console.log("User ID:", userId);
+                    if (userType === 'user') {
+                        console.log("Store ID:", storeId);
+                    }
+
+                    const redirectURL = determineRedirectURL(userType, userId, storeId);
+                    console.log("Redirect URL:", redirectURL);
+
+                    if (redirectURL) {
+                        redirectToURL(redirectURL);
+                    } else {
+                        console.error("Error determining redirect URL.");
+                    }
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                }
+            } else {
+                console.log("No token found. Loading page...");
+            }
+        }
+
+        function getCookie(cookieName) {
+            const name = cookieName + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let cookie = cookieArray[i];
+                while (cookie.charAt(0) === ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(name) === 0) {
+                    return cookie.substring(name.length, cookie.length);
+                }
+            }
+            return "";
+        }
+
+        function determineRedirectURL(userType, userId, storeId = null) {
+            switch (userType) {
+                case 'user':
+                    return `/userstoredetails/${storeId}?userId=${userId}`;
+                case 'store':
+                    return `/storedetails/${userId}`;
+                case 'admin':
+                    return `/adminstoredetails?adminid=${userId}`;
+                default:
+                    console.error("Unknown user type:", userType);
+                    return null;
+            }
+        }
+
+        function redirectToURL(url) {
+            window.location.href = url;
+        }
+
+        function initializeDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            const loginButton = dropdown.querySelector('.login-button');
+            const dropdownContent = dropdown.querySelector('.dropdown-content');
+
+            loginButton.addEventListener('click', function (event) {
+                event.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+
+            document.body.addEventListener('click', function () {
+                dropdown.classList.remove('active');
+            });
+
+            dropdownContent.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        }
+
+        function initializeDialogBoxes() {
+            $(document).ready(function () {
+                $(".dialog-box").hide();
+
+                $("a[href^='#']").on("click", function (e) {
+                    e.preventDefault();
+                    var target = $(this).attr("href");
+                    $(target).dialog({
+                        width: 400,
+                        modal: true,
+                        open: function () {
+                            $(this).scrollTop(0);
+                        }
+                    });
+                });
+
+                $(document).on("click", function (e) {
+                    if ($(e.target).closest(".ui-dialog").length === 0) {
+                        $(".dialog-box").dialog("close");
+                    }
+                });
+            });
+        }
+
+        function initializeBackToTopButton() {
+            const button = document.getElementById("backToTopBtn");
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 300) {
+                    button.style.display = "block";
+                } else {
+                    button.style.display = "none";
+                }
+            });
+
+            button.addEventListener("click", function () {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        }
+    </script>
+</html>

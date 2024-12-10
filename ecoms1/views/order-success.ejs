@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Placed Successfully</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      background-color: #007bff;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 24px;
+    }
+  </style>
+  <script>
+    setTimeout(function() {
+      const storeId = '<%= storeId %>';
+      const userId = '<%= userId %>';
+      window.location.href = `/userstoredetails/${storeId}?userId=${userId}`;
+    }, 3000); 
+  </script>
+</head>
+<body>
+  <h1>Your order has been placed successfully!</h1>
+</body>
+</html>

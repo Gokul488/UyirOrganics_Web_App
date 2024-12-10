@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Access Change</title>
+</head>
+<body>
+  
+        <h1>Confirm Access Change</h1>
+        <p>Are you sure you want to change the access status to <span id="newAccess"></span>?</p>
+        <button id="confirmButton">Yes</button>
+        <button id="cancelButton">Cancel</button>
+    
+        <script>
+            const newAccess = "<%= newAccess %>";
+            const userId = "<%= userId %>";
+        
+            document.getElementById("newAccess").textContent = newAccess;
+        
+            const confirmButton = document.getElementById("confirmButton");
+            const cancelButton = document.getElementById("cancelButton");
+        
+            let newAccessValue = newAccess.toLowerCase() === 'yes' ? 1 : 0;
+        
+            confirmButton.addEventListener("click", function () {
+                const data = {
+                    userId: userId,
+                    newAccessValue: newAccessValue 
+                };
+                
+                console.log('userId:', userId);
+                console.log('newAccessValue:', newAccessValue);
+    
+                fetch('/update-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Access status updated successfully.");
+                        window.location.href = "/adminuserdetails"; 
+                    } else {
+                        alert("Failed to update access status.");
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error updating access:', error);
+                });
+            });
+        
+            cancelButton.addEventListener("click", function () {
+                window.location.href = "/adminuserdetails";
+            });
+        </script>
+    </body>
+    </html>

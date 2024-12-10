@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+               
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.app-bar {
+    background-color: rgb(4, 43, 17);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 90px;
+}
+
+.logo img {
+    width: auto;
+    height: 90px;
+}
+
+.app-title {
+    text-align: center; 
+    flex-grow: 1;
+}
+
+#Backend {
+    color: #f9f9f9;
+    text-align: center;
+    margin: 0;
+    font-weight: bold;
+    font-size: 25px;
+    margin-bottom: 5px;
+}
+
+#sname {
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    margin: 0;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.name {
+    color: #f7f3f3;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    margin-top: 10px;
+}
+
+.dropdown-content a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: #333;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: block;
+}
+
+.back-button {
+        order: 1;
+        display: inline-block;
+        padding: 9px 9px;
+        background-color:#0A2472;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .back-button::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background-color: #0A2472;
+    }
+
+    .back-button:hover::before {
+        width: 100%;
+    }
+.back-button:hover{
+    background-color: #0d5dbb;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 20% auto;
+    padding: 20px;
+    width: 300px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #f7f3f3;
+}
+
+#confirm-logout {
+    color: white;
+    background-color: #2196F3;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    outline: none;
+}
+
+
+    </style>
+</head>
+<body>
+  
+    <div class="app-bar">
+        <div class="logo">
+            <img src="/images/ll.png" alt="Company Logo">
+        </div>
+        <div>
+            <h1 id="Backend">Store Management System</h1>
+            <h4 id="sname"><%= name %></h4>
+
+        </div> 
+        <div class="dropdown">
+          <p class="name">Hi <%= contactname %> 
+          <button id="dropdownButton" class="dropdown-button">
+                <i class="fas fa-user"></i> 
+            </button></p>
+            <div class="dropdown-content">
+                <a class="dropdown-item" href="/storeuserdetails/<%= storeId%>">Users</a>
+                <a class ="dropdown-item" href="/storeorder/<%= storeId%>">Orders</a>
+                <a class ="dropdown-item" href="/update-stock/<%= storeId%>">Excel-Update Stock</a>
+                <a class="dropdown-item" href="/storedetails/<%= storeId %>">Products</a>
+                <a class="dropdown-item" href="/editstore/<%= storeId%>">Edit store</a>
+                <a class="dropdown-item" href="/addSpecialOfferForm/<%= storeId%>">Add Special Offer</a>
+                <a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const dropdownButton = document.getElementById("dropdownButton");
+const dropdownContent = document.querySelector(".dropdown-content");
+
+dropdownButton.addEventListener("click", function(event) {
+    event.stopPropagation(); 
+    dropdownContent.classList.toggle("show");
+});
+
+window.addEventListener("click", function(event) {
+    if (!event.target.matches(".dropdown-button")) {
+        if (dropdownContent.classList.contains("show")) {
+            dropdownContent.classList.remove("show");
+        }
+    }
+});
+
+dropdownContent.addEventListener("click", function(event) {
+    event.stopPropagation(); 
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && dropdownContent.classList.contains("show")) {
+        dropdownContent.classList.remove("show");
+    }
+});
+
+const logoutButton = document.getElementById("logout");
+const cancelLogoutBtn = document.getElementById("cancel-logout");
+const confirmLogoutBtn = document.getElementById("confirm-logout");
+
+logoutButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const modal = document.getElementById("logout-modal");
+    modal.style.display = "block";
+});
+
+cancelLogoutBtn.addEventListener("click", function() {
+    const modal = document.getElementById("logout-modal");
+    modal.style.display = "none";
+});
+
+confirmLogoutBtn.addEventListener("click", function() {
+    window.location.href = "http://localhost:7777/login"; 
+    history.replaceState(null, null, 'http://localhost:7777');
+
+});
+
+</script>
+</body>
+</html>

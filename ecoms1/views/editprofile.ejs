@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Profile</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+      margin: 0;
+      padding: 0;
+    }
+
+    .profile-container {
+      max-width: 700px; 
+      margin: 40px auto;
+      padding: 30px; 
+      border-radius: 15px; 
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .profile-container:hover {
+      transform: translateY(-5px); 
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); 
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 auto;
+      font-size: 30px;
+      font-weight: bold;
+      color: black; 
+    }
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+
+    .profile-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px; 
+    }
+
+    .profile-table th,
+    .profile-table td {
+      text-align: left;
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .profile-table th {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: bold;
+      font-size: 24px;
+      color: #000;
+    }
+
+    .profile-table td {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .profile-table input {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      border: none;
+      background: none;
+      font-size: 24px;
+      width: 100%;
+      color: #000;
+    }
+
+    .profile-table input:read-only {
+      color: #000;
+      cursor: not-allowed;
+    }
+
+    .profile-table input:focus {
+      outline: none;
+    }
+</style>
+
+</head>
+<body>
+  <%- include('./userappbar.ejs') %>
+  <div class="profile-header">
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>MY PROFILE</h1>
+  </div>
+  <div class="profile-container">
+    <table class="profile-table">
+      <tr>
+        <th>Name:</th>
+        <td><input type="text" value="<%= user.name %>" readonly></td>
+      </tr>
+      <tr>
+        <th>Mobile Number:</th>
+        <td><input type="text" value="<%= user.mobilenumber %>" readonly></td>
+      </tr>
+      <tr>
+        <th>Address:</th>
+        <td><input type="text" value="<%= user.address %>" readonly></td>
+      </tr>
+      <tr>
+        <th>Pincode:</th>
+        <td><input type="text" value="<%= user.pincode %>" readonly></td>
+      </tr>
+      <tr>
+        <th>Email:</th>
+        <td><input type="email" value="<%= user.email %>" readonly></td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

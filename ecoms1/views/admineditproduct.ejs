@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  background-image: url("images/wa1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.back-button {
+    background-color: #0A2472;
+    font-size: medium;
+    color: white;
+    border: none;
+    padding: 10px 13px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.back-button:hover{
+  background-color: #0d5dbb;
+}
+.header h2 {
+    margin: 0;
+}
+
+.container {
+    background-color: #eff3f4;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    padding: 20px 40px;
+    width: 900px;
+    margin: 20px auto; 
+}
+
+
+.container .firstContainer .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; 
+}
+
+.container .firstContainer .form-group label {
+    flex: 0 0 150px; 
+    font-weight: bold;
+    margin-right: 10px; 
+    font-size: 1.1rem; 
+}
+
+.container .firstContainer .form-group input,
+.container .firstContainer .form-group select,
+.container .firstContainer .form-group textarea {
+    flex: 1; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1.1rem; 
+}
+
+.container .firstContainer .image-preview-container {
+    margin-top: 20px; 
+}
+
+.container .firstContainer .image-preview-container label {
+    display: block;
+    margin-bottom: 5px; 
+}
+.container .firstContainer .image-preview-container input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.container .firstContainer .image-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.container .firstContainer .SubmitButton {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+#createButton, .DeleteButton1 {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;  
+    width: 20%; 
+    margin: 0 5px 0 0;
+}
+#createButton:hover,
+.DeleteButton1:hover{
+    background-color: #0d5dbb;
+}
+#editFormContainer {
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-top: 10px;
+}
+
+.memberform {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px; 
+}
+
+.labelform {
+    display: flex;
+    align-items: center;
+}
+
+.labelform label {
+    flex: 0 0 150px;
+    font-weight: bold;
+    margin-right: 10px; 
+    font-size: 1.1rem; 
+}
+
+.labelform input[type="text"],
+.labelform input[type="number"],
+.labelform input[type="file"],
+.labelform select, 
+.labelform textarea {
+    flex: 1; 
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1.1rem; 
+    margin: 0; 
+}
+
+#image_preview {
+    margin-top: 15px;
+    text-align: center;
+    position: relative;
+    width: 100%;
+}
+
+#image_preview_img {
+    display: block;
+    max-width: 200px;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+    margin-left: 160px;
+    border: 2.5px solid #ccc;
+}
+
+.remove_image_button {
+    display: none; 
+    position: absolute; 
+    top: 175px;
+    right: 400px; 
+    background-color: red; 
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0; 
+}
+
+.remove_image_button::before {
+    content: "\f2ed"; 
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 900; 
+    font-size: 16px; 
+}
+
+.remove_image_button:hover {
+    opacity: 0.8; 
+}
+
+
+.memberform .SubmitButton {
+    padding: 10px;
+    background-color:#0A2472;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.memberform .SubmitButton:hover {
+    background-color: #0d5dbb;
+}
+
+/* Second Container Styles */
+.secondContainer {
+    background-color: #eff3f4;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    padding: 20px 40px;
+    width: 900px;
+    margin: 20px auto; 
+}
+
+.secondContainer .input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.secondContainer .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; 
+}
+
+.secondContainer .form-group label,
+.secondContainer .image-preview-container label {
+    flex: 0 0 150px; 
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.1rem; 
+}
+
+.secondContainer .form-group input,
+.secondContainer .form-group select,
+.secondContainer .form-group textarea{
+    flex: 1; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1.1rem; 
+}
+
+.secondContainer .image-preview-container {
+  margin-top: 20px;
+}
+.secondContainer .image-preview-container label {
+    display: block;
+    margin-bottom: 5px; 
+}
+.secondContainer .image-preview-container .form-group {
+    position: relative;
+  margin-bottom: 10px; 
+}
+.secondContainer .image-preview-container .form-group button {
+    position: absolute; 
+    top: 185px; 
+    left: 470px; 
+    background-color: red; 
+    color: white;
+    border: none; 
+    border-radius: 5px; 
+    padding: 5px; 
+    cursor: pointer; 
+    font-size: 1.2rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.secondContainer .image-preview-container .form-group button i {
+    margin: 0; 
+}
+
+.secondContainer .image-preview-container .image-preview {
+  max-width: 300px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 4px;
+  margin-top: 10px; 
+}
+
+.secondContainer .image-container {
+    display: flex;
+  flex-wrap: wrap;
+  gap: 10px; 
+}
+
+.secondContainer .image-container img {
+    max-width: 200px; 
+    width: calc(100% - 160px); 
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    margin-left: 160px;
+}
+
+.secondContainer .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+}
+
+.secondContainer .SubmitButton, .DeleteButton {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    width: 20%; 
+    margin: 0 5px 0 0;
+}
+.secondContainer .SubmitButton:hover, .DeleteButton:hover{
+    background-color: #0d5dbb;
+}
+
+h3 {
+    text-align: center;
+    font-size: larger;
+}
+.para{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.dialog-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+    width: 300px;
+}
+
+.dialog-box p {
+    margin: 0 0 15px;
+    font-size: 16px;
+}
+
+.dialog-box button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dialog-box button:hover {
+    background-color: #0056b3;
+}
+
+#editFormContainer {
+    position: relative;
+    z-index: 1;
+}
+.SubmitButton {
+  padding: 10px;
+  background-color: #0A2472; 
+  color: #fff; 
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+}
+
+.SubmitButton:hover {
+  background-color: #0056b3; 
+}
+
+    </style>   
+</head>
+<body>
+    <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+
+    <div class="header">
+        <button class="back-button" onclick="goBack()">Back</button>
+        <% if (product.producttype === 'productfamily') { %>
+            <h2 style="margin:auto;">EDIT PRODUCT FAMILY</h2>
+        <% } else if (product.producttype === 'product') { %>
+            <h2 style="margin:auto;">EDIT PRODUCT</h2>
+        <% } else { %>
+            <h2 style="margin:auto;">EDIT PRODUCT MEMBER</h2>
+        <% } %>
+    </div>
+    
+    <% if (product.producttype === 'productfamily') { %>
+        <div class="container">
+            <div class="firstContainer">
+                <p class="para">Product Family: <%= product.productname || "No name available" %></p><br>
+                <p class="para">Members</p>
+                <div class="product-family-members">
+                    <% if (products && products.length > 0) { %>
+                        <% let counter = 1; %>
+                        <% products.forEach(function(member) { %>
+                            <% if (member.parentid === product.productid) { %> 
+                                <p><%= counter %>: <%= member.productname || "Unnamed member" %> - <%= member.weight || "0" %></p>
+                                <% counter++; %> 
+                            <% } %>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No members found for this product family.</p>
+                    <% } %>
+                </div>
+                <br><br>                                 
+                <div>
+                    <button id="createButton" onclick="toggleForm()">Add Member</button>
+                    <div id="editFormContainer" style="display: none;"></div>
+                    <button class="DeleteButton1" id="deleteButton" type="button" onclick="deleteProductFamily('<%= product.productid %>')">Delete</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <% if (product.producttype === 'product' || product.producttype === 'member') { %>
+        <div class="secondContainer">
+            <% if (product.producttype === 'member') { %>
+                <h3 style="text-align: center;">Product Family: <%= product.productname || "No name available" %></h3>
+            <% } %>
+            <br>
+            <form action="/adminupdateproduct?adminid=<%= adminId %>" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="adminid" value="<%= adminId %>">
+                <input type="hidden" name="productid" value="<%= product.productid %>">
+                <input type="hidden" name="producttype" value="<%= product.producttype %>">
+                <input type="hidden" name="parentid" value="<%= product.parentid %>">
+    
+                <div class="form-group">
+                    <label for="productname">Product Name</label>
+                    <input type="text" id="productname" name="productname" value="<%= product.productname || "No name available" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" value="<%= product.category || "No category" %>" required readonly>
+                </div>
+    
+                <div class="form-group">
+                    <label for="code">Code</label>
+                    <input type="text" id="code" name="code" value="<%= product.code || "No code" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="hsn">HSN</label>
+                    <input type="text" id="hsn" name="hsn" value="<%= product.hsn || "0" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="gst">GST</label>
+                    <select id="gst" name="gst" required>
+                        <option value="Exempt" <%= product.GST === 'Exempt' ? 'selected' : '' %>>Exempt</option>
+                        <option value="5%" <%= product.GST === '5%' ? 'selected' : '' %>>5%</option>
+                        <option value="12%" <%= product.GST === '12%' ? 'selected' : '' %>>12%</option>
+                        <option value="18%" <%= product.GST === '18%' ? 'selected' : '' %>>18%</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="weight">Weight</label>
+                    <input type="text" id="weight" name="weight" value="<%= product.weight || "0" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="salesprice">Sales Price</label>
+                    <input type="number" id="salesprice" name="salesprice" value="<%= product.salesprice || "0" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" value="<%= product.qty || "0" %>" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required style="width: 100%; height: 150px;"><%= product.description || "No description available" %></textarea>
+                </div>
+    
+                <div class="image-preview-container">
+                    <% productImages.forEach((image, index) => { %>
+                        <div class="form-group">
+                            <label for="newFileInput<%= index %>"><b>Images</b></label>
+                            <input type="file" class="newFileInput" id="newFileInput<%= index %>" name="newFileInput<%= index %>" accept="image/*" onchange="replaceCurrentImage(this, 'currentImage<%= index %>')">
+                        </div>
+                        <div class="image-container">
+                            <img id="currentImage<%= index %>" src="<%= image || '/path/to/default/image.jpg' %>" alt="Current Image" style="max-width: 200px; height: auto;">
+                        </div>
+                    <% }); %>
+                </div>
+    
+                <br>
+                <div class="button-container">
+                    <button class="SubmitButton" type="submit">Update</button>
+                    <button class="DeleteButton" type="button" onclick="deleteProduct('<%= product.productid %>')">Delete</button>
+                </div>
+            </form>
+        </div>
+    <% } %>
+    
+    <script>
+document.querySelector('form').addEventListener('submit', function (event) {
+    event.preventDefault(); 
+
+    const formData = new FormData(this);  
+
+    fetch('/adminupdateproduct?adminid=<%= adminId %>', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())  
+    .then(data => {
+        if (data.success) {
+            const updatedImages = data.updatedImages;
+
+            updatedImages.forEach((imagePath, index) => {
+                const currentImage = document.getElementById(`currentImage${index}`);
+                currentImage.src = imagePath;
+            });
+
+            Swal.fire({
+                title: 'Success!',
+        icon: 'success',
+        text: 'Product updated successfully!',
+        confirmButtonText: 'OK'
+    }).then(() => {
+        const page = "<%= page %>"; 
+        const adminid = "<%= adminId %>";
+        window.location.href = `/adminproductdetails?page=${page}&adminid=${adminid}&search=&category=`;
+    });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to update product details. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'There was an error processing your request.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+});
+
+function deleteProduct(productId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admindeleteproduct?productid=${productId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your product has been deleted.',
+                        'success'
+                    ).then(() => {
+                        const page = "<%= page %>";
+                        const adminid = "<%= adminId %>";
+                        window.location.href = `/adminproductdetails?page=${page}&adminid=${adminid}&search=&category=`;
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the product.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'There was an error processing your request.',
+                    'error'
+                );
+            });
+        }
+    });
+}
+        function goBack() {
+            window.history.back();
+        }
+        function hideButton() {
+    var button = document.getElementById('createButton');
+    button.style.display = 'none';
+
+    var formContainer = document.getElementById('editFormContainer');
+    formContainer.style.display = 'block';
+}
+
+function toggleForm() {
+    const button = document.getElementById('createButton');
+    const formContainer = document.getElementById('editFormContainer');
+    const deleteButton = document.getElementById('deleteButton');
+
+    button.style.display = 'none';
+    formContainer.style.display = 'block';
+    deleteButton.style.display = 'none';
+
+    const parentId = "<%= product.productid %>";
+    const createFormHTML = `
+        <div class="memberform">
+            <form id="createForm" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                <input type="hidden" name="parentid" value="${parentId}">
+
+                <div class="labelform">
+                    <label for="productname">Product Name</label>
+                    <input type="text" id="productname" name="productname" value="<%= product.productname %>" required readonly>
+                </div>
+
+                <div class="labelform">
+                    <label for="hsn">HSN</label>
+                    <input type="text" id="hsn" name="hsn" required>
+                </div>
+
+                <div class="labelform">
+                    <label for="code">Code</label>
+                    <input type="text" id="code" name="code" required>
+                </div>
+
+                <div class="labelform">
+                    <label for="weight">Weight</label>
+                    <input type="text" id="weight" name="weight" required>
+                </div>
+
+                <div class="labelform">
+                    <label for="salesprice">Sales Price</label>
+                    <input type="number" id="salesprice" name="salesprice" required>
+                </div>
+
+                <div class="labelform">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+
+                <div class="labelform">
+                    <label for="images">Images</label>
+                    <input type="file" id="images" name="images" accept="image/*" required onchange="previewImage(this, 'image_preview_img')">
+                </div>
+
+                <div id="image_preview" style="width: 100%">
+                    <img id="image_preview_img" style="display: none; max-width: 100%; height: auto;">
+                    <button class="remove_image_button" type="button" style="display: none;" onclick="removeImagePreview('image_preview_img')">Remove</button>
+                </div>
+
+                <button class="SubmitButton" type="submit">Submit</button>
+
+            </form>
+        </div>
+    `;
+
+    formContainer.innerHTML = createFormHTML;
+
+        const createForm = document.getElementById('createForm');
+        createForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/admineditproduct', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'New product member added successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();  
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to add new product member. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error adding new product:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an error processing your request. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        });
+    }
+
+    function deleteProductFamily(productId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will delete the product family and its members!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admindeleteproductfamily?productid=${productId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Deleted!',
+                        'The product family and its members have been deleted.',
+                        'success'
+                    ).then(() => {
+                        const page = "<%= page %>"; 
+                        const adminid = "<%= adminId %>";
+                        window.location.href = `/adminproductdetails?page=${page}&adminid=${adminid}&search=&category=`;
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the product family.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'There was an error processing your request.',
+                    'error'
+                );
+            });
+        }
+    });
+}
+    function previewImage(input, imgId) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById(imgId);
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.querySelector('.remove_image_button').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    function removeImagePreview(imgId) {
+        const img = document.getElementById(imgId);
+        img.src = '';
+        img.style.display = 'none';
+        document.querySelector('.remove_image_button').style.display = 'none';
+    }
+
+    function previewImage(input, imgId) {
+        const file = input.files[0];
+        const imagePreview = document.getElementById(imgId);
+        const removeButton = document.querySelector('.remove_image_button');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function () {
+                    if (img.width <= 1080 && img.height <= 1080) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        removeButton.style.display = 'block';
+                    } else {
+                        alert("The image dimensions should be less than or equal to 1080x1080 pixels.");
+                        imagePreview.style.display = 'none';
+                        imagePreview.src = '#';
+                        removeButton.style.display = 'none';
+                    }
+                };
+            };
+            reader.readAsDataURL(file); 
+        } else {
+            imagePreview.style.display = 'none';
+            imagePreview.src = '#';
+            removeButton.style.display = 'none';
+        }
+    }
+
+
+    function removeImagePreview(imgId) {
+        const imagePreview = document.getElementById(imgId);
+        const removeButton = document.querySelector('.remove_image_button');
+
+        imagePreview.src = '#';
+        imagePreview.style.display = 'none';
+        removeButton.style.display = 'none';
+    }
+
+    function replaceCurrentImage(fileInput, currentElementId) {
+        const selectedFile = fileInput.files[0];
+        const currentElement = document.getElementById(currentElementId);
+
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function () {
+                    if (img.width <= 1080 && img.height <= 1080) {
+                        currentElement.src = e.target.result;
+                    } else {
+                        alert("The image dimensions should be less than or equal to 1080x1080 pixels.");
+                    }
+                };
+            };
+            reader.readAsDataURL(selectedFile); 
+        }
+    }
+</script>
+</body>
+</html>

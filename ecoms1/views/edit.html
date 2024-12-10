@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Product</title>
+</head>
+<body>
+  <h1>Edit Product</h1>
+  <form action="/updateproduct" method="POST">
+    <input type="hidden" name="productid" value="<%= product.productid %>">
+
+    <label for="productname">Product Name:</label>
+    <input type="text" name="productname" value="<%= product.productname %>" required><br>
+
+    <label for="category">Category:</label>
+    <input type="text" name="category" value="<%= product.category %>" required><br>
+
+    <label for="code">Code:</label>
+    <input type="text" name="code" value="<%= product.code %>" required><br>
+
+    <label for="hsn">HSN:</label>
+    <input type="text" name="hsn" value="<%= product.hsn %>" required><br>
+
+    <label for="salesprice">Sales Price:</label>
+    <input type="text" name="salesprice" value="<%= product.salesprice %>" required><br>
+
+    <label for="mrp">MRP:</label>
+    <input type="text" name="mrp" value="<%= product.mrp %>" required><br>
+
+    <label for="qty">Quantity:</label>
+    <input type="text" name="qty" value="<%= product.qty %>" required><br>
+
+    <label for="description">Description:</label>
+    <textarea name="description" rows="5" required><%= product.description %></textarea><br>
+
+    <input type="submit" value="Update">
+  </form>
+</body>
+</html>

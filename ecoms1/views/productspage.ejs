@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .icons {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      margin-top: 12px;
+    }
+
+    .cart {
+      color: white;
+      font-size: 22px;
+    }
+
+    .cart-icon-button {
+      background-color: transparent;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .cart-icon {
+      font-size: 24px;
+      color: #e8ebee;
+    }
+
+    h1 {
+      text-align: center; 
+  margin: 0 auto; 
+  order: 2;
+  font-size: 30px;
+  font-weight: bold;
+    }
+
+    .product-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .product-image-container {
+      text-align: center;
+      flex: 1;
+    }
+
+    .product-image {
+      max-width: 100%;
+      max-height: 300px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .product-image:hover {
+      transform: scale(1.1);
+    }
+
+    .product-details {
+    flex: 1;
+    margin: 20px;
+}
+
+.product-details h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.product-details p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.product-details form {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-details .quantity-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.product-details label {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.product-details .quantity-input {
+    width: 60px;
+    padding: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.product-details .quantity-input:focus {
+    outline: none;
+    border: 2px solid #007bff;
+}
+
+.product-details .total-price-container {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.product-details button[type="submit"] {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    align-self: start;
+}
+
+.product-details button[type="submit"]:hover {
+    background-color: #0d5dbb;
+}
+
+    button {
+      padding: 10px 20px;
+      background-color: rgb(4, 43, 17);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    button[type="submit"] {
+      margin-top: 20px;
+      background-color: #1A73E8;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .quantity-input {
+      width: 50px;
+      padding: 5px;
+      font-size: 16px;
+    }
+
+    .product-description {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-description h3 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .product-description p {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .product-description ul {
+      list-style: disc;
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .product-description li {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+      margin-top: 5px;
+    }
+
+    .first {
+      display: flex;
+      text-align: center;
+    }
+
+    .back-button {
+      order: 1;
+      display: inline-block;
+      padding: 5px 6px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      font-size: smaller;
+    }
+
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+    .back-button:hover{
+  background-color: #0d5dbb;
+}
+    .description-list {
+      list-style-type: none !important;
+      padding-left: 0;
+    }
+
+    .main-point {
+      margin-bottom: 10px;
+    }
+
+    .sub-point {
+      margin-left: 20px;
+    }
+
+    .cart-icon-button {
+      position: relative;
+      display: inline-block;
+    }
+    .special-offer h3{
+      color: #065f1c;
+    }
+    .special-offer i{
+      color: #45a049;
+    }
+    .cart-item-count {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: #065f1c;
+      color: white;
+      border-radius: 50%;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  </style>
+  <link rel="stylesheet" href="/path/to/your/css/styles.css">
+  <script src="/path/to/your/fontawesome.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <%- include('./userappbar.ejs') %>
+  <br>
+  <div class="first">
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>PRODUCT DETAILS</h1>
+  </div>
+
+  <div class="product-container" data-salesprice="<%= product.salesprice %>" data-discountprice="<%= specialOfferDiscountPrice %>">
+    <div class="product-image-container">
+      <% images.forEach(function(image) { %>
+        <% if (image.imagepath) { %>
+          <img src="<%= image.imagepath %>" alt="<%= product.productname %>" class="product-image">
+        <% } %>
+      <% }); %>
+    </div>
+    
+    <div class="product-details">
+        <h2><%= product.productname %></h2><br>
+        <p>Weight: <%= product.weight %></p>
+
+        <% if (specialOfferContent) { %>
+        <div class="special-offer">
+            <h3>SPECIAL OFFER!</h3>
+            <p><i><%= specialOfferContent %></i></p>
+            <% if (specialOfferDiscountPrice) { 
+                var percentageReduction = Math.round(((product.salesprice - specialOfferDiscountPrice) / product.salesprice) * 100);
+            %>
+            <p>
+                Sales Price: <span style="text-decoration: line-through;">₹<%= product.salesprice %></span><br>
+                Offer Price: ₹<%= specialOfferDiscountPrice %><br><br>
+                <span style="color: green; font-weight: bold;">You Saved: <%= percentageReduction %>%</span>
+            </p>
+            <% } %>
+            <% if (specialOfferExpiryDate) { %>
+            <p>Offer Valid Until: <%= new Date(specialOfferExpiryDate).toLocaleString() %></p>
+            <% } %>
+        </div>
+        <% } else { %>
+        <p>Sales Price: ₹<%= product.salesprice %></p>
+        <% } %>
+
+        <% if (qty > 0) { %>
+        <form action="/buynow" method="POST">
+            <div class="quantity-container">
+                <input type="hidden" name="productid" value="<%= product.productid %>">
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" class="quantity-input" min="1" value="1" max="<%= qty %>" oninput="calculateTotalPrice()">
+            </div>
+            <div class="total-price-container">
+                <p>Total Amount: ₹<span id="total-price">
+                    <%= specialOfferDiscountPrice ? specialOfferDiscountPrice : product.salesprice %>
+                </span></p>
+            </div>
+            <button type="submit">Buy Now</button>
+        </form>
+        <% } else { %>
+        <p style="color: red; font-weight: bold;">Out Of Stock</p>
+        <% } %>
+    </div>
+</div>
+
+<div class="product-description">
+  <h3>Description</h3>
+  <ul class="description-list">
+      <% if (product.description) { %>
+          <% const descriptionPoints = product.description.split('\n'); %>
+          <% let isSubPoint = false; %>
+          <% descriptionPoints.forEach(function(point) { %>
+              <% const trimmedPoint = point.trim(); %>
+              <% if (trimmedPoint) { %>
+                  <% if (isSubPoint) { %>
+                      <li class="sub-point"><%= trimmedPoint %></li>
+                  <% } else { %>
+                      <li class="main-point"><strong><%= trimmedPoint %></strong></li>
+                  <% } %>
+                  <% isSubPoint = true; %>
+              <% } else { %>
+                  <% isSubPoint = false; %>
+              <% } %>
+          <% }); %>
+      <% } else { %>
+          <li>No description available.</li>
+      <% } %>
+  </ul>
+</div>
+
+  <script>
+      function updateCartItemCount() {
+          fetch('/api/cart/count')
+              .then((response) => response.json())
+              .then((data) => {
+                  const cartItemCount = document.getElementById('cartItemCount');
+                  if (cartItemCount) {
+                      cartItemCount.textContent = data.count;
+                  }
+              })
+              .catch((error) => {
+                  console.error('Error fetching cart item count:', error);
+              });
+      }
+
+      updateCartItemCount();
+
+      function toggleDropdown() {
+          const dropdownContent = document.getElementById("dropdown");
+          const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+          dropdownContent.classList.toggle("show");
+          dropdownArrow.classList.toggle("rotate-arrow");
+      }
+
+      function redirectToCart() {
+          window.location.href = "/cart";
+      }
+
+      document.addEventListener("click", function(event) {
+          const dropdownContent = document.getElementById("dropdown");
+          const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+          if (!event.target.closest(".edit-profile-dropdown")) {
+              dropdownContent.classList.remove("show");
+              dropdownArrow.classList.remove("rotate-arrow");
+          }
+      });
+     
+      function showCustomAlert() {
+          Swal.fire({
+              title: "Are you sure you want to logout?",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Logout",
+              cancelButtonText: "Cancel",
+              customClass: {
+                  confirmButton: "action-button",
+                  cancelButton: "action-button",
+              },
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.location.href = "http://localhost:7777/login";
+                  history.replaceState(null, null, 'http://localhost:7777/login');
+              }
+          });
+      }
+      document.addEventListener("DOMContentLoaded", function() {
+        var quantityInput = document.getElementById("quantity");
+        quantityInput.addEventListener("input", function() {
+            checkQuantity(quantityInput);
+            calculateTotalPrice();
+        });
+    });
+
+    function checkQuantity(input) {
+        var quantity = parseInt(input.value);
+        var maxQuantity = parseInt(input.max);
+
+        if (quantity >= maxQuantity) {
+            Swal.fire({
+                title: 'Quantity Reached Maximum Stock Value',
+                text: 'You have reached the maximum limit for this product.',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'action-button'
+                }
+            });
+        }
+    }
+
+      document.addEventListener("DOMContentLoaded", function() {
+          calculateTotalPrice(); 
+      });
+
+      function calculateTotalPrice() {
+          var quantityInput = document.getElementById("quantity");
+          var quantity = parseInt(quantityInput.value);
+
+          var productContainer = document.querySelector(".product-container");
+          var salesPrice = parseFloat(productContainer.getAttribute("data-salesprice"));
+          var discountPrice = parseFloat(productContainer.getAttribute("data-discountprice"));
+
+          var pricePerItem = isNaN(discountPrice) ? salesPrice : discountPrice;
+
+          if (!isNaN(quantity) && quantity >= 1) {
+              var totalPrice = quantity * pricePerItem;
+              document.getElementById("total-price").textContent = totalPrice.toFixed(2);
+          }
+      }
+
+      function goBack() {
+          window.history.back();
+      }
+
+      function deleteCookie(name) {
+          console.log(`Deleting cookie: ${name}`);
+          document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+  </script>
+</body>
+</html>

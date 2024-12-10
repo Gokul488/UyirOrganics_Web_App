@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 30px;
+            font-weight: bold;
+        }
+  
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .action-links a {
+            margin-right: 10px;
+        }
+
+        .delete-link {
+            color: #dc3545;
+        }
+
+        .delete-link:hover {
+            text-decoration: underline;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -23px;
+            margin-right: 630px;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #0A2472;
+            margin-left: -250px;
+        }
+
+        .btn-success {
+            background-color: #0A2472;
+        }
+
+        .btn:hover, .btn-success:hover {
+            background-color: #0d5dbb;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 9px 9px;
+            background-color: #0A2472;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-left: 10px;
+            top: 10px;
+        }
+
+        .back-button::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #0056b3;
+            transition: width 0.3s ease;
+        }
+
+        .back-button:hover::before {
+            width: 100%;
+        }
+        .back-button:hover{
+  background-color: #0d5dbb;
+}
+        .button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color:#0A2472 ;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none !important;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-link:hover {
+            background-color:  #0d5dbb;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: right;
+            margin-right: 200px;
+            margin-bottom: 20px;
+        }
+
+
+        .admin-details-container {
+            text-align: right;
+            margin-bottom: 20px;
+            margin-right: 20px;
+        }
+        @media (max-width: 1090px) {
+            .app-bar {
+                width: 100%;
+                min-width: 1090px; 
+            }
+        }
+        @media (max-width: 697px) {
+            .file-upload {
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 551px) {
+            .file-upload {
+                margin-left: 100px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.css">
+</head>
+<body>
+    <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+    <button onclick="goBack()" class="back-button">Back</button>
+    <div class="file-upload">
+        <button type="button" id="downloadExcel" class="btn btn-primary"><i class="fas fa-download"></i> Download Excel</button>
+        <input type="file" id="fileInput" accept=".xlsx,.xls">
+        <button type="button" id="uploadFile" class="btn btn-success"><i class="fas fa-upload"></i> Upload Excel</button>
+    </div>
+
+    <h1>CATEGORY LIST</h1>
+    
+    <div class="button-container">
+        <a href="/newcategory" class="button-link">Add Category</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th class="action-links" colspan="3">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% categories.forEach(category => { %>
+                <tr>
+                    <td><%= category.id %></td>
+                    <td><%= category.name %></td>
+                    <td><a href="/createproduct?category=<%= encodeURIComponent(category.name) %>" class="create-link">Create Product</a></td>
+                    <td><a href="/editcategory/<%= category.id %>" class="edit-link">Edit</a></td>
+                    <td><a href="#" onclick="deleteCategory('<%= category.id %>')" class="delete-link">Delete</a></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.js"></script>
+    <script>
+       function deleteCategory(categoryId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/deletecategory/${categoryId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Category has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload(); 
+                        });
+                    } else {
+                        console.error("Error deleting category:", response.statusText);
+                        Swal.fire(
+                            'Error!',
+                            'Failed to delete category.',
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting category:", error);
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting the category.',
+                        'error'
+                    );
+                });
+            }
+        });
+    }
+
+        function downloadExcel() {
+            fetch('/downloadexceltemplate', {
+                method: 'GET',
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    console.error('Failed to download Excel:', response.statusText);
+                    throw new Error('Failed to download Excel file.');
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.setAttribute('download', 'products_template.xlsx'); 
+
+                document.body.appendChild(downloadLink);
+
+                downloadLink.click();
+
+                document.body.removeChild(downloadLink);
+            })
+            .catch(error => {
+                console.error('Failed to download Excel:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Download Failed',
+                    text: 'Failed to download Excel file.',
+                });
+            });
+        }
+
+        function uploadExcel(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/uploadexcel1', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Upload Successful',
+                        text: 'Excel file uploaded successfully.',
+                    });
+                } else {
+                    console.error('Failed to upload Excel:', response.statusText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        text: 'Failed to upload Excel file.',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Failed to upload Excel:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: 'Failed to upload Excel file.',
+                });
+            });
+        }
+
+        document.getElementById('downloadExcel').addEventListener('click', function() {
+            downloadExcel();
+        });
+
+        document.getElementById('uploadFile').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.click();  
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                uploadExcel(file);
+            }
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

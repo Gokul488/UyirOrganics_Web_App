@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Store Details</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-K7U7pm0htdFy4XZKoPIdRnTSjFmMhj1zV9LzmZv5wS+9hSJQVgdE/KdS+1aFqu4t9eDvWGytiufhsRY5Itskag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+.material-icons {
+  padding-top: 20px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.dropdown > span {
+  margin-left: 5px;
+}
+
+    h1 {
+      text-align: center;
+      margin: 0 auto;
+      order: 2;
+      margin-top: -9px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    form {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      font-size: 16px;
+      color: #333;
+    }
+
+    input[type="submit"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #0A2472;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0d5dbb;
+    }
+
+    .ui-dialog-titlebar {
+      display: none; 
+    }
+
+    .ui-dialog {
+      padding: 20px;
+      background-color: #fff;
+      border: none;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+    }
+
+    .ui-dialog-buttonset {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .ui-dialog-buttonset button {
+      padding: 8px 16px;
+      background-color: #0f3193;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .ui-dialog-buttonset button:hover {
+      background-color: #110f0f;
+    }
+    .back-button {
+            display: inline-block;
+            padding: 7px 7px;
+            background-color: #0A2472; 
+            color: #fff; 
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-left: 10px;
+            font-size: 14px;
+            width: 45px;
+        }
+
+        .back-button::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #0056b3; 
+            transition: width 0.3s ease;
+        }       
+        .back-button:hover::before {
+            width: 100%;
+            background-color: #0d5dbb;
+        }
+
+      @media (max-width: 330px) {
+            .app-bar {
+                width: 100%;
+                min-width: 330px; 
+            }
+        }
+  </style>
+</head>
+<body>
+  <%- include('storeappbar.ejs', { contactname: contactname }) %>
+<br>
+<button onclick="goBack()" class="back-button">Back</button>
+
+  <h1>EDIT STORE DETAILS</h1>
+  <br>
+  <form id="editStoreForm" method="post" action="/updatestore1/<%= store.storeid %>">
+
+    <label for="name">Store Name:</label>
+    <input type="text" id="name" name="name" value="<%= store.name %>" required>
+
+    <label for="contactname">Contact Name:</label>
+    <input type="text" id="contactname" name="contactname" value="<%= store.contactname %>" required>
+
+    <label for="place">Place:</label>
+    <input type="text" id="place" name="place" value="<%= store.place %>" required>
+
+    <label for="gstnumber">GST Number:</label>
+    <input type="text" id="gstnumber" name="gstnumber" value="<%= store.gstnumber %>" required>
+
+    <label for="storepincode">Store Pincode:</label>
+<input type="text" id="storepincode" name="storepincode" value="<%= store.storepincode %>" required readonly>
+
+
+    <label for="mobilenumber">Mobile Number:</label>
+    <input type="text" id="mobilenumber" name="mobilenumber" value="<%= store.mobilenumber %>" 
+       required pattern="\d{10}" maxlength="10" 
+       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
+       title="Please enter a valid 10-digit mobile number.">
+
+
+       <label for="password">Password:</label>
+       <input type="password" id="password" name="password" value="<%= store.password %>" required>
+       
+
+    <input type="submit" value="Save Changes">
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  
+  <script>
+   $(document).ready(function () {
+      $('#editStoreForm').submit(function (event) {
+        event.preventDefault(); 
+
+        $.ajax({
+          type: 'POST',
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          success: function (response) {
+            if (response.success) {
+              Swal.fire({
+                title: 'Update Successful',
+                text: 'Store details updated successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                  confirmButton: 'swal2-btn',
+                },
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  window.location.href = '/storedetails/<%= store.storeid %>';
+                }
+              });
+            } else {
+              Swal.fire({
+                title: 'Update Failed',
+                text: response.message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                  confirmButton: 'swal2-btn',
+                },
+              });
+            }
+          },
+          error: function () {
+            Swal.fire({
+              title: 'Update Failed',
+              text: 'Failed to update store details. Please try again.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              customClass: {
+                confirmButton: 'swal2-btn',
+              },
+            });
+          }
+        });
+      });
+    });
+
+  function confirmLogout() {
+    Swal.fire({
+      title: 'Logout Confirmation',
+      text: 'Are you sure you want to logout?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Logout',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = 'http://localhost:7777/login';
+        history.replaceState(null, null, 'http://localhost:7777/login');
+
+      } else {
+        const errorMessage = 'Logout cancelled.';
+        displayErrorDialog('Cancelled', errorMessage);
+      }
+    });
+  }
+      const personIcon = $('.person-icon');
+      const dropdownMenu = $('.dropdown-menu');
+  
+      personIcon.on('click', () => {
+        dropdownMenu.toggleClass('show');
+      });
+
+      $(document).on('click', (event) => {
+        if (!$(event.target).closest('.dropdown').length) {
+          if (dropdownMenu.hasClass('show')) {
+            dropdownMenu.removeClass('show');
+          }
+        }
+      });
+      document.getElementById('userdetails-button').addEventListener('click', function () {
+      window.location.href = '/userdetails?storeId=<%= storeId %>';
+    });
+    function goBack() {
+  window.history.back(); 
+}
+  </script>
+</body>
+</html>

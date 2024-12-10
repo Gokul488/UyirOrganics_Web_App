@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+  <!-- Add your CSS styles or link to an external stylesheet here -->
+
+  <!-- Include jQuery library -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include jQuery UI library -->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+   .app-bar {
+              background-color: rgb(4 43 17);
+              padding: 25px;
+              display: flex;
+              width:100%;
+              height:60px;
+              align-items: center;
+              justify-content: space-between;
+            }
+
+            .logo {
+              display: flex;
+              align-items: center;
+            }
+
+            .logo img {
+              width: auto;
+              height: 130px;
+              margin-right: 10px;
+            }
+
+
+            
+            .material-icons{
+              padding-top: 20px;
+            }
+
+
+              .app-bar button {
+                background-color: rgb(4 43 17); /* Set the background color */
+                color: #fff; /* Set the text color */
+                padding: 10px 20px; /* Adjust padding as needed */
+                border: none; /* Remove border */
+                cursor: pointer; /* Add a pointer cursor on hover */
+                text-decoration: none; /* Remove underlines from links */
+                font-size: 25px;
+              }
+
+              /* Style the button on hover */
+              .app-bar button:hover {
+                background-color:rgb(4 43 17); /* Change the background color on hover */
+              }
+
+              /* Style the anchor tag inside the button */
+              .app-bar button a {
+                color: #fff; /* Set the text color */
+                text-decoration: none; /* Remove underlines from links */
+              }
+              
+              #Backend{
+                text-align: center;
+                color: #f9f9f9;
+                margin-top: 20px;
+                  }
+
+
+                  /* Style the dropdown container */
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        /* Style the dropdown button */
+        .dropdown-button {
+          background-color: #fff;
+          border: none;
+          cursor: pointer;
+          padding: 10px;
+          border-radius: 50%; /* Make it circular */
+          margin-right: 120px;
+        }
+
+        /* Style the dropdown content (hidden by default) */
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+
+        /* Style the links inside the dropdown content */
+        .dropdown-content a {
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+          color: #333;
+        }
+
+        /* Change link color on hover */
+        .dropdown-content a:hover {
+          background-color: #ddd;
+        }
+
+        /* Show the dropdown content when the button is clicked */
+        .show {
+          display: block;
+        }
+
+
+
+        /* Add styles for the custom modal */
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+        }
+
+        .modal-content {
+          background-color: #fff;
+          margin: 20% auto;
+          padding: 20px;
+          width: 300px;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          text-align: center;
+          position: relative;
+        }
+
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 20px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .close:hover {
+          color: #f7f3f3;
+        }
+
+        /* Style the "Logout" button in the modal */
+        #confirm-logout {
+          color: white;
+          background-color: #2196F3;
+          border: none;
+          border-radius: 5px;
+          padding: 10px 20px;
+          margin-top: 10px;
+          cursor: pointer;
+          outline: none;
+        }
+
+</style>
+<body>
+  <div class="app-bar">
+    <div class="logo">
+        <img src="images/ll.png" alt="Company Logo">
+    </div>
+    <div>
+        <h1 id="Backend">Backend Management System</h1>
+    </div>
+    <div class="dropdown">
+        <button id="dropdownButton" class="dropdown-button">
+            <i class="fas fa-user"></i> <!-- Font Awesome user icon -->
+        </button>
+        <div class="dropdown-content">
+            <a href="http://localhost:7777/adminuserdetails">User Details</a>
+            <a href="http://localhost:7777/storesignup">Add New Store</a>
+            <a href="#" id="logout">Logout</a>
+
+        </div>
+    </div>
+</div>
+
+<div id="logout-modal" class="modal">
+  <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Are you sure you want to logout?</p>
+      <button id="confirm-logout">Logout</button>
+      <button id="cancel-logout">Cancel</button>
+  </div>
+</div>
+
+</body>
+<script>    // JavaScript code
+  const dropdownButton = document.getElementById("dropdownButton");
+  const dropdownContent = document.querySelector(".dropdown-content");
+
+  dropdownButton.addEventListener("click", function(event) {
+    event.stopPropagation(); // Prevent the click event from propagating to the window
+    dropdownContent.classList.toggle("show");
+  });
+
+  // Close the dropdown if the user clicks outside of it
+  window.addEventListener("click", function(event) {
+    if (!event.target.matches(".dropdown-button")) {
+      if (dropdownContent.classList.contains("show")) {
+        dropdownContent.classList.remove("show");
+      }
+    }
+  });
+
+  // Close the dropdown if the user clicks inside it
+  dropdownContent.addEventListener("click", function(event) {
+    event.stopPropagation(); // Prevent the click event from propagating to the window
+  });
+
+  // Close the dropdown if the user presses the "Esc" key
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && dropdownContent.classList.contains("show")) {
+      dropdownContent.classList.remove("show");
+    }
+  });
+
+
+
+  
+
+  // Show the dropdown menu when the user clicks the button
+  // Handle the Logout option
+  const logoutButton = document.getElementById("logout");
+  logoutButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    
+    // Show the logout modal
+    const modal = document.getElementById("logout-modal");
+    modal.style.display = "block";
+  });
+
+  // Handle the cancel action when the user clicks "Cancel"
+  const cancelLogoutBtn = document.getElementById("cancel-logout");
+  cancelLogoutBtn.addEventListener("click", function() {
+    // Close the modal when "Cancel" is clicked
+    const modal = document.getElementById("logout-modal");
+    modal.style.display = "none";
+  });
+
+  // Handle the logout action when the user clicks "Logout"
+  const confirmLogoutBtn = document.getElementById("confirm-logout");
+  confirmLogoutBtn.addEventListener("click", function() {
+    // Redirect to the login page when the user confirms
+    window.location.href = "http://localhost:7777/login"; // Change the URL to your login page
+  });
+  </script>
+</html>
+
+
+
+<!-- back button -->
+
+<button onclick="goBack()">Back</button>
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+
+
+
+
+store app bar
+
+
+
+<div class="app-bar">
+  <div class="logo">
+    <img src="/images/ll.png" alt="Company Logo">
+
+  <div><h1 id="Management">Store Management System</h1>  <h4 id="sname"> <%= name %></h4> </div> 
+ <div>  </div>
+  </div>
+  <!-- Your existing logo and other elements -->
+  <div class="dropdown">
+    <i class="material-icons person-icon">person</i><span>Profile</span>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="/addproduct/<%= storeId %>">Add Product</a>
+      <a class="dropdown-item" href="/editstore/<%= storeId %>">Edit Store Details</a>
+    
+      <a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a>
+    </div>
+  </div>
+</div>
+<br>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  
+
+<script>
+   function displayErrorDialog(title, message) {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'error',
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'swal2-btn',
+      },
+    });
+  }
+
+  // Function to handle logout confirmation
+  function confirmLogout() {
+    // Display a custom confirmation dialog using SweetAlert2
+    Swal.fire({
+      title: 'Logout Confirmation',
+      text: 'Are you sure you want to logout?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Logout',
+    }).then((result) => {
+      // If the user clicks "Yes, Logout", proceed with the logout action
+      if (result.isConfirmed) {
+        // Replace the following line with your actual logout URL and logic
+        window.location.href = 'http://localhost:7777/login';
+      } else {
+        // If the user cancels, display a custom error message using SweetAlert2
+        const errorMessage = 'Logout cancelled.';
+        displayErrorDialog('Cancelled', errorMessage);
+      }
+    });
+  }
+      // Handle the dropdown menu display
+      const personIcon = $('.person-icon');
+      const dropdownMenu = $('.dropdown-menu');
+  
+      personIcon.on('click', () => {
+        dropdownMenu.toggleClass('show');
+      });
+  
+      // Close dropdown menu when clicking outside
+      $(document).on('click', (event) => {
+        if (!$(event.target).closest('.dropdown').length) {
+          if (dropdownMenu.hasClass('show')) {
+            dropdownMenu.removeClass('show');
+          }
+        }
+      });
+      document.getElementById('userdetails-button').addEventListener('click', function () {
+      // Replace this URL with the appropriate URL for your server route
+      window.location.href = '/userdetails?storeId=<%= storeId %>';
+    });
+    function goBack() {
+  window.history.back(); // This function navigates back to the previous page in the browser's history.
+}
+</script>
+
+
+
+
+
+
+
+.app-bar {
+  background-color: rgb(4, 43, 17);
+  padding: 25px;
+  display: flex;
+  width: 100%;
+  height: 120px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: auto;
+  height: 150px;
+  margin-right: 10px;
+}
+
+.material-icons {
+  padding-top: 20px;
+}
+
+.logout-button:hover {
+  background-color: #535582;
+}
+
+
+
+
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: emoji;
+}
+
+.person-icon {
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+}
+
+/* Dropdown menu styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  left: auto;
+  display: none;
+  min-width: 150px;
+  padding: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+  background-color: #e8f2f1;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* Optional style to move the dropdown indicator to the right of the text */
+.dropdown > span {
+  margin-left: 5px;
+}
+
+.add-product-button {
+  display: block;
+  text-align: center;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin-left: 600px;
+  display: flex;
+  align-items: center;
+}
+
+.add-product-button i {
+  margin-right: 8px;
+}
+
+/* Logout button style with icon */
+.logout-button {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button i {
+  margin-right: 8px;
+}
+
+.add-product-button:hover {
+  background-color: #535582;
+}
+
+#sname{
+  margin-left: 350px;
+  color: white;
+  font-family: emoji;
+}
+
+#Management{
+  color: whitesmoke;
+  margin-left: 350px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+/////////
+
+user
+
+
+.user-details {
+  flex: 1;
+  text-align: right;
+  font-size:20px;
+  margin-right: 50px;
+
+}
+
+
+.edit-profile-dropdown {
+  position: relative;
+}
+
+.edit-profile-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 0;
+}
+
+.edit-profile-dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.edit-profile-dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.show {
+  display: block;
+}
+
+
+
+function toggleDropdown() {
+  // Your existing code
+  const dropdownContent = document.getElementById("dropdown");
+  const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+  dropdownContent.classList.toggle("show");
+  dropdownArrow.classList.toggle("rotate-arrow");
+}
+
+
+function showCustomAlert() {
+  Swal.fire({
+    title: "Are you sure you want to logout?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Logout",
+    cancelButtonText: "Cancel",
+    customClass: {
+      confirmButton: "action-button",
+      cancelButton: "action-button",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Replace the following line with your actual logout URL and logic
+      window.location.href = "http://localhost:7777";
+    }
+  });
+}
+
+document.addEventListener("click", function(event) {
+  const dropdownContent = document.getElementById("dropdown");
+  const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+  if (!event.target.closest(".edit-profile-dropdown")) {
+    dropdownContent.classList.remove("show");
+    dropdownArrow.classList.remove("rotate-arrow");
+  }    });
+
+
+  back button----------------------------------
+  
+      .back-button {
+            display: inline-block;
+            padding: 3px 3px;
+            background-color: #007bff; /* Background color */
+            color: #fff; /* Text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-left: 10px;
+        }
+
+        .back-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #0056b3; /* Arrow color */
+            transition: width 0.3s ease;
+        }
+
+        .back-button::after {
+            content: "←"; /* Unicode arrow character */
+            font-size: 20px; /* Adjust the font size for a larger arrow */
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-button:hover::before {
+            width: 100%;
+        }
+
+
+
+        <button onclick="goBack()" class="back-button">Back</button>
+
+          
+        function goBack() {
+          window.history.back(); // This function navigates back to the previous page in the browser's history.
+        }
+

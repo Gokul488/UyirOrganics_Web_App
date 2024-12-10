@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-K7U7pm0htdFy4XZKoPIdRnTSjFmMhj1zV9LzmZv5wS+9hSJQVgdE/KdS+1aFqu4t9eDvWGytiufhsRY5Itskag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0;
+        }
+    
+        .table {
+            border-collapse: collapse;
+            width: 1100px;
+            margin: 20px;
+            margin-left: 150px;
+        }
+    
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+        th {
+            background-color: #0A2472;
+            color: #fff;
+            text-align: center;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    
+        tr:hover {
+            background-color: #ddd;
+        }      
+    
+        .printbtn {
+            order: 4;
+            background-color: #0A2472;
+            color: #fff;
+            border: none;
+            padding: 5px 9px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    .printbtn:hover{
+        background-color: #0d5dbb;
+    }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+    
+        .heading {
+            order: 2; 
+            margin: auto;
+            font-size: 30px;
+            margin-left: 540px;
+            text-align: center; 
+            order: 2;
+            font-size: 30px;
+            font-weight: bold;
+        }
+    
+        form {
+            display: flex;
+            align-items: center;
+            order: 3; 
+        }
+    
+        select {
+            margin-right: 10px;
+        }
+    
+        form button {
+            padding: 8px 16px; 
+        }
+        #overallStatusForm{
+            margin-left: -200px;
+        }
+        #overallStatusForm {
+        display: flex;
+        align-items: center;
+    }
+
+    #overallStatusForm label {
+        margin-right: 5px;
+        white-space: nowrap;
+    }
+
+    #overallStatusForm select {
+        margin-right: 10px;
+    }
+        .btn-success {
+            color: #fff;
+            background-color: #0A2472;
+            width: 90px;
+            margin-right: 5px;
+        }
+    .btn-success:hover{
+        background-color: #0d5dbb;
+    }
+        .order-details-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 150px 0px;
+            margin-right: 300px;
+        }
+    
+        .order-details-info p {
+            margin: 0;
+        }
+    
+        @media (max-width: 768px) {        
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+            }
+    
+            .back-button {
+                margin-bottom: 10px;
+                background-color: #0A2472;
+            }
+    .back-button:hover{
+        background-color: #0d5dbb;
+    }
+            .order-details-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    
+        @media print {
+            .app-bar,
+            .header-container,
+            .back-button,
+            .printbtn,
+            form {
+                display: none !important;
+            }
+    
+            body {
+                font-family: Arial, sans-serif;
+            }
+    
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 20px;
+            }
+    
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+    
+            th {
+                background-color: #3498db;
+                color: #120101;
+            }
+    
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+    
+            tr:hover {
+                background-color: #ddd;
+            }
+    
+            table th:last-child,
+            table td:last-child {
+                display: none;
+            }
+    
+            h1 {
+                text-align: center;
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+    
+            .order-details-info {
+                color: #333;
+                margin-bottom: 20px; 
+                margin-left: 300px;
+            }
+    
+            .order-details-info h4 {
+                font-size: 24px;
+                margin: 0;
+            }  
+    
+            #sname {
+                display: block !important;
+                text-align: left;
+            }
+        }
+    
+        @media (max-width: 1248px) {
+            .app-bar {
+                width: 100%;
+                min-width: 1248px; 
+            }
+        }
+    </style>
+    </head>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <body>
+        <%- include('storeappbar.ejs') %> 
+    
+        <div class="header-container">
+            <button onclick="goBack()" class="back-button">Back</button>
+            <button onclick="printOrders()" class="printbtn">Print</button>
+            <h1 class="heading">ORDER DETAILS</h1>
+           
+            <form id="overallStatusForm" action="/updateOverallStatus/<%= orderId %>" method="post" onsubmit="return confirmUpdateOverallStatus()">
+                <label for="overallStatus">Overall Status:</label>
+                <input type="hidden" name="storeId" value="<%= storeId %>">
+                <select name="overallStatus" class="form-control">
+                    <option value="Ordered">Ordered</option>
+                    <option value="Partially Delivered">Partially Delivered</option>
+                    <option value="Delivered">Delivered</option>
+                </select>
+                <button type="submit" class="btn btn-success">Update</button>
+            </form>
+            
+        </div>
+    
+        <div class="order-details-info">
+            <p><b>Order ID:</b> <%= orderId %></p>
+            <p><strong>Order Date:</strong> <%= new Date(products[0].orderdate).toLocaleString("en-US", { timeZone: "Asia/Kolkata", weekday: "short", month: "short", day: "2-digit", year: "numeric" }) %></p>
+            <p><b>User Name:</b> <%= user.name %></p>
+            <p><b>Overall status:</b> <%= overallStatus %></p>
+        </div>
+   
+    <table class="table">
+        <thead>
+            <tr>
+		 <th>S.No</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (products && products.length > 0) { %>
+                <% let serialNumber = 1; %>
+                <% let totalAmount = 0; %>
+
+                <% products.forEach(product => { %>
+                    <tr>
+			            <td><%= serialNumber %></td>
+
+                        <td><%= product.productname %></td>
+                        <td style="text-align: right;">₹<%= product.price %></td>
+                        <td style="text-align: right;"><%= product.quantity %></td>
+                        <td style="text-align: right;">₹<%= product.totalprice %></td>
+                        <td><%= product.status %></td>
+                        <td>
+                            <form action="/updateOrderStatus/<%= orderId %>/<%= product.productid || '' %>" method="post" onsubmit="return confirmUpdateStatus()">
+                                <select name="status" class="form-control">
+                                    <option value="Ordered" <%= product.status === 'ordered' ? 'selected' : '' %>>Ordered</option>
+                                    <option value="Not Available" <%= product.status === 'Not Available' ? 'selected' : '' %>>Not Available</option>
+                                    <option value="Delivered" <%= product.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                </select>
+                                <button type="submit" class="btn btn-success">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% serialNumber++; %>
+                    <% totalAmount += parseFloat(product.totalprice); %>
+                <% }); %>
+                <tr>
+                    <td colspan="3"></td>
+                    <td>Total:</td>
+                    <td>₹<%= totalAmount.toFixed(2) %></td>
+                    <td colspan="3"></td>
+                </tr>
+            <% } else { %>
+                <tr>
+                    <td colspan="7">No details available</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+   
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Logout Confirmation',
+                text: 'Are you sure you want to logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Logout',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'http://localhost:7777/login';
+                } else {
+                    const errorMessage = 'Logout cancelled.';
+                    displayErrorDialog('Cancelled', errorMessage);
+                }
+            });
+        }
+   
+        const personIcon = $('.person-icon');
+        const dropdownMenu = $('.dropdown-menu');
+   
+        personIcon.on('click', () => {
+            dropdownMenu.toggleClass('show');
+        });
+   
+        $(document).on('click', (event) => {
+            if (!$(event.target).closest('.dropdown').length) {
+                if (dropdownMenu.hasClass('show')) {
+                    dropdownMenu.removeClass('show');
+                }
+            }
+        });
+   
+        document.getElementById('userdetails-button').addEventListener('click', function() {
+            window.location.href = '/userdetails?storeId=<%= storeId %>';
+        });
+   
+        function printOrders() {
+            window.print();
+        }
+   
+        function confirmUpdateOverallStatus() {
+            console.log('Overall status update confirmed');
+            return true;
+        }
+   
+        document.addEventListener('DOMContentLoaded', () => {
+            const overallStatusForm = document.getElementById('overallStatusForm');
+   
+            overallStatusForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+ 
+                const formData = new FormData(overallStatusForm);
+                console.log('Form Data:', formData);
+   
+                try {
+                    const response = await fetch(overallStatusForm.action, {
+                        method: 'POST',
+                        body: formData,
+                    });
+   
+                    if (response.ok) {
+                        const responseData = await response.json();
+   
+                        if (responseData.success) {
+                            console.log('Overall status updated successfully');
+   
+                            updatePageContent(responseData.orderDetails);
+                        } else {
+                       
+                            console.error('Failed to update overall status:', responseData.error);
+                        }
+                    } else {
+
+                        console.error('Failed to update overall status:', response.status);
+                    }
+                } catch (error) {
+                    console.error('Error updating overall status:', error);
+                }
+            });
+   
+            function updatePageContent(updatedOrderDetails) {
+                console.log('Updated order details:', updatedOrderDetails);
+            }
+        });
+   
+        function showOrderDetails(orderId, userName) {
+
+            const orderDetailsDiv = document.getElementById('orderDetails');
+
+            const heading = document.createElement('h2');
+            heading.textContent = `Order Details - ${orderId}`;
+   
+            const userParagraph = document.createElement('p');
+            userParagraph.textContent = `User: ${userName}`;
+
+            orderDetailsDiv.innerHTML = '';
+            orderDetailsDiv.appendChild(heading);
+            orderDetailsDiv.appendChild(userParagraph);
+        }
+    </script>
+    </body>
+</html>

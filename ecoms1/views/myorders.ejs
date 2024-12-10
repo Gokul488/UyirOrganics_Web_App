@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Orders</title>
+    <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .orders-container {
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      text-align: left;
+      padding: 8px;
+    }
+table th{
+  border-left: 1px solid #ddd;
+}
+    thead {
+      background-color: #0A2472;
+      color: #fff;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #fff;
+    }
+    .back-button {
+      position: absolute;
+      left: 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+
+h1 {
+  text-align: center; 
+  margin: 0 auto; 
+  order: 2;
+  font-size: 30px;
+  font-weight: bold;
+}  
+
+    </style>
+  <link rel="stylesheet" href="/path/to/your/css/styles.css">
+<script src="/path/to/your/fontawesome.js"></script>
+</head>
+<body>
+  <%- include('./userappbar.ejs') %>
+ <div class="header">
+  <button onclick="goBack()" class="back-button">Back</button>
+  <h1>MY ORDERS</h1>
+</div>
+
+  <div class="orders-container">
+    <table>
+     <table>
+  <thead>
+    <tr>
+      <th>S.No</th>
+      <th>Product Name</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Total Amount</th>
+      <th>Order Date (IST)</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+      // Sort userOrders array in descending order based on orderdate
+      userOrders.sort(function(a, b) {
+        return new Date(b.orderdate) - new Date(a.orderdate);
+      });
+
+      let prevOrderDate = null;
+      let subdivisionCounter = 97; // ASCII code for 'a'
+      let sNo = 1;
+
+      userOrders.forEach(function(order, index) {
+        // Check if the current orderdate is the same as the previous one
+        if (prevOrderDate === order.orderdate) {
+          subdivisionCounter++; // Increment the subdivision counter
+        } else {
+          subdivisionCounter = 97; // Reset the subdivision counter
+        }
+
+        // Format subdivision as a string (e.g., '1a', '1b', etc.)
+        const subdivision = String.fromCharCode(subdivisionCounter);
+
+        %>
+        <tr>
+          <td><%= sNo %></td>
+          <td><%= order.productname %></td>
+          <td>₹<%= order.price %></td>
+          <td><%= order.quantity %></td>
+          <td>₹<%= order.totalprice %></td>
+          <td><%= new Date(order.orderdate).toLocaleString("en-US", { timeZone: "Asia/Kolkata", dateStyle: "medium" }) %></td>
+          <td><%= order.status %></td>
+        </tr>
+        <%
+
+        prevOrderDate = order.orderdate;
+        sNo++;
+      });
+    %>
+  </tbody>
+</table>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+</html>

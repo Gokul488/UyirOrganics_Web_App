@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Users</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <style>
+        .back-button {
+        display: inline-block !important;
+        padding: 9px 9px !important;
+        background-color: #0A2472 !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 5px !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: hidden !important;
+        margin-left: 10px !important;
+        z-index: 1 !important;
+        transition: opacity 0.3s ease !important;
+      }
+      .back-button {
+        pointer-events: auto;
+      }
+      .back-button:hover{
+        background-color: #0d5dbb !important;
+      }
+      body, h1, table {
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+        }
+
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+          font-size: 24px;
+          color: #333;
+          margin-bottom: 20px;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+
+        table th, table td {
+          padding: 12px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+          font-size:15px;
+        }
+
+        table th {
+          background-color: #f2f2f2;
+          font-weight: bold;
+        }
+
+
+        table tr:hover {
+          background-color: #f9f9f9;
+        }
+
+        .actions a {
+          text-decoration: none;
+          color: #007BFF;
+          margin-right: 10px;
+        }
+
+        .actions a:hover {
+          text-decoration: underline;
+        }
+        a{text-decoration: none;}
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 15px;
+        }
+        .centered-heading {
+          margin-left: 400px;
+        }
+    
+        .filter {
+          margin-left:250px;
+        }
+        body {
+              font-family: Arial, sans-serif;
+              background-color: #f2f2f2;
+              margin: 0;
+              padding: 0;
+            }
+  
+            .material-icons{
+              padding-top: 20px;
+            }
+
+              @media (max-width: 1135px) {
+          .app-bar {
+              width: 100%; 
+          }
+
+          .app-bar button {
+              font-size: 20px; 
+              padding: 0px 15px; 
+          }
+          }
+
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 20px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .close:hover {
+          color: #f7f3f3;
+        }
+
+        .creates {
+      order: 3;
+      text-decoration: none;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease; 
+    }
+
+    .creates:hover {
+      background-color: #0d5dbb;
+    }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .pagination a,
+  .pagination span {
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #007bff;
+    border-radius: 5px;
+  }
+  .pagination a:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+  }
+  .pagination span {
+    cursor: default;
+  }
+.hidden {
+    opacity: 0; 
+}
+        #list{
+          font-size: 30px;
+          margin-left: 500px;
+
+        }
+  </style>
+</head>
+<body>
+  <%- include('./adminappbar.ejs') %>
+
+  <div class="header">
+    <button onclick="goBack()" class="back-button">Back</button>
+
+    <h1 style="text-align:center" id="list">USERS LIST</h1>
+
+    <a href="http://localhost:7777/adminusersignup?adminid=<%= adminId %>" class="creates">Create user</a>
+
+    <div class="filter">
+      <label for="filter">Filter by Access:</label>
+      <select id="filter">
+        <option value="all" <% if (filter === 'all') { %>selected<% } %>>All</option>
+        <option value="yes" <% if (filter === 'yes') { %>selected<% } %>>Yes</option>
+        <option value="no" <% if (filter === 'no') { %>selected<% } %>>No</option>
+      </select>
+    </div>
+    
+    <p id="total-users" class="total">Total Users: <%= totalUsersCount %></p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Name</th>
+        <th>Mobilenumber</th>
+        <th>Address</th>
+        <th>Pincode</th>
+        <th>Email</th>
+        <th>Store Name</th>
+        <th>Store Place</th>
+        <th>Access</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% userDetails.forEach(function(user, index) { %>
+        <tr class="user-row" data-access="<%= user.access %>">
+          <td><%= startSerialNumber + index %></td> 
+          <td><%= user.name %></td>
+          <td><%= user.mobilenumber %></td>
+          <td><%= user.address %></td>
+          <td><%= user.pincode %></td>
+          <td><%= user.email %></td>
+          <td><%= user.storeName %></td>
+          <td><%= user.storePlace %></td>
+          <td>
+            <form method="POST" action="/updateAccess" class="update-form">
+              <input type="hidden" name="adminId" value="<%= adminId %>">
+              <input type="hidden" name="userId" value="<%= user.idusersignin %>">
+              <select name="access">
+                <option value="1" <% if (user.access === 1) { %>selected<% } %>>Yes</option>
+                <option value="0" <% if (user.access === 0) { %>selected<% } %>>No</option>
+              </select>
+              <button type="button" class="update-button">Update</button>
+            </form>
+          </td>
+          <td>
+            <a href="/adminedituser/<%= user.idusersignin %>?adminid=<%= adminId %>">Edit</a>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div id="confirmation-dialog" style="display: none;" title="Confirmation">
+    <p>Are you sure you want to update?</p>
+  </div>
+
+  <div class="pagination">
+    <% if (totalPages > 0) { %>
+      <% if (currentPage > 1) { %>
+        <a href="/adminuserdetails?page=<%= currentPage - 1 %>&adminid=<%= adminId %>&filter=<%= filter %>">&laquo; Previous</a>
+      <% } %>
+  
+      <% if (currentPage > 3) { %>
+        <a href="/adminuserdetails?page=1&adminid=<%= adminId %>&filter=<%= filter %>">1</a>
+        <% if (currentPage > 4) { %>
+          <span>...</span>
+        <% } %>
+      <% } %>
+  
+      <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+        <% if (i === currentPage) { %>
+          <span class="current"><%= i %></span>
+        <% } else { %>
+          <a href="/adminuserdetails?page=<%= i %>&adminid=<%= adminId %>&filter=<%= filter %>"><%= i %></a>
+        <% } %>
+      <% } %>
+  
+      <% if (currentPage < totalPages - 2) { %>
+        <% if (currentPage < totalPages - 3) { %>
+          <span>...</span>
+        <% } %>
+        <% if (currentPage + 2 < totalPages) { %>
+          <a href="/adminuserdetails?page=<%= totalPages %>&adminid=<%= adminId %>&filter=<%= filter %>"><%= totalPages %></a>
+        <% } %>
+      <% } %>
+  
+      <% if (currentPage < totalPages) { %>
+        <a href="/adminuserdetails?page=<%= currentPage + 1 %>&adminid=<%= adminId %>&filter=<%= filter %>">Next &raquo;</a>
+      <% } %>
+    <% } else { %>
+      <p>No users found.</p>
+    <% } %>
+  </div>
+  
+  
+  <script>
+    $(document).ready(function() {
+    window.goBack = function() {
+      window.history.back();
+    };
+
+    $(".update-button").click(function() {
+      var form = $(this).closest(".update-form");
+
+      $("#confirmation-dialog").dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          "Yes": function() {
+            $(this).dialog("close");
+            form.submit();
+          },
+          "No": function() {
+            $(this).dialog("close");
+          }
+        }
+      });
+    });
+ 
+    $("#filter").change(function() {
+      var filterValue = $(this).val();
+      window.location.href = `/adminuserdetails?page=1&adminid=<%= adminId %>&filter=${filterValue}`;
+    });
+
+    window.onscroll = function() {
+      var backButton = document.querySelector('.back-button');
+      var appBarHeight = document.querySelector('.app-bar').offsetHeight;
+
+      if (window.pageYOffset > appBarHeight) {
+        backButton.classList.add('hidden');
+      } else {
+        backButton.classList.remove('hidden');
+      }
+    };
+  });
+  </script>
+</body>
+</html>

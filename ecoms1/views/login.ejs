@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          margin: 0;
+          padding: 0;
+        }
+
+        .back-button {
+      position: absolute;
+      left: 18px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+
+    .upper {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    input[type="tel"],
+    input[type="password"] {
+      width: 620px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .password-icon {
+      position: relative;
+    }
+
+    .password-icon input[type="password"] {
+      padding-right: 30px;
+    }
+
+    .password-icon .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #999;
+    }
+
+    input[type="submit"] {
+      width: 100px;
+      padding: 10px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .signup-link {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .signup-link a {
+      color: #52294f;
+      font-weight: 800;
+    }
+
+    .label-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .label-container span {
+      color: #0f3193;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .error {
+      color: red;
+      margin-top: 5px;
+    }
+
+      body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .app-bar {
+      background-color: rgb(4 43 17);
+      padding: 25px;
+      display: flex;
+      width: 100%;
+      height: 100px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: auto;
+      height: 130px;
+      margin-right: 10px;
+    }
+
+     .material-icons{
+      padding-top: 20px;
+    }
+  body {
+        font-family: Arial, sans-serif;
+        background-image: url("images/bg11.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+        opacity: 90; 
+    }
+
+      .container 
+        {
+          background-color: rgba(255, 255, 255, 0);
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+          padding: 20px;
+          width: 700px;
+          height: 400px;
+          margin: 150px auto;
+          margin-top: 50px;
+      }
+
+      .lower.box {
+        background-color: rgba(255, 255, 255, 0);
+        padding: 20px;
+      }
+
+    #error-dialog {
+      color: #ff0000;
+      font-weight: bold; 
+      margin-top: 10px; 
+    }
+
+    .tooltip {
+      font-size: 12px;
+      background-color: red;
+      color: white;
+    }
+
+
+    @media (max-width: 990px) {
+  .container {
+    margin: 50px auto; 
+    width: 750px;
+  }
+  
+  input[type="tel"], input[type="password"] {
+    width: 660px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .app-bar {
+    padding: 15px;
+    height: 90px;
+  }
+  
+  .logo img {
+    height: 120px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    padding: 10px;
+    width: 660px;
+  }
+  
+  .material-icons {
+    padding-top: 20px;
+    margin-right: -20px;
+  }
+
+  .signup-link a {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 769px) {
+  
+  .container {
+    margin: 50px auto; 
+    width: 650px;
+  }
+  input[type="tel"], input[type="password"] {
+    width: 500px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+} 
+@media (max-width: 720px) {
+  .container {
+    margin: 150px auto 500px;
+    width: 550px;
+  }
+  
+  input[type="tel"], input[type="password"] {
+    width: 550px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .app-bar {
+    padding: 15px;
+    height: 90px;
+  }
+  
+  .logo img {
+    height: 120px;
+  }
+  
+  input[type="tel"],
+  input[type="password"] {
+    padding: 10px;
+    width: 490px;
+  }
+  
+  .material-icons {
+    padding-top: 20px;
+    margin-right: -20px;
+  }
+
+  .signup-link a {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 570px) {
+  
+  .container {
+    margin: 50px auto; 
+    width: 400px;
+  }
+  input[type="tel"], input[type="password"] {
+    width: 350px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type="tel"],
+  input[type="password"] {
+    padding: 8px;
+    width: 400 px;
+  }
+  input[type="submit"] {
+      width: 100px;
+      padding: 5px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+}
+
+@media (max-width: 420px) {
+  .container {
+    margin: 50px auto; 
+    width: 260px;
+  }
+  
+  .app-bar {
+    padding: 15px;
+    height: 90px;
+  }
+  
+  .logo img {
+    height: 120px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    padding: 10px;
+    width: 215px;
+  }
+  
+  .material-icons {
+    padding-top: 20px;
+    margin-right: -20px;
+  }
+
+  .signup-link a {
+    font-size: 14px;
+  }
+}
+  </style> 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" integrity="sha512-WRIMqL3NjM7jg6TAE9h0AS1A8zFzUyWMaVcdh09MJGpg6J/EUgn1t8/G5HTTzS6Tdyg2O+oCUJMBUsI5ekmRfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="app-bar">
+    <div class="logo">
+      <img src="images/ll.png" alt="Company Logo">
+    </div>
+  </div>
+<br>
+  <button class="back-button" onclick="goBack()" style="order: 1;">Back</button>
+    <br>
+    <div id="error-dialog" class="error" style="display: none;"></div> 
+
+  <div class="container">
+    <div class="upper box">
+      <h2>Log In</h2>
+    </div>
+
+    <div class="lower box">
+      <form id="loginForm" action="/userlogin" method="POST" onsubmit="return validateForm()">
+        <div class="input">
+          <div class="label-container">
+            <span>Mobile Number</span>
+          </div>
+          <input 
+          type="tel" 
+          name="mobilenumber" 
+          id="mobilenumber" 
+          placeholder="Enter your mobile number" 
+          maxlength="10" 
+          pattern="\d{10}" 
+          oninput="validateMobileInput(this)" 
+        />
+        <span class="error" id="mobilenumber-error"></span>
+        
+        </div>
+
+        <div class="input password-icon">
+          <div class="label-container">
+            <span>Password</span>
+          </div>
+          <input type="password" name="password" id="password" placeholder="Enter your password" />
+          <span class="toggle-password" id="password-icon" onclick="togglePasswordVisibility()">
+            <i class="material-icons">visibility_off</i>
+          </span>
+          <span class="error" id="password-error"></span>
+        </div>
+
+        <input type="submit" value="Log In" />
+      </form>
+      <br/>
+
+<br />
+
+      <div class="signup-link">
+        <p>
+          <span style="color:#0f3193;font-weight: bold;">Don't you have an account?</span>
+          <a href="http://localhost:7777/usersignup"><span style="color:#52294f;font-weight:800">Sign Up</span></a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  
+  function validateMobileInput(input) {
+    input.value = input.value.replace(/[^0-9]/g, ''); 
+  }
+
+  function validateForm() {
+    const mobileNumber = document.getElementById('mobilenumber').value;
+    const password = document.getElementById('password').value;
+    const mobileNumberError = document.getElementById('mobilenumber-error');
+    const passwordError = document.getElementById('password-error');
+
+    mobileNumberError.textContent = '';
+    passwordError.textContent = '';
+
+    if (!mobileNumber) {
+      mobileNumberError.textContent = 'Mobile number is required';
+      return false;
+    } else if (!/^\d{10}$/.test(mobileNumber)) {
+      mobileNumberError.textContent = 'Mobile number must be 10 digits';
+      return false;
+    }
+
+    if (!password) {
+      passwordError.textContent = 'Password is required';
+      return false;
+    }
+
+    return true;
+  }
+
+  function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('password-icon');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      passwordIcon.innerHTML = '<i class="material-icons">visibility</i>';
+    } else {
+      passwordInput.type = 'password';
+      passwordIcon.innerHTML = '<i class="material-icons">visibility_off</i>';
+    }
+  }
+
+  function goBack() {
+    window.location.href = 'http://localhost:7777/';
+    history.replaceState(null, null, 'http://localhost:7777');
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const mobileNumber = document.getElementById('mobilenumber').value;
+    const password = document.getElementById('password').value;
+    const errorDialog = document.getElementById('error-dialog');
+
+    try {
+      const response = await fetch('/userlogin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ mobilenumber: mobileNumber, password: password }),
+      });
+
+      if (!response.ok) {
+        if (response.headers.get('content-type')?.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+        } else {
+          throw new Error('Unexpected error occurred.');
+        }
+      }
+
+      const data = await response.json();
+
+      setCookie('token', data.token, 7);
+
+      window.location.href = data.redirectUrl;
+    } catch (error) {
+      console.error('Error:', error);
+      errorDialog.textContent = error.message;
+      errorDialog.style.display = 'block';
+    }
+  });
+
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = 'expires=' + date.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+  }
+  </script>
+</body>
+</html>

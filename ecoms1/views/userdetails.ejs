@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>User Details</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body, h1, table {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #000;
+      margin-bottom: -100px;
+      margin-left: -70px;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      margin-left: 20px;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .actions a {
+      text-decoration: none;
+      color: #007BFF;
+      margin-right: 10px;
+    }
+
+    .actions a:hover {
+      text-decoration: underline;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 9px 9px;
+      background-color:  #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      margin-left: 10px;
+      top: -20px;
+    }
+
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+    .back-button:hover{
+  background-color: #0d5dbb;
+}
+    .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+
+.sname {
+  order: 2;
+  flex-grow: 2;
+  text-align: left;
+  margin-left: -50px ;
+}
+
+.users-list {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  order: 3;
+  flex-grow: 1;
+  margin: 0 auto;
+  margin-right: 550px;
+}
+
+    .add-pincode-button {
+      order: 4;
+      margin-right: 20px; 
+    }
+
+    .total-users {
+  order: 4;
+  margin-left: auto;
+  text-align: right;
+}
+  </style>
+</head>
+<body>
+
+  <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+
+<div class="container">
+  <div> 
+    <button onclick="goBack()" class="back-button">Back</button>
+  </div>
+  <h1 class="sname">STORE NAME: <%= storeName %></h1>
+  <h1 class="users-list">USERS LIST</h1>
+  <p class="total-users">Total Users: <%= userDetails.length %></p>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>S.No</th> 
+      <th>Name</th>
+      <th>Mobilenumber</th>
+      <th>Address</th>
+      <th>Pincode</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% userDetails.forEach(function(user, index) { %>
+      <tr>
+        <td><%= index + 1 %></td> 
+        <td><%= user.name %></td>
+        <td><%= user.mobilenumber %></td>
+        <td><%= user.address %></td>
+        <td><%= user.pincode %></td>
+        <td><%= user.email %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<script>
+ function goBack() {
+    window.history.back();
+  }
+</script>
+</body>
+</html>

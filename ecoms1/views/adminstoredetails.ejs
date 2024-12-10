@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Store</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <style>
+    body, table {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container { 
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: bold;
+      text-align: center; 
+      flex-grow: 1; 
+      order: 2;
+      margin: 0 auto;
+      margin-left: 200px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .actions a {
+      text-decoration: none;
+      color: #007BFF;
+      margin-right: 10px;
+    }
+
+    .actions a:hover {
+      text-decoration: underline;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .material-icons {
+      padding-top: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 9px 9px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      margin-left: 10px;
+    }
+
+    .back-button::before {
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+.back-button:hover{
+  background-color: #0d5dbb;
+}
+    .name {
+      color: #f7f3f3;
+      margin-right: 50px;
+    }
+
+    .creates {
+      margin-right: 50px;
+    }
+    .creates {
+  order: 4;
+  text-decoration: none;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0A2472;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.creates:hover {
+  background-color: #0d5dbb; 
+}
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination a,
+    .pagination span {
+      border: 1px solid #ddd;
+      padding: 10px 15px;
+      margin: 0 5px;
+      text-decoration: none;
+      color: #007bff;
+      border-radius: 5px;
+    }
+
+    .pagination a:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .pagination .current {
+      background-color: #007bff;
+      color: white;
+      border: 1px solid #007bff;
+    }
+
+    .pagination span {
+      cursor: default;
+    }
+
+    .link {
+      text-decoration: none;
+      cursor: pointer;
+      color: #1214b4;
+    }
+
+    .link:hover {
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+
+
+  <div class="header" style="display: flex;">
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>STORE LIST</h1>
+    <a href="/storesignup?adminid=<%= adminId %>" class="creates">Create store</a>
+    <p class="store-count" style="text-align: right; order: 3; margin-right: 40px;">Total Stores: <%= storeCount %></p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Store Name</th>
+        <th>Contact Name</th>
+        <th>Place</th>
+        <th>GST Number</th>
+        <th>Mobile Number</th>
+        <th>Store Pincode</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% let serialNumber = (currentPage - 1) * pageSize + 1; %>
+      <% storeDetails.forEach(function(store) { %>
+        <tr>
+          <td><%= serialNumber %></td>
+          <td>
+            <a href="javascript:void(0);" class="link" onclick="navigateToUserDetails('<%= store.storeid %>', '<%= adminId %>')">
+              <%= store.name %>
+            </a>
+          </td>
+          <td><%= store.contactname %></td>
+          <td><%= store.place %></td>
+          <td><%= store.gstnumber %></td>
+          <td><%= store.mobilenumber %></td>
+          <td><%= store.storepincode %></td>
+          <td>
+            <a href="/admineditstore/<%= store.storeid %>?adminid=<%= adminId %>">Edit</a>
+          </td>
+        </tr>
+        <% serialNumber++; %>
+      <% }); %>
+    </tbody>
+  </table> 
+  
+  <br><br><br>
+  <div class="pagination">
+    <% if (totalPages > 0) { %>
+        <% if (currentPage > 1) { %>
+            <a href="/adminstoredetails?page=<%= currentPage - 1 %>&adminid=<%= adminId %>">&laquo; Previous</a>
+        <% } %>
+
+        <% if (currentPage > 3) { %>
+            <a href="/adminstoredetails?page=1&adminid=<%= adminId %>">1</a>
+            <% if (currentPage > 4) { %>
+                <span>...</span>
+            <% } %>
+        <% } %>
+
+        <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+            <% if (i === currentPage) { %>
+                <span class="current"><%= i %></span>
+            <% } else { %>
+                <a href="/adminstoredetails?page=<%= i %>&adminid=<%= adminId %>"><%= i %></a>
+            <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages - 2) { %>
+            <% if (currentPage < totalPages - 3) { %>
+                <span>...</span>
+            <% } %>
+            <% if (currentPage + 2 < totalPages) { %>
+                <a href="/adminstoredetails?page=<%= totalPages %>&adminid=<%= adminId %>"><%= totalPages %></a>
+            <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <a href="/adminstoredetails?page=<%= Math.min(currentPage + 1, totalPages) %>&adminid=<%= adminId %>">Next &raquo;</a>
+        <% } else { %>
+            <span class="disabled">Next &raquo;</span>
+        <% } %>
+    <% } else { %>
+        <p>No products found.</p>
+    <% } %>
+</div>
+
+  <script>
+    function navigateToUserDetails(storeId, adminId) {
+      window.location.href = `/userdetails?storeid=${storeId}&adminId=${adminId}`;
+    }
+
+    function goBack() {
+window.history.back();    
+}
+  </script>
+</body>
+</html>

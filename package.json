@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-localstorage": "^3.0.5",
+    "xlsx": "^0.18.5"
+  },
+  "name": "uyir-blob(nov13)",
+  "version": "1.0.0",
+  "description": "\"# Initial commit\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Admin Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .app-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgb(4, 43, 17);
+            padding: 10px 20px;
+            width: 100%;
+            height: 80px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            width: auto;
+            height: 90px;
+        }
+
+        .app-bar button {
+            background-color: rgb(4 43 17);
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .app-bar button:hover {
+            background-color: rgb(4 43 17);
+        }
+
+        .app-bar button a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        #Backend {
+            color: #f9f9f9;
+            font-size: 24px;
+            text-align: center;
+            margin: auto;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            right: 25px;
+        }
+
+        .dropdown-button {
+            background-color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            margin-right: 0px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            top: 100px;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            color: #333;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .name {
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .name span {
+            margin-right: 10px;
+        }
+
+        .custom-swal-container {
+            background-color: #f0f0f0; 
+            border-radius: 10px; 
+            padding: 20px; 
+        }
+
+        .custom-swal-title {
+            font-size: 22px; 
+            color: #333; 
+            margin-bottom: 15px; 
+        }
+
+        .custom-swal-input {
+            border-radius: 5px; 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            font-size: 16px;
+        }
+
+        .custom-swal-confirm-btn {
+            background-color: #3085d6;
+            color: #fff; 
+        }
+
+        .custom-swal-cancel-btn {
+            background-color: #d33; 
+            color: #fff; 
+        }
+    </style>
+</head>
+<body>
+    <div class="app-bar">
+        <div class="logo">
+            <img src="/images/ll.png" alt="Company Logo">
+        </div>
+    
+        <div>
+            <h1 id="Backend">Uyir Warehouse Management System (<%= admincategory %>)</h1>
+        </div>
+        
+        <div class="dropdown">
+            <p class="name">
+                <span>Hi <%= adminName %></span>
+                <button id="dropdownButton" class="dropdown-button">
+                    <i class="fas fa-user"></i>
+                </button>
+            </p>
+        </div>
+    
+        <div class="dropdown-content">
+            <% if (hideDropdownItems) { %>
+                <a href="#" class="logout-link-hideDropdown" onclick="showCustomAlert()">Logout</a>
+            <% } else { %>
+                <a href="/adminuserdetails?adminid=<%= adminId %>&page=1">Users</a>
+                <a href="http://localhost:7777/adminproductdetails?adminid=<%= adminId %>" class="product-link">Products</a>
+                <a href="/adminstoredetails?adminid=<%= adminId %>&page=1">Stores</a>
+                <a href="/adminorders?adminid=<%= adminId %>">Orders</a>
+                <a href="/admindetails">Admin details</a>
+                <a href="#" class="logout-link-showDropdown" onclick="showCustomAlert()">Logout</a>
+            <% } %>
+        </div>
+    </div>
+    
+    <script>
+        const dropdownButton = document.getElementById("dropdownButton");
+        const dropdownContent = document.querySelector(".dropdown-content");
+
+        dropdownButton.addEventListener("click", function(event) {
+            event.stopPropagation();
+            dropdownContent.classList.toggle("show");
+        });
+
+        window.addEventListener("click", function(event) {
+            if (!event.target.closest(".dropdown")) {
+                dropdownContent.classList.remove("show");
+            }
+        });
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape" && dropdownContent.classList.contains("show")) {
+                dropdownContent.classList.remove("show");
+            }
+        });
+
+        function setupLogoutEvent() {
+            const appBar = document.querySelector(".app-bar"); 
+
+            appBar.addEventListener("click", function(event) {
+                if (event.target.closest(".logout-link-hideDropdown")) {
+                    event.preventDefault();
+                    handleLogoutWithCondition('hideDropdownItems');
+                }
+
+                if (event.target.closest(".logout-link-showDropdown")) {
+                    event.preventDefault();
+                    handleLogoutWithCondition('showDropdownItems');
+                }
+            });
+        }
+
+        function showCustomAlert() {
+            Swal.fire({
+                title: 'Logout Confirmation',
+                text: 'Are you sure you want to logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Logout',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'action-button',
+                    cancelButton: 'action-button',
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "http://localhost:7777/login";
+                    history.replaceState(null, null, 'http://localhost:7777/login');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

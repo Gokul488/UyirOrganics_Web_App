@@ -1,0 +1,17 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Store</title>
+</head>
+<body>
+  <h1>Delete Store Details</h1>
+  <p>Are you sure you want to delete the store "<%= store.name %>"?</p>
+  <form action="/deletestore/<%= store.storeid %>" method="get"> 
+    <input type="hidden" name="storeId" value="<%= store.storeid %>">
+    <button type="submit">Delete</button>
+    <a href="/adminstoredetails">Cancel</a>
+  </form>
+</body>
+</html>

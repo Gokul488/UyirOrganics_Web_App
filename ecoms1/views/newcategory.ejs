@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Category</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"], input[type="file"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0A2472;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color:  #0d5dbb;
+        }
+
+        #image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            height: auto;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 13px; 
+            background-color: #0A2472;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-left: 10px;
+            top: 10px;
+            width: auto; 
+            white-space: nowrap; 
+        }
+
+        .back-button::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #0056b3;
+            transition: width 0.3s ease;
+        }
+
+        .back-button:hover::before {
+            width: 100%;
+        }
+        .back-button:hover{
+  background-color: #0d5dbb;
+}
+    </style>
+</head>
+<body>
+    <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>Add New Category</h1>
+    <form id="categoryForm" enctype="multipart/form-data">
+        <label for="name">Category Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="imagePath">Image Path:</label>
+        <input type="file" id="imagePath" name="imagePath" accept="image/*" required onchange="previewImage(event)"><br>
+        <img id="image-preview" src="#" alt="Preview Image">
+        <button type="submit">Add Category</button>
+    </form>
+
+    <script>
+        function previewImage(event) {
+            const preview = document.getElementById('image-preview');
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        $('#categoryForm').on('submit', function(event) {
+            event.preventDefault(); 
+            
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/newcategory',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = '/createcategory'; 
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while creating the category.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

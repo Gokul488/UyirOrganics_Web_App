@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Special Offer</title>
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      color: #333;
+      margin-left: 25px;
+    }
+    h1 {
+      text-align: center;
+      margin: 0 auto;
+      order: 2;
+      margin-top: -30px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .form-container {
+      width: 700px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      margin: 0 auto;
+      position: relative;
+      margin-top: 10px;
+      transform: translateY(0);
+    }
+    .form-container form {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .form-container label {
+      flex: 1;
+      margin-right: -30px; 
+      font-size: large;
+      font-weight: bold;
+    }
+    .form-container input[type="text"],
+    .form-container select,
+    .form-container textarea,
+    .form-container input[type="datetime-local"],
+    .form-container input[type="number"] {
+      flex: 2;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: large;
+      width: 100%;
+    }
+a{
+  text-decoration: none;
+  color: #0A2472;
+}
+a:hover{
+ color: #0d5dbb;
+}
+    .form-container button {
+      padding: 8px 16px; 
+      background-color: #0A2472;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px; 
+      margin: 0 auto; 
+      display: block; 
+    }
+    .form-container button:hover {
+      background-color:  #0d5dbb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      margin-left: 25px;
+    }
+    th,
+    td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .back-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    .back-button:hover {
+      background-color:  #0d5dbb;
+    }
+    @media (min-aspect-ratio: 1/1) {
+      .back-button {
+        top: 15px;
+      }
+    }
+    @media (max-width: 1190px) {
+      .app-bar {
+        width: 100%;
+        min-width: 1190px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('storeappbar.ejs') %>
+  <button onclick="goBack()" class="back-button">Back</button>
+  <h1>ADD SPECIAL OFFER</h1>
+
+  <div class="form-container">
+    <form id="offerForm">
+      <div class="form-group">
+        <label for="storeId">Store ID</label>
+        <input type="text" id="storeId" name="storeId" value="<%= storeId %>" required readonly>
+      </div>
+      <div class="form-group">
+        <label for="product">Product</label>
+        <select id="product" name="productId" required>
+          <% products.forEach(function(product) { %>
+            <option value="<%= product.productid %>">
+              <%= product.productname %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="discountPrice">Discount Price</label>
+        <input type="number" id="discountPrice" name="discountPrice" placeholder="Enter discount price" required>
+      </div>
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea id="content" name="content" rows="2" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="expiryDate">Expiry Date</label>
+        <input type="datetime-local" id="expiryDate" name="expiryDate" required>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <h2>Special Offers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Store ID</th>
+        <th>Product ID</th>
+        <th>Discount Price</th>
+        <th>Content</th>
+        <th>Expiry Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% specialOffers.forEach(function(offer) { %>
+        <tr>
+          <td><%= offer.storeid %></td>
+          <td><%= offer.productid %></td>
+          <td><%= offer.discountprice %></td>
+          <td><%= offer.content %></td>
+          <td><%= offer.expirydate %></td>
+          <td>
+            <a href="/editOffer/<%= offer.offerid %>">Edit</a> |
+            <a href="#" onclick="openConfirmationDialog('<%= offer.offerid %>')">Delete</a>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div class="overlay" id="confirmationOverlay"></div>
+  <div class="modal" id="confirmationModal">
+    <p>Are you sure you want to delete this offer?</p>
+    <button onclick="confirmDeletion()">Yes</button>
+    <button onclick="closeConfirmationDialog()">Cancel</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.getElementById('offerForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+  
+      fetch('/uploadOffer', {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === 'Offer added successfully') {
+            Swal.fire({
+              title: 'Success',
+              text: data.message,
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              location.reload(); 
+            });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to add offer',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Internal Server Error',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        });
+    });
+    
+    function openConfirmationDialog(offerId) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to delete this offer?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/deleteOffer/${offerId}`, {
+            method: 'DELETE'
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              Swal.fire(
+                'Deleted!',
+                'The offer has been deleted.',
+                'success'
+              ).then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Failed to delete the offer',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting offer:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to delete the offer',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          });
+        }
+      });
+    }
+
+    function closeConfirmationDialog() {
+      document.getElementById('confirmationOverlay').style.display = 'none';
+      document.getElementById('confirmationModal').style.display = 'none';
+    }
+    function confirmLogout() {
+    Swal.fire({
+        title: 'Logout Confirmation',
+        text: 'Are you sure you want to logout?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Logout',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.cookie = 'token=; Max-Age=0; path=/;';
+            sessionStorage.clear();
+
+            window.location.href = 'http://localhost:7777';
+        } else {
+            Swal.fire({
+                title: 'Cancelled',
+                text: 'Logout cancelled.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-K7U7pm0htdFy4XZKoPIdRnTSjFmMhj1zV9LzmZv5wS+9hSJQVgdE/KdS+1aFqu4t9eDvWGytiufhsRY5Itskag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <title>Add Product</title>
+    </head>
+    <body>
+    <style>
+       * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+h1{
+    font-weight: bold;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.add-product {
+    margin: 20px 0;
+}
+
+.add-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button:hover{
+    background-color: #0056b3;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.product-table th, .product-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.product-table th {
+    background-color: #0A2472;
+    color: #fff;
+}
+
+.product-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.product-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.add-product-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product-table th, .product-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+.material-icons {
+    padding-top: 20px;
+}
+
+.add-product-button:hover {
+    background-color: #535582;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    left: auto;
+    display: none;
+    min-width: 150px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+.dropdown-menu a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.dropdown-menu a:hover {
+    background-color: #e8f2f1;
+}
+.dropdown-menu.show {
+    display: block;
+}
+.dropdown > span {
+    margin-left: 5px;
+}
+#userdetails-button {
+    padding: 8px;
+    background-color: rgb(70, 158, 70);
+    font-weight: bold;
+    border: none;
+}
+
+.invalid-input {
+    border: 2px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+.available {
+    color: rgb(70, 38, 230); 
+}
+      
+@media (max-width: 1000px) {
+    #sname {
+        margin-right: 200px;
+    }
+}
+
+#total {
+    margin-left: 1300px;
+    font-size: 20px;
+    font-family: emoji;
+}
+
+.update-stock-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    margin-right: -200px;
+}
+
+.update-stock-container h1 {
+    margin: 0 auto;
+    font-size: 24px;
+    flex-grow: 1;
+    text-align: center;
+    
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-left: 100px;
+}
+
+.btn-secondary {
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+ .btn-secondary:hover {
+    background-color: #0d5dbb;
+}
+
+
+.add-button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 400px;
+    margin-top: -50px;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 8px 10px;
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin-left: 10px;
+    font-size: 14px;
+    width: 45px;
+}
+
+.back-button::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #0056b3;
+    transition: width 0.3s ease;
+}
+
+.back-button:hover::before {
+    width: 100%;
+}
+.back-button:hover{
+    background-color: #0d5dbb;
+}
+@media (max-width: 666px) {
+            .app-bar {
+                width: 100%;
+                min-width: 666px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('storeappbar.ejs') %> 
+
+    <br>
+    <button onclick="goBack()" class="back-button">Back</button>
+    <br>
+    <div class="container">
+        <div class="add-product">
+            <form action="/addproduct/<%= storeId %>/submit" method="post" enctype="application/x-www-form-urlencoded" class="add-product-form">
+                <div class="update-stock-container">
+                    <h1>UPDATE STOCK</h1>
+                    <div class="button-group">
+                        <button type="button" id="add-selected-products-button" class="btn btn-secondary">Add Quantity</button>
+                    </div>
+                </div>
+                <div id="error-message" style="display: none; color: red;"></div>
+                <div id="success-message" style="display: none; color: green;"></div>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Unit Price</th>
+                            <th>Quantity Available On Stock</th>
+                            <th>Quantity</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(function(product) { %>
+                            <tr data-product-id="<%= product.productid %>">
+                                <td style="text-align: left;"><%= product.productname %></td>
+                                <td style="text-align: right;">₹<%= product.salesprice %></td>
+                                <td style="text-align: right;"><%= product.qty %></td>
+                                <td style="text-align: right;">
+                                    <input type="number" name="product_<%= product.productid %>_qty" min="0" max="<%= product.qty %>">
+                                </td>
+                           
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script>
+    const availableProductIds = JSON.parse('<%- JSON.stringify(availableProductIds) %>');
+    console.log('Available Product IDs:', availableProductIds);
+
+    availableProductIds.forEach(id => {
+        document.querySelectorAll('.product-table tbody tr').forEach(row => {
+            const productId = parseInt(row.getAttribute('data-product-id'), 10);
+            if (productId === id) {
+                row.classList.add('available');
+            }
+        });
+    });
+
+    function confirmLogout() {
+        Swal.fire({
+            title: 'Logout Confirmation',
+            text: 'Are you sure you want to logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Logout',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'http://localhost:7777/login';
+                history.replaceState(null, null, 'http://localhost:7777');
+            } else {
+                const errorMessage = 'Logout cancelled.';
+                displayErrorDialog('Cancelled', errorMessage);
+            }
+        });
+    }
+
+    function displayErrorDialog(title, message) {
+        Swal.fire({
+            title: title,
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+
+    $(document).ready(function () {
+        $('.person-icon').click(function () {
+            $('.dropdown-menu').toggleClass('show');
+        });
+
+        $(document).click(function (event) {
+            if (!$(event.target).closest('.dropdown').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+
+        $('#add-selected-products-button').click(function () {
+            console.log('Add Selected Products button clicked');
+            
+            const productsToUpdate = [];
+            let isValid = true;
+
+            $('input[name$="_qty"]').each(function () {
+                const name = $(this).attr('name');
+                const quantity = $(this).val();
+                const productId = parseInt(name.split('_')[1], 10);
+                const maxQty = $(this).attr('max');
+
+                if (quantity && quantity > 0) {
+                    if (parseInt(quantity) > parseInt(maxQty)) {
+                        Swal.fire({
+                            title: 'Quantity Exceeds Stock',
+                            text: `The selected quantity for product ID ${productId} exceeds the available stock.`,
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        isValid = false;
+                        return false;
+                    }
+
+                    if (availableProductIds.includes(productId)) {
+                        productsToUpdate.push({ productId, quantity });
+                    }
+                }
+            });
+
+            console.log('Products to update:', productsToUpdate);
+
+            if (!isValid) {
+                return;
+            }
+
+            if (productsToUpdate.length === 0) {
+                Swal.fire({
+                    title: 'Products Not Available in the Store',
+                    text: "Can't add quantity to the products which are not inserted to the store.",
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '/addselectedproducts/<%= storeId %>', 
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ products: productsToUpdate }),
+                success: function (response) {
+                    console.log('API response:', response);
+                    Swal.fire({
+                        title: 'Update Successful',
+                        text: 'Selected products have been successfully updated.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('API error:', textStatus, errorThrown);
+                    let errorMessage = 'There was an error updating the selected products. Please try again.';
+                    if (jqXHR.status === 400) {
+                        const response = jqXHR.responseText;
+                        if (response) {
+                            errorMessage = response;
+                        }
+                    }
+                    Swal.fire({
+                        title: 'Update Failed',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+
+    function goBack() {
+        window.history.back();
+    }
+    </script>
+</body>
+</html>

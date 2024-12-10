@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin User Edit Profile</title>
+  <style>
+    h1 {
+      text-align: center;
+      margin: 0 auto;
+      order: 2;
+      margin-top: -15px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+  
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 10px; 
+    }
+  
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+  
+    button[type="submit"],
+    button#delete-button {
+      background-color: #0A2472;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 48%; 
+      margin: 0 5px 0 0; 
+    }
+  
+    button[type="submit"]:hover,
+    button#delete-button:hover {
+      background-color: #0d5dbb;
+    }
+  
+    .button-group {
+      display: flex; 
+      justify-content: space-between; 
+    }
+  
+    p {
+      text-align: left;
+      margin-bottom: 20px;
+      font-size: 25pt;
+      text-decoration-color: blueviolet;
+      font-style: italic;
+    }
+  
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .material-icons {
+      padding-top: 20px;
+    }
+  
+    .back-button {
+      display: inline-block;
+      padding: 10px 13px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      margin-left: 10px;
+      margin-top: 15px;
+    }
+  
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+  
+    .back-button:hover::before {
+      width: 100%;
+    }
+  
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+  
+    @media all {
+      .name {
+        font-style: normal;
+        color: white;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+
+  <button class="back-button" onclick="goBack()" style="order: 1;">Back</button>
+
+  <h1>EDIT PROFILE</h1>
+  <form action="/adminedituser/<%= user.idusersignin %>?adminid=<%= adminId %>" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<%= user.name %>" required>
+
+    <label for="mobilenumber">Mobile Number:</label>
+    <input type="text" id="mobilenumber" name="mobilenumber" value="<%= user.mobilenumber %>" 
+           required pattern="\d{10}" maxlength="10" 
+           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
+           title="Please enter a valid 10-digit mobile number.">
+
+    <label for="address">Address:</label>
+    <input type="text" id="address" name="address" value="<%= user.address %>" required>
+
+    <label for="pincode">Pincode:</label>
+    <input type="text" id="pincode" name="pincode" value="<%= user.pincode %>" 
+           required pattern="\d{6}" maxlength="6" 
+           oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);" 
+           title="Please enter a valid 6-digit pincode.">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="<%= user.email %>" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" value="<%= user.password %>" required>
+
+    <div class="button-group">
+      <button type="submit">Update Profile</button>
+      <button type="button" id="delete-button">Delete Profile</button>
+    </div>
+  </form>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMessage = urlParams.get('success');
+    const page = urlParams.get('page') || 1; 
+    const adminid = urlParams.get('adminid') || '<%= adminId %>'; 
+    const filter = urlParams.get('filter') || 'all'; 
+
+    if (successMessage === 'updated') {
+      alert('User details updated successfully');
+    }
+
+    document.getElementById('delete-button').addEventListener('click', function () {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admindeleteuser/<%= user.idusersignin %>?adminid=<%= adminId %>`, {
+            method: 'DELETE',
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                Swal.fire(
+                  'Deleted!',
+                  'The user profile has been deleted.',
+                  'success'
+                ).then(() => {
+                  window.location.href = `/adminuserdetails?page=${page}&adminid=${adminid}&filter=${filter}`;
+                });
+              } else {
+                Swal.fire('Error!', data.message, 'error');
+              }
+            })
+            .catch(error => {
+              Swal.fire('Error!', 'An error occurred while deleting the user.', 'error');
+            });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

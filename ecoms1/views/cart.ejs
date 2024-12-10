@@ -1,0 +1,466 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cart</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center; 
+      margin: 0 auto; 
+      order: 2;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .cart-container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    th {
+      background-color: #f9f9f9;
+      font-weight: bold;
+      padding: 10px;
+    }
+
+    td {
+      padding: 10px;
+      text-align: center;
+      font-size: large;
+    }
+
+    .cart-total {
+      margin-top: 20px;
+      text-align: right;
+      font-size: 30px;
+    }
+
+    .cart-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .cart-buttons button {
+      padding: 10px 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .cart-buttons button:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    .cart-buttons button:hover {
+      background-color: #0d5dbb;
+    }
+
+    .quantity-input {
+      width: 50px;
+      padding: 5px;
+    }
+
+    .remove-button {
+      padding: 5px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .remove-button:hover {
+      color: red;
+    }
+
+    .checkout-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .product-image {
+      max-width: 100px;
+      max-height: 100px;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px; 
+      }
+
+    .material-icons {
+        padding-top: 10px;
+      }
+
+      table {
+        margin-top: 10px;
+        font-size: 12px; 
+      }
+
+      th,
+      td {
+        padding: 5px;
+      }
+
+      .cart-total {
+        margin-top: 10px;
+        font-size: 24px;
+      }
+
+      .cart-buttons {
+        margin-top: 10px;
+        justify-content: center;
+      }
+
+      .cart-buttons button {
+        padding: 8px 16px; 
+      }
+
+      .cart-buttons button:not(:last-child) {
+        margin-right: 5px;
+      }
+
+      .quantity-input {
+        width: 40px; 
+        padding: 2px;
+        font-size: 12px;
+      }
+
+      .remove-button {
+        padding: 2px;
+        font-size: 25px;
+      }
+
+      .checkout-button {
+        padding: 8px 16px; 
+        font-size: 14px;
+      }
+
+      .user-details .logout-icon {
+        padding: 3px 8px;
+      }
+
+      .custom-dialog {
+        padding: 20px;
+        width: 300px; 
+        height: auto;
+      }
+
+      .product-image {
+        max-width: 80px;
+        max-height: 80px; 
+      }
+    }
+
+    .back-button {
+      order: 1;
+      display: inline-block;
+      padding: 9px 9px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+.back-button:hover{
+  background-color: #0d5dbb;
+}
+    .first {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stock-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .product-image {
+      width: 50px;
+      height: 50px;
+    }
+    .rotate-arrow {
+      transform: rotate(180deg);
+    }
+    .stock-message {
+      color: red;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <%- include('./userappbar.ejs') %>
+
+  <br>
+  <div class="first">
+    <button style="order: 1;" onclick="goBack()" class="back-button">Back</button>
+    <h1 style="order: 2;">CART</h1>
+  </div>
+
+  <div class="cart-container">
+    <% let uniqueProducts = new Map(); %>
+    <% let totalPrice = 0; %>
+    <% let serialNumber = 1; %>
+    <% if (cartItems.length > 0) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>S.No.</th>
+          <th>Product Name</th>
+          <th>Image</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cartItems.forEach(function(item) { %>
+          <% if (!uniqueProducts.has(item.productid)) { %>
+            <% uniqueProducts.set(item.productid, item); %>
+
+            <% 
+              const itemPrice = item.finalPrice * item.quantity; 
+              totalPrice += itemPrice; 
+            %>
+
+            <tr>
+              <td><%= serialNumber++ %></td>
+              <td><%= item.productname %></td>
+              <td>
+                <% if (item.imagepath) { %>
+                  <img src="<%= item.imagepath %>" alt="Product Image" class="product-image">
+                <% } else { %>
+                  <span>No image available</span>
+                <% } %>
+              </td>
+              
+              <td>
+                <div class="product-quantity">
+                  <form action="/cart" method="POST" data-cartid="<%= item.cartid %>">
+                    <input type="hidden" name="cartId" value="<%= item.cartid %>">
+                    <input type="hidden" name="productId" value="<%= item.productid %>">
+                    <input type="number" name="quantity" class="quantity-input"
+                      min="1"
+                      max="<%= item.maxQuantity %>"
+                      value="<%= item.quantity %>"
+                      data-max-quantity="<%= item.maxQuantity %>"
+                      onchange="handleQuantityChange(this)">
+                  </form>
+                  <p class="stock-message" id="stock-message-<%= item.productid %>"></p>
+                </div>
+              </td>
+              <td>₹<%= item.finalPrice %></td>
+              <td>₹<%= itemPrice.toFixed(2) %></td>
+              <td>
+                <button class="remove-button" onclick="openRemoveItemDialog('<%= item.productname %>', '<%= item.cartid %>')">
+                  <i class="fas fa-times"></i>
+                </button>
+              </td>
+            </tr>
+          <% } %>
+        <% }); %>
+      </tbody>
+    </table>
+    <div class="cart-total">
+      Total Amount: ₹<%= totalPrice.toFixed(2) %>
+    </div>
+    <div class="cart-buttons">
+      <button onclick="redirectToUserStoreDetails('<%= storeId %>', '<%= userId %>')">Continue Shopping</button>
+      <button onclick="redirectToCheckout()" class="checkout-button">Checkout</button>
+    </div>
+    <% } else { %>
+    <p class="empty-cart-message">Your cart is empty.</p>
+    <% } %>
+  </div>
+
+  <div id="remove-item-dialog" title="Remove Item" style="display: none;">
+    <p>Are you sure you want to remove the item?</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  <script>
+    function toggleDropdown() {
+      const dropdownContent = document.getElementById("dropdown");
+      const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+      dropdownContent.classList.toggle("show");
+      dropdownArrow.classList.toggle("rotate-arrow");
+    }
+
+    document.addEventListener("click", function(event) {
+      const dropdownContent = document.getElementById("dropdown");
+      const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+      if (!event.target.closest(".edit-profile-dropdown")) {
+        dropdownContent.classList.remove("show");
+        dropdownArrow.classList.remove("rotate-arrow");
+      }
+    });
+    
+    document.querySelector(".dropdown-trigger .username").addEventListener("click", function(event) {
+      event.stopPropagation();
+      toggleDropdown();
+    });
+
+    function redirectToUserStoreDetails(storeId, userId) {
+      console.log('Store ID:', storeId);
+      console.log('User ID:', userId);
+
+      if (userId) {
+        console.log('User ID is passed:', userId);
+      } else {
+        console.log('User ID is not passed');
+      }
+
+      window.location.href = "/userstoredetails/" + storeId + "?userId=" + userId;
+    }
+
+    function redirectToCheckout() {
+      window.location.href = "/checkout";
+    }
+
+    function openRemoveItemDialog(productName, cartId) {
+      $("#remove-item-dialog").dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          "Remove": function () {
+            $.ajax({
+              url: "/removefromcart",
+              method: "POST",
+              data: { cartid: cartId },
+              success: function () {
+                location.reload();
+              },
+              error: function () {
+                alert('Error removing item from cart');
+              }
+            });
+            $(this).dialog("close");
+          },
+          "Cancel": function () {
+            $(this).dialog("close");
+          }
+        }
+      });
+    }
+
+    function showLogoutDialog() {
+      document.getElementById("logoutDialog").style.display = "block";
+    }
+
+    function hideLogoutDialog() {
+      document.getElementById("logoutDialog").style.display = "none";
+    }
+
+    function logout() {
+      window.location.href = "http://localhost:7777";
+      history.replaceState(null, null, 'http://localhost:7777');
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function showCustomAlert() {
+      Swal.fire({
+        title: "Are you sure you want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton: "action-button",
+          cancelButton: "action-button",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "http://localhost:7777/login";
+        }
+      });
+    }
+
+    function handleQuantityChange(input) {
+      const maxQuantity = parseInt(input.getAttribute('data-max-quantity'), 10);
+      const quantity = parseInt(input.value, 10);
+      const form = input.closest('form'); 
+
+      if (quantity > maxQuantity) {
+        input.value = maxQuantity; 
+        Swal.fire({
+          title: 'Quantity Exceeds Stock',
+          text: `Quantity exceeds stock. You can only add up to ${maxQuantity} items.`,
+          icon: 'warning',
+          confirmButtonText: 'OK'
+        }).then(() => {
+         
+        });
+        return; 
+      }
+
+      if (quantity === maxQuantity) {
+        Swal.fire({
+          title: 'Max Stock Reached',
+          text: `You have reached the maximum available stock of ${maxQuantity} items.`,
+          icon: 'info',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          form.submit(); 
+        });
+      } else {
+        form.submit(); 
+      }
+    }
+  </script>
+
+</body>
+</html>

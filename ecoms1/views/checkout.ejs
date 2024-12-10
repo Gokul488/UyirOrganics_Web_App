@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+ <html>
+ <head>
+   <meta charset="UTF-8">
+   <title>Checkout</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   <style>
+     body {
+       font-family: Arial, sans-serif;
+       margin: 0;
+       padding: 0;
+       font-size: 18px;
+     }
+ 
+     .container {
+       max-width: 960px;
+       margin: 0 auto;
+       padding: 20px;
+     }
+ 
+     h1 {
+      text-align: center; 
+  margin: 0 auto; 
+  order: 2;
+  font-size: 30px;
+  font-weight: bold;
+ 
+    }
+
+       h4{
+          font-size:21px;
+          color:white;
+          text-align: center;
+          font-style: emoji;
+          padding:5px;
+        }
+     table {
+       width: 100%;
+       border-collapse: collapse;
+       margin-bottom: 20px;
+     }
+ 
+     th, td {
+       padding: 10px;
+       text-align: left;
+       border-bottom: 1px solid #ddd;
+     }
+ 
+     .cart-total {
+       text-align: right;
+       margin-bottom: 20px;
+       font-weight: bold;
+       font-size:30px;
+     }
+     .user-details {
+       text-align:left;
+     }
+     .user-details1 {
+       margin-bottom: 20px;
+       text-align: left;
+       font-size: 18px;
+     }
+
+  #checkbutton
+  {
+    margin-left:850px;
+    background-color:#0A2472;
+    color: white;
+    padding:2px;
+    border-radius:4px;
+    box-shadow: none;
+    font-size:15px;
+    border: none;
+    width: 20%;
+    height: 40px;
+  }
+  #checkbutton:hover{
+background-color: #0d5dbb;
+  }
+   .back-button {
+        order: 1;
+        display: inline-block;
+        padding: 9px 9px;
+        background-color:#0A2472;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .back-button::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background-color: #0056b3;
+        transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+        width: 100%;
+    }
+    .back-button:hover{
+  background-color: #0d5dbb;
+}
+    .first {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+  }
+             
+   </style>
+   <link rel="stylesheet" href="/path/to/your/css/styles.css">
+<script src="/path/to/your/fontawesome.js"></script>
+
+ </head>
+ <body>
+  <%- include('./userappbar.ejs') %>
+
+  <div class="first">
+    <button onclick="goBack()" class="back-button">Back</button>
+
+     <h1>CHECKOUT</h1> 
+     </div>
+
+     <div class="container">
+      <div class="cart-total">
+          Total Amount: ₹<%= totalPrice.toFixed(2) %>
+      </div>
+  
+      <div class="cart-container">
+          <% if (cartItems.length > 0) { %>
+          <table>
+              <thead>
+                  <tr>
+                      <th>S.No.</th>
+                      <th>Product Name</th>
+                      <th>Qty</th>
+                      <th>Unit Price</th>
+                      <th>Price</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <% cartItems.forEach(function(item, index) { %>
+                  <tr>
+                      <td><%= index + 1 %></td>
+                      <td><%= item.productname %></td>
+                      <td><%= item.quantity %></td>
+                      <td>₹<%= (parseFloat(item.finalPrice) || 0).toFixed(2) %></td>
+                      <td>₹<%= (parseFloat(item.finalPrice) * item.quantity || 0).toFixed(2) %></td>
+                      
+                  </tr>
+                  <% }); %>
+              </tbody>
+          </table>
+          <form action="/placeorder" method="POST">
+              <input type="hidden" name="cartItems" value='<%= JSON.stringify(cartItems) %>'>
+              <input type="hidden" name="totalPrice" value="₹<%= totalPrice.toFixed(2) %>">
+              <div class="user-details1">
+                  <h2>User Details</h2>
+                  <p>Name: <%= user.name %></p>
+                  <p>Address: <%= user.address %></p>
+                  <p>Phone Number: <%= user.phoneNumber %></p>
+              </div>
+              <input id="checkbutton" type="submit" value="Proceed to Checkout">
+          </form>
+          <% } else { %>
+          <p class="empty-cart-message">Your cart is empty.</p>
+          <% } %>
+      </div>
+  </div>
+  
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  <script>
+  function toggleDropdown() {
+      const dropdownContent = document.getElementById("dropdown");
+      const dropdownArrow = document.querySelector(".dropdown-arrow i");
+  
+      dropdownContent.classList.toggle("show");
+      dropdownArrow.classList.toggle("rotate-arrow");
+  }
+  
+  function showCustomAlert() {
+      Swal.fire({
+          title: "Are you sure you want to logout?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Logout",
+          cancelButtonText: "Cancel",
+          customClass: {
+              confirmButton: "action-button",
+              cancelButton: "action-button",
+          },
+      }).then((result) => {
+          if (result.isConfirmed) {
+              window.location.href = "http://localhost:7777";
+              history.replaceState(null, null, 'http://localhost:7777');
+          }
+      });
+  }
+  
+  document.addEventListener("click", function(event) {
+      const dropdownContent = document.getElementById("dropdown");
+      const dropdownArrow = document.querySelector(".dropdown-arrow i");
+  
+      if (!event.target.closest(".edit-profile-dropdown")) {
+          dropdownContent.classList.remove("show");
+          dropdownArrow.classList.remove("rotate-arrow");
+      }
+  });
+  
+  function goBack() {
+      window.history.back(); 
+  }
+  </script>
+</html>

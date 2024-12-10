@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Details</title>
+    <style>
+
+body, h1, p {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.product-details-container {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+}
+
+.product-details-container:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+    flex: 1;
+    padding: 10px;
+    position: relative;
+}
+
+.product-image img {
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.product-image:hover img {
+    transform: scale(1.1);
+}
+
+.product-image::before {
+    content: "Click to Zoom"; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 15px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.product-image:hover::before {
+    opacity: 1;
+}
+
+.product-info {
+    flex: 2;
+    padding: 10px;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+p {
+    font-size: 16px;
+    margin: 0;
+    margin-top: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="product-details-container">
+        <div class="product-image">
+            <img src="<%= product.imagepath %>" alt="Product Image">
+        </div>
+        <div class="product-info">
+            <h1><%= product.productname %></h1>
+            <p><strong>Category:</strong> <%= product.category %></p>
+            <p><strong>Code:</strong> <%= product.code %></p>
+            <p><strong>HSN:</strong> <%= product.hsn %></p>
+            <p><strong>Sales Price:</strong> <%= product.salesprice %></p>
+            <p><strong>MRP:</strong> <%= product.mrp %></p>
+            <p><strong>Quantity:</strong> <%= product.qty %></p>
+            <p><strong>Description:</strong> <%= product.description %></p>
+        </div>
+    </div>
+</body>
+</html>

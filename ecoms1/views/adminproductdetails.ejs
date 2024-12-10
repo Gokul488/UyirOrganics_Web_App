@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Product Details</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=refresh" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+
+  body, h1, table {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  margin-right: 280px;
+  margin-top: 15px;
+}
+
+.sort-arrow {
+    font-size: 12px;
+    margin-left: 5px; 
+}
+
+
+.sort-arrow {
+    color: #888; 
+}
+
+.sort-arrow:hover {
+    color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+
+table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.actions a {
+  text-decoration: none;
+  color: #007BFF;
+  margin-right: 10px;
+}
+
+.actions a:hover {
+  text-decoration: underline;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0A2472;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+a{text-decoration: none;}
+.button:hover {
+  background-color:  #0d5dbb;
+}
+
+body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+           
+            .material-icons{
+              padding-top: 20px;
+            }
+
+        .show {
+          display: block;
+        }
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7); 
+        }
+
+        .modal-content {
+          background-color: #fff;
+          margin: 20% auto;
+          padding: 20px;
+          width: 300px;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          text-align: center;
+          position: relative;
+        }
+
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 20px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .close:hover {
+          color: #f7f3f3;
+        }
+
+        .product-list-container {
+  margin-top: 10px; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+        .name{
+          color: white;
+        }
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  gap: 30px; 
+  margin: 20px;
+  justify-content: center;
+}
+
+.product-item {
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 20px; 
+  background-color: #fff; 
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.product-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); 
+}
+
+.product-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.product-item h3 {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.product-item p {
+  margin: 8px 0; 
+  font-size: 14px; 
+}
+
+.dropbtn {
+    background-color: #0f567a;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+form select {
+    margin: 10px;
+}
+
+form input[type="submit"] {
+    margin: 10px;
+    background-color: #0f567a;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+.rightalign{
+  text-align: right;
+}
+.list-view{
+  width: auto;
+ margin-left: 120px;
+}
+.grid-view {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; 
+}
+
+.product-item {
+  flex: 1 1 calc(25% - 16px); 
+  box-sizing: border-box;
+}
+
+.product-list-title{
+  font-size: 30px;
+  margin-left: 100px;
+  text-align: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  .reset-button .material-symbols-outlined {
+    font-size: 12px; 
+}
+  .pagination a, .pagination span {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  .pagination a:hover {
+    background-color: #f1f1f1;
+  }
+
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+  }
+  .product-family-highlight {
+  color: darkslategrey;  
+}
+
+.product-member-highlight {
+  color: darkslategrey; 
+}
+
+  @media (max-width: 1396px) {
+    .product-list-container {
+        width: 100%; 
+    }
+}
+</style>
+</head>
+<body>
+  <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
+  <div class="product-list-container">
+    <form action="/adminproductdetails" method="get" id="productSearchForm">
+      <input type="text" name="search" id="searchInput" placeholder="Search by Product Name" value="<%= search %>">
+      <button type="button" onclick="resetSearch()" class="reset-button">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+      <input type="hidden" name="adminid" value="<%= adminId %>">
+      <input type="hidden" name="page" value="<%= currentPage %>">
+      <button type="submit">Search</button>
+    </form>
+  
+    <div class="filter-by-category">
+      <form action="/adminproductdetails" method="get" id="filter-form">
+        <select name="category" id="category-select">
+          <option value="">All Categories</option>
+          <% categories.forEach(function(category) { %>
+            <% if (category && category.trim() !== "") { %> 
+              <option value="<%= category %>" <% if (category === selectedCategory) { %> selected <% } %> >
+                <%= category %>
+              </option>
+            <% } %>
+          <% }); %>
+        </select>
+        <input type="hidden" name="adminid" value="<%= adminId %>">
+        <input type="hidden" name="search" value="<%= search %>">
+        <button type="submit">Filter</button>
+      </form>
+    </div>
+ 
+  
+    <h1 class="product-list-title">PRODUCT LIST</h1>
+    <p id="total-products-count" class="total-products-count"><b>Total Count</b>: <%= totalProductsCount %></p>
+    <p class="total-stock-value"><b>Stock Value</b>: ₹<%= totalStockValue.toFixed(2) %></p>
+    <button onclick="redirectToCreateCategory()" class="button">Create</button>
+  </div>
+
+  <p id="display-count" class="total-products-count"><b>Display Count</b>:</p>
+
+
+    <div class="view-options">
+      <button id="list-view-button">List View</button>
+      <button id="grid-view-button">Grid View</button>
+    </div>
+
+    <table class="list-view">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Product Name</th>
+          <th>Product Type</th>
+          <th>Category</th>
+          <th>Code</th>
+          <th>HSN</th>
+          <th>GST</th>
+          <th>Weight</th>
+          <th>Sales Price</th>
+          <th>Quantity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% productDetails.forEach(function(product, index) { %>
+          <tr class="<%= product.producttype === 'productfamily' ? 'product-family-highlight' : '' %> <%= product.producttype === 'member' ? 'product-member-highlight' : '' %>">
+            <td><%= startSerialNumber + index %></td>
+            <td>
+              <a href="/admineditproduct?productid=<%= product.productid %>&adminid=<%= adminId %>"
+                 class="<%= product.producttype === 'productfamily' ? 'product-family-highlight' : '' %> <%= product.producttype === 'member' ? 'product-member-highlight' : '' %>">
+                <%= product.productname %>
+              </a> 
+            </td>
+            <td><%= product.producttype %></td>
+            <td><%= product.producttype === 'productfamily' ? 'Family Group' : product.category %></td>
+            <td><%= product.producttype === 'productfamily' ? '--' : product.code %></td>
+            <td><%= product.producttype === 'productfamily' ? '--' : product.hsn %></td>
+            <td><%= product.producttype === 'productfamily' ? '--' : product.GST %></td>
+            <td class="text-right"><%= product.producttype === 'productfamily' ? '--' : product.weight %></td>
+            <td class="text-right"><%= product.producttype === 'productfamily' ? '--' : '₹' + product.salesprice %></td>
+            <td class="text-right"><%= product.producttype === 'productfamily' ? '--' : product.qty %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <div class="grid-view" style="display: none;">
+      <div class="product-grid">
+        <% productDetails.forEach(function(product) { %>
+          <div class="product-item">
+            <a href="/admineditproduct?productid=<%= product.productid %>&adminid=<%= adminId %>">
+              <% if (product.producttype === 'productfamily') { %>
+                <img src="/images/productfamily.jpg" alt="<%= product.productname %>">
+              <% } else { %>
+                <img src="<%= product.imagepath %>" alt="<%= product.productname %>">
+              <% } %>
+              <h3><%= product.productname %></h3>
+              <% if (product.producttype !== 'productfamily') { %>
+                <p>Sales Price: ₹<%= product.salesprice %></p>
+                <p>Quantity: <%= product.qty %></p>
+              <% } %>
+            </a>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  
+  
+    <div class="pagination">
+      <% if (totalPages > 0) { %>
+        <% if (currentPage > 1) { %>
+          <a href="/adminproductdetails?page=<%= currentPage - 1 %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>">&laquo; Previous</a>
+        <% } %>
+    
+        <% if (currentPage > 3) { %>
+          <a href="/adminproductdetails?page=1&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>">1</a>
+          <% if (currentPage > 4) { %>
+            <span>...</span>
+          <% } %>
+        <% } %>
+    
+        <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+          <% if (i === currentPage) { %>
+            <span class="current"><%= i %></span>
+          <% } else { %>
+            <a href="/adminproductdetails?page=<%= i %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>"><%= i %></a>
+          <% } %>
+        <% } %>
+    
+        <% if (currentPage < totalPages - 2) { %>
+          <% if (currentPage < totalPages - 3) { %>
+            <span>...</span>
+          <% } %>
+          <a href="/adminproductdetails?page=<%= totalPages %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>"><%= totalPages %></a>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+          <a href="/adminproductdetails?page=<%= currentPage + 1 %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>">Next &raquo;</a>
+        <% } %>
+      <% } else { %>
+        <p>No products found.</p>
+      <% } %>
+    </div>
+  </div>
+  
+</body>
+<script>
+function resetSearch() {
+    document.getElementById('searchInput').value = '';
+    document.querySelector('input[name="page"]').value = 1; 
+    document.getElementById('productSearchForm').submit();
+}
+
+function redirectToCreateCategory() {
+    window.location.href = '/createcategory';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!sessionStorage.getItem('pageReloaded')) {
+        sessionStorage.setItem('pageReloaded', 'true');
+        window.location.reload();
+        return;
+    }
+
+    const listViewButton = document.getElementById('list-view-button');
+    const gridViewButton = document.getElementById('grid-view-button');
+    const listView = document.querySelector('.list-view');
+    const gridView = document.querySelector('.grid-view');
+
+    let selectedView = localStorage.getItem('productView') || 'list';
+    toggleView(selectedView);
+
+    listViewButton.addEventListener('click', function() {
+        toggleView('list');
+    });
+
+    gridViewButton.addEventListener('click', function() {
+        toggleView('grid');
+    });
+
+    function toggleView(view) {
+        if (view === 'list') {
+            listView.style.display = 'block';
+            gridView.style.display = 'none';
+            listViewButton.disabled = true;
+            gridViewButton.disabled = false;
+        } else {
+            listView.style.display = 'none';
+            gridView.style.display = 'block';
+            listViewButton.disabled = false;
+            gridViewButton.disabled = true;
+        }
+        localStorage.setItem('productView', view);
+    }
+
+    fetchFilteredProductCount();
+
+    const searchForm = document.getElementById('productSearchForm');
+    const filterForm = document.getElementById('filter-form');
+
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.querySelector('input[name="page"]').value = 1; 
+        fetchFilteredProductCount();
+        searchForm.submit();
+    });
+
+    filterForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.querySelector('input[name="page"]').value = 1; 
+        fetchFilteredProductCount();
+        filterForm.submit();
+    });
+
+    function fetchFilteredProductCount() {
+        const searchInput = document.getElementById('searchInput').value;
+        const categorySelect = document.getElementById('category-select').value;
+        const adminId = document.querySelector('input[name="adminid"]').value;
+
+        const params = new URLSearchParams({
+            search: searchInput,
+            category: categorySelect,
+            adminid: adminId
+        });
+
+        fetch(`/getFilteredProductCount?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                const displayCountElement = document.getElementById('display-count');
+                displayCountElement.textContent = `Display Count: ${data.filteredProductsCount}`;
+            })
+            .catch(error => {
+                console.error('Error fetching filtered product count:', error);
+            });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Info</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .back-button {
+      position: absolute;
+      left: 20px;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+
+    h1 {
+      text-align: center; 
+  margin: 0 auto; 
+  order: 2;
+  font-size: 30px;
+  font-weight: bold;
+    }
+
+    .details {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #e6ffe6; 
+      border-radius: 12px;
+      box-shadow: 8px 10px 8px 10px rgba(0, 0, 0, 0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+    }
+
+    .details h2, .details h3 {
+      margin: 20px 0;
+      color: #333;
+    }
+
+    .details h2 {
+      font-size: 28px;
+      color: #2e8b57;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .details h2 i {
+      margin-right: 10px;
+    }
+
+    .details h3 {
+      font-size: 22px;
+      color: #2e8b57; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .details h3 i {
+      margin-right: 10px;
+    }
+
+    .details .store-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .details .store-info h3 {
+      margin: 0;
+    }
+
+    .details .store-info .label {
+      font-weight: bold;
+      color: #043b11;
+    }
+
+    a {
+      color: #2e8b57; 
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #006400; 
+    }
+
+    .dropdown-arrow.rotate-arrow {
+      transform: rotate(180deg);
+      transition: transform 0.3s;
+    }
+
+  </style>
+</head>
+<body>
+  <%- include('./userappbar.ejs') %>
+  <div class="header">
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>STORE INFO</h1>
+  </div>
+  <div class="details">
+    <h3><i class="fas fa-store"></i> Store Name: <%= storeName %></h3>
+    <h3><i class="fas fa-user"></i> Contact Name: <%= storesignin.contactname %></h3>
+    <h3><i class="fas fa-phone-alt"></i> Contact Number: <%= storesignin.mobilenumber %></h3>
+    <h3><i class="fas fa-map-marker-alt"></i> Address <%= storesignin.place %><a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(storesignin.place) %>" target="_blank">(Show in Map)</a></h3>
+  
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+</body>
+</html>
