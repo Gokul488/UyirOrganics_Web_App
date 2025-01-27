@@ -11,12 +11,19 @@
             padding: 0;
             background-color: #f7f7f7;
         }
+        .header-container {
+    display: flex;
+    align-items: center; /* Vertically centers items */
+    justify-content: space-between;
+}
 
         h1 {
+            margin: 0 auto; /* Centers the heading in the row */
             text-align: center;
-            color: #333;
+            flex: 1;
+            margin-top: -35px;
         }
-
+    
         form {
             max-width: 500px;
             margin: 0 auto;
@@ -61,17 +68,18 @@
 
         .back-button {
             display: inline-block;
-            padding: 9px 14px; 
+            padding: 9px 9px; 
             background-color: #0A2472;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 13px;
             position: relative;
             overflow: hidden;
             margin-left: 10px;
             top: 10px;
-            width: auto; 
+            width: 50px; 
             white-space: nowrap; 
         }
 
@@ -89,9 +97,38 @@
             width: 100%;
         }
         .back-button:hover{
-  background-color: #0d5dbb;
+        background-color: #0d5dbb;
+        }
+    @media(max-width:863px){
+        .app-bar #Backend{
+            white-space: nowrap;
+            font-size: 20px;
+        }
+        .app-bar .dropdown{
+            white-space: nowrap;
+            margin-left: 40px;
+        }
+    }
+    @media (max-width: 703px) {
+                .app-bar {
+                    width: 100% !important;
+                    min-width: 703px !important; 
+                }
+            }
+    @media(max-width:684px){
+        form,h1 {
+        width: 100% !important;
+        min-width : 450px !important;
+        margin: 0 100px;
+            }
+            .back-button{
+        width:50px;
+        flex-shrink: 0;        }
 }
+    
     </style>
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 </head>
@@ -99,7 +136,7 @@
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
     <button onclick="goBack()" class="back-button">Back</button>
-    <h1>Edit Category</h1>
+    <h1>EDIT CATEGORY</h1>
     <form id="editCategoryForm" enctype="multipart/form-data">
         <label for="name">Category Name:</label>
         <input type="text" id="name" name="name" value="<%= category.name %>" required><br>

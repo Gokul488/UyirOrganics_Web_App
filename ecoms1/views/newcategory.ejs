@@ -7,22 +7,29 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
+        .header-container {
+    display: flex;
+    align-items: center; /* Vertically centers items */
+    justify-content: space-between;
+}
 
         h1 {
+            margin: 0 auto; /* Centers the heading in the row */
             text-align: center;
-            color: #333;
+            flex: 1;
+            margin-top: -35px;
         }
 
         form {
             max-width: 500px;
             margin: 0 auto;
+            margin-top: 30px;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -64,7 +71,8 @@
 
         .back-button {
             display: inline-block;
-            padding: 10px 13px; 
+            padding: 9px 9px; 
+            font-size: 13px;
             background-color: #0A2472;
             color: #fff;
             border: none;
@@ -74,7 +82,7 @@
             overflow: hidden;
             margin-left: 10px;
             top: 10px;
-            width: auto; 
+            width: 50px; 
             white-space: nowrap; 
         }
 
@@ -94,13 +102,40 @@
         .back-button:hover{
   background-color: #0d5dbb;
 }
+@media(max-width:863px){
+    .app-bar #Backend{
+        white-space: nowrap;
+        font-size: 20px;
+    }
+    .app-bar .dropdown{
+        white-space: nowrap;
+        margin-left: 40px;
+    }
+}
+@media (max-width: 703px) {
+            .app-bar {
+                width: 100% !important;
+                min-width: 703px !important; 
+            }
+        }
+        @media(max-width:684px){
+    form,h1 {
+       width: 100% !important;
+       min-width : 450px !important;
+       margin: 0 100px;
+        }
+        .back-button{
+        width:50px;
+        flex-shrink: 0;        }
+}
+
     </style>
 </head>
 <body>
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
     <button onclick="goBack()" class="back-button">Back</button>
-    <h1>Add New Category</h1>
+    <h1>ADD CATEGORY</h1>
     <form id="categoryForm" enctype="multipart/form-data">
         <label for="name">Category Name:</label>
         <input type="text" id="name" name="name" required><br>

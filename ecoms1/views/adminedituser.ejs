@@ -3,6 +3,13 @@
 <head>
   <title>Admin User Edit Profile</title>
   <style>
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; 
+    }
     h1 {
       text-align: center;
       margin: 0 auto;
@@ -75,21 +82,30 @@
     .material-icons {
       padding-top: 20px;
     }
-  
-    .back-button {
-      display: inline-block;
-      padding: 10px 13px;
-      background-color: #0A2472;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      margin-left: 10px;
-      margin-top: 15px;
-    }
-  
+    .header-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; 
+  margin: 15px 10px; 
+}
+
+.header-container h1 {
+  margin: 0 0 0 20px; 
+  font-size: 30px;
+  font-weight: bold;
+  flex-grow: 1; 
+}
+
+.back-button {
+  display: inline-block;
+  padding: 9px 9px;
+  background-color: #0A2472;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
     .back-button::before {
       position: absolute;
       top: 0;
@@ -124,9 +140,11 @@
 <body>
   <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
-  <button class="back-button" onclick="goBack()" style="order: 1;">Back</button>
-
-  <h1>EDIT PROFILE</h1>
+  <div class="header-container">
+    <button class="back-button" onclick="goBack()">Back</button>
+    <h1>EDIT PROFILE</h1>
+  </div>
+  
   <form action="/adminedituser/<%= user.idusersignin %>?adminid=<%= adminId %>" method="post">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="<%= user.name %>" required>

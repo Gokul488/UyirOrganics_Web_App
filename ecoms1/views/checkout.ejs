@@ -24,6 +24,7 @@
   order: 2;
   font-size: 30px;
   font-weight: bold;
+  margin-left: 560px;
  
     }
 
@@ -88,6 +89,7 @@ background-color: #0d5dbb;
         cursor: pointer;
         position: relative;
         overflow: hidden;
+        margin-left: 10px;
     }
 
     .back-button::before {
@@ -112,7 +114,13 @@ background-color: #0d5dbb;
       align-items: center;
       margin-top: 20px;
   }
-             
+      
+  @media (max-width: 1043px) {
+            .app-bar {
+                width: 100%;
+                min-width: 1043px;
+            }
+        }        
    </style>
    <link rel="stylesheet" href="/path/to/your/css/styles.css">
 <script src="/path/to/your/fontawesome.js"></script>

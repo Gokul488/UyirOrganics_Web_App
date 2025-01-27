@@ -19,6 +19,28 @@
       background-color: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       border-radius: 5px;
+      margin-top: 2rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #0A2472;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #0d5dbb;
     }
 
     table {
@@ -28,11 +50,12 @@
     }
 
     table th, table td {
-      text-align: left;
+      text-align: center;
       padding: 8px;
     }
 table th{
   border-left: 1px solid #ddd;
+  text-align: center;
 }
     thead {
       background-color: #0A2472;
@@ -47,21 +70,36 @@ table th{
       background-color: #fff;
     }
     .back-button {
-      position: absolute;
-      left: 20px;
+      order: 1;
+      display: inline-block;
+      padding: 9px 9px;
       background-color: #0A2472;
       color: #fff;
       border: none;
-      padding: 10px 14px;
       border-radius: 5px;
+      margin-top: -7px;
       cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
+      position: relative;
+      overflow: hidden;
+      margin-left: 10px;
     }
 
-    .back-button:hover {
-      background-color: #0d5dbb;
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
     }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+.back-button:hover{
+  background-color: #0d5dbb;
+}
 
 h1 {
   text-align: center; 
@@ -69,8 +107,14 @@ h1 {
   order: 2;
   font-size: 30px;
   font-weight: bold;
+  margin-top: -30px;
 }  
-
+.price{
+  text-align: right;
+}
+.header{
+  margin-top: 1.5rem;
+}
     </style>
   <link rel="stylesheet" href="/path/to/your/css/styles.css">
 <script src="/path/to/your/fontawesome.js"></script>
@@ -84,58 +128,42 @@ h1 {
 
   <div class="orders-container">
     <table>
-     <table>
-  <thead>
-    <tr>
-      <th>S.No</th>
-      <th>Product Name</th>
-      <th>Price</th>
-      <th>Quantity</th>
-      <th>Total Amount</th>
-      <th>Order Date (IST)</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% 
-      // Sort userOrders array in descending order based on orderdate
-      userOrders.sort(function(a, b) {
-        return new Date(b.orderdate) - new Date(a.orderdate);
-      });
-
-      let prevOrderDate = null;
-      let subdivisionCounter = 97; // ASCII code for 'a'
-      let sNo = 1;
-
-      userOrders.forEach(function(order, index) {
-        // Check if the current orderdate is the same as the previous one
-        if (prevOrderDate === order.orderdate) {
-          subdivisionCounter++; // Increment the subdivision counter
-        } else {
-          subdivisionCounter = 97; // Reset the subdivision counter
-        }
-
-        // Format subdivision as a string (e.g., '1a', '1b', etc.)
-        const subdivision = String.fromCharCode(subdivisionCounter);
-
-        %>
+      <thead>
         <tr>
-          <td><%= sNo %></td>
-          <td><%= order.productname %></td>
-          <td>₹<%= order.price %></td>
-          <td><%= order.quantity %></td>
-          <td>₹<%= order.totalprice %></td>
-          <td><%= new Date(order.orderdate).toLocaleString("en-US", { timeZone: "Asia/Kolkata", dateStyle: "medium" }) %></td>
-          <td><%= order.status %></td>
+          <th>S.No</th>
+          <th>Order ID</th>
+          <th>Total Amount</th>
+          <th>Order Date (IST)</th>
+          <th>Status</th>
+          <th>Actions</th> 
         </tr>
-        <%
-
-        prevOrderDate = order.orderdate;
-        sNo++;
-      });
-    %>
-  </tbody>
-</table>
+      </thead>
+      <tbody>
+        <% sNo = 1; %> 
+        <% userOrders.forEach(order => { %>
+          <tr>
+            <td><%= sNo %></td>
+            <td><%= order.orderid %></td>
+            <td class="price">₹<%= order.totalamount %></td>
+            <td><%= new Date(order.orderdate).toLocaleString("en-GB", { 
+              timeZone: "Asia/Kolkata", 
+              day: "2-digit", 
+              month: "2-digit", 
+              year: "numeric", 
+              hour: "2-digit", 
+              minute: "2-digit",
+              hour12: false
+            }) %></td>
+            <td><%= order.status %></td>
+            <td>
+              <a href="/userorderdetails/<%= order.orderid %>?storeid=<%= storeId %>" class="btn btn-primary">View Order</a>
+            </td>
+          </tr>
+          <% sNo++; %>
+        <% }); %>
+      </tbody>
+    </table>
+    
   </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>

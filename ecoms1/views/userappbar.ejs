@@ -33,6 +33,7 @@
       width: 100%;
       height: 80px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
 
     .logo img {
@@ -43,6 +44,7 @@
     .store-details {
       flex: 1;
       text-align: center;
+      margin-left: 125px;
     }
 
     .store-details h4 {
@@ -51,9 +53,11 @@
       font-weight: bold;
       text-align: center;
     }
-h4{
-  margin-top: 20px;
-}
+
+    h4 {
+      margin-top: 20px;
+    }
+
     .store-name {
       color: white;
       font-size: 20px;
@@ -63,7 +67,9 @@ h4{
     }
 
     .user-details {
-      text-align: right;
+      display: flex;
+      align-items: center; 
+      justify-content: flex-end; 
     }
 
     .username {
@@ -74,35 +80,35 @@ h4{
     }
 
     .edit-profile-dropdown {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  right: 25px;
-}
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      margin-right: 20px; 
+    }
 
-.edit-profile-dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  border-radius: 8px;
-  overflow: hidden;
-}
+    .edit-profile-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-.edit-profile-dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.3s;
-  text-align: left;
-}
+    .edit-profile-dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.3s;
+      text-align: left;
+    }
 
-.edit-profile-dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
+    .edit-profile-dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
 
     .dropdown-arrow.rotate-arrow {
       transform: rotate(180deg);
@@ -112,15 +118,47 @@ h4{
     .show {
       display: block; 
     }
-    .header {
+
+    .icons {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-      margin-bottom: 10px;
+      margin-left: -15px; 
+      margin-right: 18px;
     }
 
+    .cart {
+      color: white;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      margin-right: 4px;
+    }
+
+    .cart-icon-button {
+      position: relative;
+      display: inline-block;
+      background-color: transparent;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    .cart-icon {
+      font-size: 24px;
+      color: #e8ebee;
+      margin-right: 10px;
+    }
+
+    .cart-item-count {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: #065f1c;
+      color: white;
+      border-radius: 50%;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +185,15 @@ h4{
           <a href="#" onclick="showCustomAlert()">Logout</a>
         </div>
       </div> 
+      <div class="icons">
+        <p class="cart" onclick="redirectToCart()">
+          <button class="cart-icon-button">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+            <span id="cartItemCount" class="cart-item-count">0</span>
+          </button>
+          Cart
+        </p>
+      </div>
     </div>
   </div>
 
@@ -162,7 +209,7 @@ h4{
     function showCustomAlert() {
       Swal.fire({
         title: 'Logout Confirmation',
-      text: 'Are you sure you want to logout?',
+        text: 'Are you sure you want to logout?',
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Logout",
@@ -188,6 +235,26 @@ h4{
         dropdownArrow.classList.remove("rotate-arrow");
       }
     });
+
+    function redirectToCart() {
+      window.location.href = "/cart";
+    }
+
+    updateCartItemCount();
+
+    function updateCartItemCount() {
+      fetch('/api/cart/count')
+        .then((response) => response.json())
+        .then((data) => {
+          const cartItemCount = document.getElementById('cartItemCount');
+          if (cartItemCount) {
+            cartItemCount.textContent = data.count;
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching cart item count:', error);
+        });
+    }
 
     function goBack() {
       window.history.back(); 

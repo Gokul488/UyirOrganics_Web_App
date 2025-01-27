@@ -15,9 +15,9 @@
         .container {
             width: 40%;
             margin: 50px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 8px 10px 8px 10px rgba(0, 0, 0, 0.2);
             padding: 20px;
             text-align: center;
         }
@@ -73,20 +73,6 @@
             background-color: #004080;
         }
 
-        @media (max-width: 1194px) {
-            .app-bar {
-                width: 100%;
-                min-width: 1194px; 
-            }
-        } 
-
-        @media (max-width: 1160px) {
-            .container {
-                width: 50%;
-                margin: 50px auto;
-            }
-        }
-
         .products-table {
             width: 80%;
             margin: 30px auto;
@@ -106,6 +92,25 @@
         .highlight {
             background-color: #ffe5b4; 
         }
+
+        @media (max-width: 1194px) {
+            .app-bar {
+                width: 100%;
+                min-width: 1194px; 
+            }
+        } 
+
+@media(max-width:1175px){
+.container{
+    width: 50%;
+    min-width: 587px;
+    margin: 40px 300px;
+}
+     .products-table, h2{
+        width: 80%;
+        min-width: 1175px;
+    }
+}
     </style>
 </head>
 <body>

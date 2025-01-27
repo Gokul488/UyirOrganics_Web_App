@@ -12,15 +12,15 @@
     }
     h2 {
       color: #333;
-      margin-left: 25px;
+      margin-left: 100px;
     }
     h1 {
-      text-align: center;
-      margin: 0 auto;
       order: 2;
       margin-top: -30px;
       font-size: 30px;
       font-weight: bold;
+      margin-left: 600px;
+      white-space: nowrap;
     }
     .form-container {
       width: 700px;
@@ -29,11 +29,11 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
-      margin: 0 auto;
+      margin-left: 300px;
       position: relative;
       margin-top: 10px;
       transform: translateY(0);
-    }
+  }
     .form-container form {
       display: flex;
       flex-direction: column;
@@ -63,33 +63,39 @@
       font-size: large;
       width: 100%;
     }
-a{
-  text-decoration: none;
-  color: #0A2472;
-}
-a:hover{
- color: #0d5dbb;
-}
+    a{
+      text-decoration: none;
+      color: #0A2472;
+    }
+    a:hover{
+    color: #0d5dbb;
+    }
     .form-container button {
       padding: 8px 16px; 
       background-color: #0A2472;
       color: white;
       border: none;
       border-radius: 4px;
+      width: 150px;
       cursor: pointer;
       font-size: 16px; 
-      margin: 0 auto; 
+      margin: 0; 
+      margin-left: 250px;
       display: block; 
     }
     .form-container button:hover {
       background-color:  #0d5dbb;
     }
-
+.app-bar #common-name, .app-bar #sname{
+  font-weight: normal;
+}
     table {
-      width: 100%;
+      width: 90%;
       border-collapse: collapse;
       margin-top: 20px;
-      margin-left: 25px;
+      margin-left:100px;
+      margin-right: 50px;
+      white-space:nowrap;
     }
     th,
     td {
@@ -113,17 +119,43 @@ a:hover{
     .back-button:hover {
       background-color:  #0d5dbb;
     }
+    .app-bar .flex-head{
+      margin-top: -30px;
+    }
     @media (min-aspect-ratio: 1/1) {
       .back-button {
         top: 15px;
       }
     }
-    @media (max-width: 1190px) {
+    @media (max-width: 1480px) {
+     h1{
+      margin-left: 550px;
+     }
+    }
+    @media (max-width: 1450px) {
+     h1{
+      margin-left: 530px;
+     }
+    }
+    @media (max-width: 1350px) {
+     h1{
+      margin-left: 480px;
+     }
+    }
+   
+    @media (max-width: 1246px) {
       .app-bar {
         width: 100%;
-        min-width: 1190px;
+        min-width: 1246px;
+      }
+      .form-container{
+        margin-left: 300px;
+      }
+      h1{
+        margin-left: 500px;
       }
     }
+ 
   </style>
 </head>
 <body>

@@ -5,185 +5,229 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category List</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 30px;
-            font-weight: bold;
-        }
-  
-        table {
-            width: 80%;
-            margin: 0 auto;
-            border-collapse: collapse;
-            border: 1px solid #ccc;
-            background-color: #fff;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        a {
-            text-decoration: none;
-            color: #007bff;
-            cursor: pointer;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .action-links a {
-            margin-right: 10px;
-        }
-
-        .delete-link {
-            color: #dc3545;
-        }
-
-        .delete-link:hover {
-            text-decoration: underline;
-        }
-
-        .file-upload {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: -23px;
-            margin-right: 630px;
-        }
-
-        .file-upload input[type="file"] {
-            display: none;
-        }
-
-        .btn {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .btn-primary {
-            background-color: #0A2472;
-            margin-left: -250px;
-        }
-
-        .btn-success {
-            background-color: #0A2472;
-        }
-
-        .btn:hover, .btn-success:hover {
-            background-color: #0d5dbb;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 9px 9px;
-            background-color: #0A2472;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            margin-left: 10px;
-            top: 10px;
-        }
-
-        .back-button::before {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background-color: #0056b3;
-            transition: width 0.3s ease;
-        }
-
-        .back-button:hover::before {
-            width: 100%;
-        }
-        .back-button:hover{
-  background-color: #0d5dbb;
+       body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7;
+    overflow-x: hidden;
 }
-        .button-link {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color:#0A2472 ;
-            color: #fff;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none !important;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
 
-        .button-link:hover {
-            background-color:  #0d5dbb;
-        }
+table {
+    width: 80%;
+    margin: 0;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    margin-left: 130px;
+    white-space: nowrap;
+}
 
-        .button-container {
-            display: flex;
-            justify-content: right;
-            margin-right: 200px;
-            margin-bottom: 20px;
-        }
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
 
+th {
+    background-color: #0A2472;
+    color: #fff;
+}
 
-        .admin-details-container {
-            text-align: right;
-            margin-bottom: 20px;
-            margin-right: 20px;
-        }
-        @media (max-width: 1090px) {
-            .app-bar {
-                width: 100%;
-                min-width: 1090px; 
-            }
-        }
-        @media (max-width: 697px) {
-            .file-upload {
-                justify-content: flex-end;
-            }
-        }
+a {
+    text-decoration: none;
+    color: #007bff;
+    cursor: pointer;
+}
 
-        @media (max-width: 551px) {
-            .file-upload {
-                margin-left: 100px;
-            }
-        }
+a:hover {
+    text-decoration: underline;
+}
+
+.action-links a {
+    margin-right: 10px;
+}
+
+.delete-link {
+    color: #dc3545;
+}
+
+.delete-link:hover {
+    text-decoration: underline;
+}
+
+.file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 14px; 
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn-primary {
+    background-color: #0A2472;
+}
+
+.btn-success {
+    background-color: #0A2472;
+}
+
+.btn:hover, .btn-success:hover {
+    background-color: #0d5dbb;
+}
+
+.back-button {
+    display: inline-block;
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin-right: 10px;
+    min-width: 50px;
+    padding: 9px 9px;
+    flex-shrink: 0;
+}
+
+.back-button::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #0056b3;
+    transition: width 0.3s ease;
+}
+
+.back-button:hover::before {
+    width: 100%;
+}
+
+.back-button:hover{
+    background-color: #0d5dbb;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 9px 12px; 
+    background-color: #0A2472;
+    color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+}
+
+.button-link:hover {
+    background-color: #0d5dbb;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.admin-details-container {
+    text-align: right;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+.action-links{
+    text-align: center;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.top-bar button,
+.top-bar a {
+    margin-right: 20px;
+}
+
+.top-bar h1 {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+    margin-right: 250px;
+}
+@media(max-width:1018px){
+    h1{
+        font-size: 20px;
+        white-space: nowrap;
+    }
+    .btn-success,.btn-primary,.button-link{
+        padding: 6px 10px;
+        font-size: 10px; 
+    }
+}
+
+@media(max-width:947px){
+    .app-bar #Backend{
+        font-size: 18px;
+    }
+    .btn-success,.btn-primary,.button-link{
+        padding: 5px 8px !important;
+        font-size: 10px; 
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 810px) {
+    .back-button {
+        width: auto;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+@media(max-width:773px){
+    .app-bar{
+        width: 100% !important;
+        min-width: 773px !important;
+    }
+}
+@media (max-width: 741px) {
+    .table{
+        min-width: 100% !important;
+    }
+}
+
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.24/dist/sweetalert2.min.css">
 </head>
 <body>
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
-    <button onclick="goBack()" class="back-button">Back</button>
-    <div class="file-upload">
-        <button type="button" id="downloadExcel" class="btn btn-primary"><i class="fas fa-download"></i> Download Excel</button>
-        <input type="file" id="fileInput" accept=".xlsx,.xls">
-        <button type="button" id="uploadFile" class="btn btn-success"><i class="fas fa-upload"></i> Upload Excel</button>
-    </div>
-
-    <h1>CATEGORY LIST</h1>
-    
-    <div class="button-container">
+    <div class="top-bar">
+        <button onclick="goBack()" class="back-button">Back</button>
+        <div class="file-upload">
+            <button type="button" id="downloadExcel" class="btn btn-primary"><i class="fas fa-download"></i> Download Excel</button>
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+            <button type="button" id="uploadFile" class="btn btn-success"><i class="fas fa-upload"></i> Upload Excel</button>
+        </div>
+        <h1>CATEGORY LIST</h1>
         <a href="/newcategory" class="button-link">Add Category</a>
     </div>
 

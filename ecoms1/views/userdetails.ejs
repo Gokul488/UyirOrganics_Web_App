@@ -17,21 +17,21 @@
 
     body {
       font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
+      background-color: #f2f2f2; 
     }
 
     h1 {
       font-size: 24px;
       color: #000;
-      margin-bottom: -100px;
-      margin-left: -70px;
+      margin: 0;
+      margin-top: -20px;
+      text-align: center; 
     }
 
     table {
       width: 80%;
       border-collapse: collapse;
-      margin-top: 20px;
-      margin-left: 20px;
+      margin-left: 100px;
       margin-top: 20px;
     }
 
@@ -42,7 +42,8 @@
     }
 
     table th {
-      background-color: #f2f2f2;
+      background-color: #0A2472;
+      color: #fff;
       font-weight: bold;
       text-transform: uppercase;
     }
@@ -87,8 +88,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      margin-left: 10px;
-      top: -20px;
+      margin-right: 10px;
     }
 
     .back-button::before {
@@ -104,89 +104,79 @@
     .back-button:hover::before {
       width: 100%;
     }
-    .back-button:hover{
-  background-color: #0d5dbb;
-}
+
+    .back-button:hover {
+      background-color: #0d5dbb;
+    }
+
     .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  flex-wrap: wrap;
-}
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
 
-
-.sname {
-  order: 2;
-  flex-grow: 2;
-  text-align: left;
-  margin-left: -50px ;
-}
-
-.users-list {
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-  order: 3;
-  flex-grow: 1;
-  margin: 0 auto;
-  margin-right: 550px;
-}
-
-    .add-pincode-button {
-      order: 4;
+    .container > * {
       margin-right: 20px; 
     }
 
+    .users-list {
+      font-size: 30px;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0 auto;
+    }
+
     .total-users {
-  order: 4;
-  margin-left: auto;
-  text-align: right;
-}
+      text-align: right;
+    }
+
   </style>
 </head>
 <body>
-
   <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
-<div class="container">
-  <div> 
-    <button onclick="goBack()" class="back-button">Back</button>
+  <div class="container">
+    <div> 
+      <button onclick="goBack()" class="back-button">Back</button>
+    </div>
+    <h1 class="users-list">USERS LIST</h1>
+    <p class="total-users">Total Users: <%= userDetails.length %></p>
   </div>
-  <h1 class="sname">STORE NAME: <%= storeName %></h1>
-  <h1 class="users-list">USERS LIST</h1>
-  <p class="total-users">Total Users: <%= userDetails.length %></p>
-</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>S.No</th> 
-      <th>Name</th>
-      <th>Mobilenumber</th>
-      <th>Address</th>
-      <th>Pincode</th>
-      <th>Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% userDetails.forEach(function(user, index) { %>
+  <h1 class="sname"><%= storeName %></h1>
+  <table>
+    <thead>
       <tr>
-        <td><%= index + 1 %></td> 
-        <td><%= user.name %></td>
-        <td><%= user.mobilenumber %></td>
-        <td><%= user.address %></td>
-        <td><%= user.pincode %></td>
-        <td><%= user.email %></td>
+        <th>S.No</th> 
+        <th>Name</th>
+        <th>Mobilenumber</th>
+        <th>Address</th>
+        <th>Pincode</th>
+        <th>Email</th>
       </tr>
-    <% }); %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% userDetails.forEach(function(user, index) { %>
+        <tr>
+          <td><%= index + 1 %></td> 
+          <td><%= user.name %></td>
+          <td><%= user.mobilenumber %></td>
+          <td><%= user.address %></td>
+          <td><%= user.pincode %></td>
+          <td><%= user.email %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
 
-<script>
- function goBack() {
-    window.history.back();
-  }
-</script>
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
 </body>
 </html>

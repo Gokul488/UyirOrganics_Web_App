@@ -5,180 +5,263 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Details</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
 
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #333;
-        }
-        #defaultimg{
-            margin-left: 150px;
-        }
-        a{
-            color: #0A2472;
-            text-decoration: none;
-        }
-        a:hover{
-            color: #0d5dbb;
-        }
-        #adminTable {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+/* Header container styles */
+#headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-bottom: 2px solid #ddd;
+}
 
-        #adminTable th, #adminTable td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
+#headerContainer h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
 
-        #adminTable th {
-            background-color: #0A2472;
-            color: white;
-        }
+.back-button {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 9px 9px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 20px;
+}
+.back-button:hover{
+    background-color: #0d5dbb;
+}
+#createButton {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 9px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 20px;
+}
+#createButton:hover{
+    background-color: #0d5dbb;
+}
+#editForm, #createForm {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
 
-        #adminTable tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+/* Form Elements */
+#editForm label, #createForm label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
 
-        #adminTable tr:hover {
-            background-color: #ddd;
-        }
+#editForm input, #createForm input,
+#editForm select, #createForm select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
 
-        #editFormContainer {
-            width: 50%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+#editForm input[type="submit"], #createForm button[type="submit"] {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin-left: 250px;
+}
 
-        #editForm, #createForm {
-            display: flex;
-            flex-direction: column;
-        }
+#editForm input[type="submit"]:hover, #createForm button[type="submit"]:hover {
+    background-color: #0d5dbb;
+}
 
-        #editForm label, #createForm label {
-            margin-bottom: 5px;
-            color: #333;
-        }
+/* Input Fields Focus */
+#editForm input:focus, #createForm input:focus,
+#editForm select:focus, #createForm select:focus {
+    border-color: #0A2472;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
 
-        #editForm input, #createForm input {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+/* Placeholder Styling */
+#editForm input::placeholder, #createForm input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+/* Table styles */
+#adminTable {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    overflow-x: auto;
+}
 
-        #editForm button, #createForm button {
-        padding: 10px 6px; 
-        background-color: #0A2472;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        font-size: 14px; 
-        width: 15%;
-        margin-left: 275px;
-        margin-top: 5px;
-        }
+#adminTable thead {
+    background-color: #0A2472;
+    color: white;
+}
 
-        #editForm button:hover, #createForm button:hover {
-            background-color:  #0d5dbb;
-        }
+#adminTable th, #adminTable td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
 
-        .editLink, .deleteLink {
-            color: #0056b3;
-            cursor: pointer;
-            text-decoration: none;
-        }
+#adminTable th {
+    text-align: center;
+}
 
-        .editLink:hover, .deleteLink:hover {
-            text-decoration: underline;
-        }
+#adminTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
 
-        #buttonContainer {
-            display: flex;
-            justify-content: flex-end;
-            width: 80%;
-            margin: 20px auto;
-        }
+#adminTable tbody tr:hover {
+    background-color: #f1f1f1;
+}
 
-        #createButton {
-            display: block;
-            width: 20%;
-            padding: 10px;
-            background-color: #0A2472;
-            color:white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+#editFormContainer {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
 
-        #createButton:hover {
-            background-color:  #0d5dbb;
-        }
+form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
 
-        .back-button {
-            display: inline-block;
-            padding: 9px 9px;
-            background-color:#0A2472;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            margin-left: 10px;
-            top: 10px;
-        }
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
 
-        .back-button::before {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background-color: #0056b3;
-            transition: width 0.3s ease;
-        }
+form button {
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
 
-        .back-button:hover::before {
-            width: 100%;
-        }
-        .back-button:hover{
-            background-color: #0d5dbb;
-        }
-        .admincategory-dropdown {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+form button:hover {
+    background-color: #0056b3;
+}
+@media(max-width:857px){
+    .app-bar #Backend{
+        font-size: 20px;
     }
+    .app-bar .dropdown{
+        font-size: 13px;
+    }
+}
+@media(max-width:752px){
+    .app-bar #Backend{
+        font-size: 15px;
+    }
+    .app-bar .dropdown{
+        font-size: 11px;
+        margin-left: 15px;
+    }
+    #editForm, #createForm {
+        min-width: 500px;
+        width: 90%;
+    }
+}
+@media(max-width:609px){
+    .app-bar, #adminTable{
+        width: 100% !important;
+        min-width: 609px !important;
+    }
+    .app-bar .dropdown span{
+        margin-left: 15px !important;
+    }
+    #headerContainer{
+        width: 100% !important;
+        min-width: 609px !important;
+    }
+}
+@media (max-width: 600px) {
+    #editForm, #createForm {
+        padding: 15px;
+        width: 90%;
+    }
+
+    #editForm input, #createForm input,
+    #editForm select, #createForm select {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    #editForm input[type="submit"], #createForm button[type="submit"] {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}
+@media(max-width:582px){
+    .app-bar #Backend{
+        white-space: nowrap;
+    }
+}
+@media(max-width:539px){
+    .app-bar {
+     width: 100%;
+     min-width: 539px;
+    }
+}
+
+
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
-    <body>
+</head>
+<body>
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
-    <button onclick="goBack()" class="back-button">Back</button>
-    <h1>Admin Details</h1>
-
-    <div id="buttonContainer">
+    <div id="headerContainer">
+        <button onclick="goBack()" class="back-button">Back</button>
+        <h1>ADMIN DETAILS</h1>
         <button id="createButton">Create New Admin</button>
     </div>
+
     <table id="adminTable">
         <thead>
             <tr>

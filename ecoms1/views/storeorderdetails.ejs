@@ -14,6 +14,7 @@
             padding: 0;
         }
     
+
         .table {
             border-collapse: collapse;
             width: 1100px;
@@ -44,32 +45,32 @@
             order: 4;
             background-color: #0A2472;
             color: #fff;
+            margin-top: 4px;
             border: none;
-            padding: 5px 9px;
-            font-size: 16px;
+            padding: 4px 12px;
+            font-size: 13px;
             cursor: pointer;
             border-radius: 5px;
+            height: 33.5px;
         }
-    .printbtn:hover{
-        background-color: #0d5dbb;
-    }
+        .printbtn:hover{
+            background-color: #0d5dbb;
+        }
         .header-container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 10px;
             background-color: #f0f0f0;
+            white-space: nowrap;
         }
-    
+    .header-container h1{
+        font-size: 30px;
+    }
         .heading {
             order: 2; 
-            margin: auto;
-            font-size: 30px;
-            margin-left: 540px;
-            text-align: center; 
-            order: 2;
-            font-size: 30px;
+            font-size: 25px;
             font-weight: bold;
+            margin-left: 500px;
         }
     
         form {
@@ -97,59 +98,125 @@
         margin-right: 5px;
         white-space: nowrap;
     }
-
+.price{
+    text-align: right;
+}
     #overallStatusForm select {
         margin-right: 10px;
     }
+      
         .btn-success {
-            color: #fff;
-            background-color: #0A2472;
-            width: 90px;
-            margin-right: 5px;
+        color: #fff !important;
+        background-color: #0A2472 !important;
+        border-color: #0A2472 !important;
+        width: 60%;
+        margin-right: 5px;
+        font-size: 13px;
         }
-    .btn-success:hover{
-        background-color: #0d5dbb;
-    }
+
+        .btn-success:active, .btn-success:focus {
+            background-color: #0d5dbb !important;
+            border-color: #0d5dbb !important;
+            box-shadow: none !important; 
+        }
+
+        .btn-success:hover{
+            background-color: #0d5dbb;
+        }
         .order-details-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 150px 0px;
             margin-right: 300px;
+            margin-left: 200px;
         }
-    
         .order-details-info p {
             margin: 0;
         }
-    
-        @media (max-width: 768px) {        
-            .header-container {
-                flex-direction: column;
-                align-items: center;
-            }
-    
-            .back-button {
-                margin-bottom: 10px;
-                background-color: #0A2472;
-            }
-    .back-button:hover{
-        background-color: #0d5dbb;
+        .back-button {
+      order: 1;
+      display: inline-block;
+      padding: 3px 7px !important;
+      background-color: #0A2472;
+      color: #fff;
+      border: none;
+      border-radius: 5px !important ;
+      margin-top: -7px 0 0 10px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      font-size: 13px;
+      height: 33.5px;
+
     }
-            .order-details-info {
-                flex-direction: column;
-                align-items: flex-start;
+
+    .back-button::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: #0056b3;
+      transition: width 0.3s ease;
+    }
+
+    .back-button:hover::before {
+      width: 100%;
+    }
+.back-button:hover{
+  background-color: #0d5dbb;
+}
+        @media(max-width:1505px){
+            .order-details-info{
+                width: 80%;
+                min-width: 800px;
             }
         }
-    
+        @media (min-width: 1305px) and (max-width: 1550px){
+
+            #overallStatusForm{
+            margin-left: 100px;
+        }
+        }
+        @media (max-width: 1304px) {
+    .header-container {
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .header-container .heading {
+        margin: 10px 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    .back-button {
+        margin: 10px auto;
+    }
+
+    .printbtn {
+        margin: 10px auto;
+    }
+}
+
         @media print {
-            .app-bar,
             .header-container,
             .back-button,
             .printbtn,
             form {
                 display: none !important;
             }
-    
+ .app-bar .logo, .app-bar .dropdown, .app-bar #Backend, .app-bar #common-name{
+            display: none;
+        }
+        .app-bar #sname{
+            text-align: center;
+            margin-left: 500px;
+            font-size: 16px !important; /* Adjust font size for printing */
+            color: black !important ; 
+        }
             body {
                 font-family: Arial, sans-serif;
             }
@@ -209,11 +276,66 @@
         }
     
         @media (max-width: 1248px) {
-            .app-bar {
-                width: 100%;
-                min-width: 1248px; 
-            }
+    .app-bar {
+        width: 100%;
+        min-width: 1248px;
+    }
+
+    .header-container {
+        width: 100%;
+        min-width: 1248px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: medium;
+    }
+    form button {
+            padding: 6px 12px; 
         }
+   
+
+        .back-button {
+        min-width: 60px;
+        padding: 2px 4px;
+        flex-shrink: 0;
+    }
+
+    .printbtn {
+        margin-bottom: 10px;
+        font-size: smaller;
+    }
+
+    .order-details-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 200px;
+        white-space: nowrap;
+    }
+}
+
+/* Media Query for max-width: 760px */
+@media (max-width: 760px) {
+    .back-button {
+        min-width: 60px;
+        padding: 2px 4px;
+        flex-shrink: 0;
+    }
+
+    .printbtn {
+        margin-bottom: 10px;
+        font-size: smaller;
+    }
+
+    .order-details-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        white-space: nowrap;
+        margin-left: 200px;
+    }
+}
     </style>
     </head>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -222,7 +344,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     <body>
         <%- include('storeappbar.ejs') %> 
-    
+
         <div class="header-container">
             <button onclick="goBack()" class="back-button">Back</button>
             <button onclick="printOrders()" class="printbtn">Print</button>
@@ -237,13 +359,22 @@
                     <option value="Delivered">Delivered</option>
                 </select>
                 <button type="submit" class="btn btn-success">Update</button>
-            </form>
-            
+            </form>   
         </div>
     
         <div class="order-details-info">
             <p><b>Order ID:</b> <%= orderId %></p>
-            <p><strong>Order Date:</strong> <%= new Date(products[0].orderdate).toLocaleString("en-US", { timeZone: "Asia/Kolkata", weekday: "short", month: "short", day: "2-digit", year: "numeric" }) %></p>
+            <p><strong>Order Date:</strong> 
+                <%= new Date(products[0].orderdate).toLocaleString("en-GB", {
+                  timeZone: "Asia/Kolkata",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit"
+                }).replace(',', '') %>
+              </p>
+              
             <p><b>User Name:</b> <%= user.name %></p>
             <p><b>Overall status:</b> <%= overallStatus %></p>
         </div>
@@ -290,8 +421,8 @@
                 <% }); %>
                 <tr>
                     <td colspan="3"></td>
-                    <td>Total:</td>
-                    <td>₹<%= totalAmount.toFixed(2) %></td>
+                    <td class="price">Total</td>
+                    <td class="price">₹<%= totalAmount.toFixed(2) %></td>
                     <td colspan="3"></td>
                 </tr>
             <% } else { %>

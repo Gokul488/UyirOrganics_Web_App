@@ -8,192 +8,196 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <style>
-        .back-button {
-        display: inline-block !important;
-        padding: 9px 9px !important;
-        background-color: #0A2472 !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 5px !important;
-        cursor: pointer !important;
-        position: relative !important;
-        overflow: hidden !important;
-        margin-left: 10px !important;
-        z-index: 1 !important;
-        transition: opacity 0.3s ease !important;
-      }
-      .back-button {
-        pointer-events: auto;
-      }
-      .back-button:hover{
-        background-color: #0d5dbb !important;
-      }
-      body, h1, table {
-          margin: 0;
-          padding: 0;
-        }
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f2f2f2;
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .container {
+        max-width: 100%; 
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        word-wrap: break-word;
+    }
+
+    table th, table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        border: 1px solid #ddd;
+        font-size: 15px;
+    }
+
+    table th {
+      color: #fff;
+      border: 1px solid #fff;
+        background-color: #0A2472;
+        font-weight: bold;
+    }
+
+    table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .actions a {
+        text-decoration: none;
+        color: #007BFF;
+        margin-right: 10px;
+    }
+
+    .actions a:hover {
+        text-decoration: underline;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .header {
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        padding: 0 10px; 
+    }
+
+    .centered-heading {
+        flex: 1; 
+        text-align: center;
+        margin: 0;
+    }
+
+    .filter {
+        margin: 0 10px; 
+    }
+
+    .back-button, .creates {
+        margin: 10px 0;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 13px;
+        background-color: #0A2472;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background-color 0.3s ease;
+    }
+.back-button{
+  padding: 9px 9px;
+}
+    .back-button:hover, .creates:hover {
+        background-color: #0d5dbb;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap; 
+    }
+
+    .pagination a, .pagination span {
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        margin: 5px; 
+        text-decoration: none;
+        color: #007bff;
+        border-radius: 5px;
+    }
+
+    .pagination a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .pagination .current {
+        background-color: #007bff;
+        color: white;
+        border: 1px solid #007bff;
+    }
+
+    .pagination span {
+        cursor: default;
+    }
+
+    #list {
+        font-size: 30px;
+        text-align: center;
+        margin: 20px 0;
+    }
+    .update-button{
+        background-color: #0A2472;
+        color:#fff;
+    }
+    .update-button:hover{
+        background-color: #0d5dbb;
+    }
+
+    @media (max-width: 768px) {
+        table th, table td {
+            font-size: 12px;
+            padding: 8px;
         }
 
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          background-color: #fff;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .back-button, .creates {
+            padding: 8px 15px;
         }
 
-        h1 {
-          font-size: 24px;
-          color: #333;
-          margin-bottom: 20px;
+        #list {
+            font-size: 20px;
         }
+    }
 
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
+    @media (max-width: 480px) {
+        .header {
+            padding: 10px;
         }
 
         table th, table td {
-          padding: 12px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-          font-size:15px;
+            font-size: 10px; 
+            padding: 5px;
         }
 
-        table th {
-          background-color: #f2f2f2;
-          font-weight: bold;
+        #list {
+            font-size: 18px;
         }
 
-
-        table tr:hover {
-          background-color: #f9f9f9;
+        .back-button, .creates {
+            padding: 6px 10px;
+            font-size: 12px;
         }
-
-        .actions a {
-          text-decoration: none;
-          color: #007BFF;
-          margin-right: 10px;
-        }
-
-        .actions a:hover {
-          text-decoration: underline;
-        }
-        a{text-decoration: none;}
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 15px;
-        }
-        .centered-heading {
-          margin-left: 400px;
-        }
-    
-        .filter {
-          margin-left:250px;
-        }
-        body {
-              font-family: Arial, sans-serif;
-              background-color: #f2f2f2;
-              margin: 0;
-              padding: 0;
-            }
-  
-            .material-icons{
-              padding-top: 20px;
-            }
-
-              @media (max-width: 1135px) {
-          .app-bar {
-              width: 100%; 
-          }
-
-          .app-bar button {
-              font-size: 20px; 
-              padding: 0px 15px; 
-          }
-          }
-
-        .close {
-          color: #aaa;
-          float: right;
-          font-size: 20px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-
-        .close:hover {
-          color: #f7f3f3;
-        }
-
-        .creates {
-      order: 3;
-      text-decoration: none;
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #0A2472;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease; 
     }
+</style>
 
-    .creates:hover {
-      background-color: #0d5dbb;
-    }
-
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  .pagination a,
-  .pagination span {
-    border: 1px solid #ddd;
-    padding: 10px 15px;
-    margin: 0 5px;
-    text-decoration: none;
-    color: #007bff;
-    border-radius: 5px;
-  }
-  .pagination a:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  .pagination .current {
-    background-color: #007bff;
-    color: white;
-    border: 1px solid #007bff;
-  }
-  .pagination span {
-    cursor: default;
-  }
-.hidden {
-    opacity: 0; 
-}
-        #list{
-          font-size: 30px;
-          margin-left: 500px;
-
-        }
-  </style>
 </head>
 <body>
   <%- include('./adminappbar.ejs') %>
 
   <div class="header">
     <button onclick="goBack()" class="back-button">Back</button>
-
-    <h1 style="text-align:center" id="list">USERS LIST</h1>
-
-    <a href="http://localhost:7777/adminusersignup?adminid=<%= adminId %>" class="creates">Create user</a>
-
     <div class="filter">
       <label for="filter">Filter by Access:</label>
       <select id="filter">
@@ -202,8 +206,9 @@
         <option value="no" <% if (filter === 'no') { %>selected<% } %>>No</option>
       </select>
     </div>
-    
+    <h1 style="text-align:center" id="list">USERS LIST</h1>    
     <p id="total-users" class="total">Total Users: <%= totalUsersCount %></p>
+    <a href="http://localhost:7777/adminusersignup?adminid=<%= adminId %>" class="creates">Create user</a>
   </div>
 
   <table>
@@ -292,8 +297,7 @@
       <p>No users found.</p>
     <% } %>
   </div>
-  
-  
+
   <script>
     $(document).ready(function() {
     window.goBack = function() {

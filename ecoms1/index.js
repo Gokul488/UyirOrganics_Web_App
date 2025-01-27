@@ -9,13 +9,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const saltRounds = 10; 
-require('dotenv').config();
 const crypto = require('crypto');
 const excel = require('exceljs');
-const dotenv = require('dotenv');
-dotenv.config();
+
+require('dotenv').config({
+  path: path.join(__dirname, '.env') 
+});
+
+
 const app = express();
-const port = 7777;
+const port = process.env.DB_PORT;
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -31,11 +34,12 @@ connection.connect((error) => {
   }
 });
 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('images'));
 app.use(session({
-  secret:  process.env.SECRET_KEY,
+  secret: process.env.SECRET_KEY,
   resave: false,
   saveUninitialized: true
 }));
@@ -109,7 +113,7 @@ app.post('/userlogin', (req, res) => {
   connection.query(userTypeQuery, userTypeParams, (error, results) => {
       if (error) {
           console.error('Error authenticating user:', error);
-          return res.status(500).json({ error: 'Internal Server Error' });
+          return res.status(500).json({ error: 'Error in database connection' });
       }
 
       if (results.length === 0) {
@@ -123,7 +127,7 @@ app.post('/userlogin', (req, res) => {
           connection.query(query, [mobileNumber], (error, userResults) => {
               if (error) {
                   console.error('Error retrieving user:', error);
-                  return res.status(500).json({ error: 'Internal Server Error' });
+                  return res.status(500).json({ error: 'Error in database connection' });
               }
 
               if (userResults.length === 0) {
@@ -136,7 +140,7 @@ app.post('/userlogin', (req, res) => {
               bcrypt.compare(password, storedPassword, (bcryptError, passwordMatch) => {
                   if (bcryptError) {
                       console.error('Error comparing passwords:', bcryptError);
-                      return res.status(500).json({ error: 'Internal Server Error' });
+                      return res.status(500).json({ error: 'Password mismatch' });
                   }
 
                   if (!passwordMatch) {
@@ -152,7 +156,7 @@ app.post('/userlogin', (req, res) => {
                   connection.query(storeQuery, (error, storeResults) => {
                       if (error) {
                           console.error('Error retrieving store:', error);
-                          return res.status(500).json({ error: 'Internal Server Error' });
+                          return res.status(500).json({ error: 'Error in database connection' });
                       }
 
                       const matchingStores = storeResults.filter(store => {
@@ -202,7 +206,7 @@ app.post('/userlogin', (req, res) => {
           connection.query(storeQuery, [mobileNumber], (storeError, storeResults) => {
               if (storeError) {
                   console.error('Error retrieving store:', storeError);
-                  return res.status(500).send('Internal Server Error');
+                  return res.status(500).send('Error in database connection');
               }
 
               if (storeResults.length === 0) {
@@ -242,7 +246,7 @@ app.post('/userlogin', (req, res) => {
           connection.query(adminQuery, [mobileNumber], (adminError, adminResults) => {
               if (adminError) {
                   console.error('Error authenticating admin:', adminError);
-                  return res.status(500).send('Internal Server Error');
+                  return res.status(500).send('Error in database connection');
               }
 
               if (adminResults.length === 0) {
@@ -256,7 +260,7 @@ app.post('/userlogin', (req, res) => {
               bcrypt.compare(password, storedPassword, (bcryptError, passwordMatch) => {
                   if (bcryptError) {
                       console.error('Error comparing passwords:', bcryptError);
-                      return res.status(500).send('Internal Server Error');
+                      return res.status(500).send('Password mismatch');
                   }
 
                   if (!passwordMatch) {
@@ -301,6 +305,7 @@ app.post('/userlogin', (req, res) => {
       }
   });
 });
+
 
 
 app.get('/nostore', (req, res) => {
@@ -651,19 +656,20 @@ app.get('/adminorders', (req, res) => {
       }
 
       let orderQuery = `
-          SELECT 
-              o.orderid, 
-              DATE_FORMAT(MAX(o.orderdate), '%d-%m-%Y') AS formattedOrderDate,
-              MAX(o.storeid) AS storeid, 
-              MAX(s.name) AS storename,  
-              MAX(s.place) AS place,      
-              MAX(o.userid) AS userid, 
-              SUM(o.totalprice) AS totalprice, 
-              MAX(o.status) AS status
-          FROM \`order\` o
-          LEFT JOIN storesignin s ON o.storeid = s.storeid
-          LEFT JOIN usersignin u ON o.userid = u.idusersignin
-          WHERE o.orderdate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+ SELECT 
+    o.orderid, 
+    DATE_FORMAT(MAX(o.orderdate), '%d-%m-%Y %H:%i') AS formattedOrderDate,  -- Updated format
+    MAX(o.storeid) AS storeid, 
+    MAX(s.name) AS storename,  
+    MAX(s.place) AS place,      
+    MAX(o.userid) AS userid, 
+    SUM(o.totalprice) AS totalprice, 
+    MAX(o.status) AS status
+FROM \`order\` o
+LEFT JOIN storesignin s ON o.storeid = s.storeid
+LEFT JOIN usersignin u ON o.userid = u.idusersignin
+WHERE o.orderdate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+
       `;
 
       const sqlParams = [];
@@ -715,12 +721,17 @@ app.get('/order-details/:orderid', (req, res) => {
   const adminId = req.session.adminId;
 
   const orderDetailsQuery = `
-    SELECT o.*, u.name AS username, u.address, s.name AS storename
+    SELECT o.*,
+     u.name AS username, 
+     u.address, 
+     s.name AS storename,
+     DATE_FORMAT(o.orderdate, '%d-%m-%Y %H:%i') AS formattedOrderDate
     FROM \`order\` o
     LEFT JOIN usersignin u ON o.userid = u.idusersignin
     LEFT JOIN storesignin s ON o.storeid = s.storeid
     WHERE o.orderid = ? AND o.storeid = ?;
   `;
+
 
   const adminNameQuery = `
     SELECT adminname, admincategory
@@ -856,12 +867,35 @@ app.get('/admineditsuccess', (req, res) => {
 
 app.get('/storesignup', (req, res) => {
   const adminId = req.query.adminid;
-  console.log('Received adminId:', adminId); 
+
+  console.log('Received adminId:', adminId);
+
   if (!adminId) {
-    res.status(400).send('Invalid adminid');
-    return;
+      res.status(400).send('Invalid adminid');
+      return;
   }
-  res.render('storesignup', { adminId });
+
+  connection.query('SELECT adminname, admincategory FROM admin WHERE adminid = ?', [adminId], (error, adminResult) => {
+      if (error) {
+          console.error('Error fetching admin details:', error);
+          res.status(500).send('Internal Server Error');
+          return;
+      }
+
+      if (adminResult.length === 0) {
+          res.status(404).send('Admin not found');
+          return;
+      }
+
+      const adminName = adminResult[0].adminname;
+      const admincategory = adminResult[0].admincategory;
+
+      res.render('storesignup', { 
+          adminId, 
+          adminName, 
+          admincategory 
+      });
+  });
 });
 
 
@@ -1906,12 +1940,34 @@ app.get('/adminusersignup', (req, res) => {
   const adminId = req.query.adminid;
 
   if (!adminId) {
-    console.error('Invalid adminId:', adminId);
-    res.status(400).send('Invalid adminid');
-    return;
+      console.error('Invalid adminId:', adminId);
+      res.status(400).send('Invalid adminid');
+      return;
   }
-  res.render('adminusersignup', { adminId });
+
+  connection.query('SELECT adminname, admincategory FROM admin WHERE adminid = ?', [adminId], (error, adminResult) => {
+      if (error) {
+          console.error('Error fetching admin details:', error);
+          res.status(500).send('Internal Server Error');
+          return;
+      }
+
+      if (adminResult.length === 0) {
+          res.status(404).send('Admin not found');
+          return;
+      }
+
+      const adminName = adminResult[0].adminname;
+      const admincategory = adminResult[0].admincategory;
+
+      res.render('adminusersignup', { 
+          adminId, 
+          adminName, 
+          admincategory 
+      });
+  });
 });
+
 
 app.post('/adminuserregister', (req, res) => {
   const { name, mobilenumber, address, pincode, username, password, adminId } = req.body;
@@ -2171,8 +2227,9 @@ app.get('/adminproductdetails', (req, res) => {
   req.session.adminId = adminId;
 
   console.log('adminId:', adminId);
+  
+  // Query to count the total products for pagination
   const countQuery = 'SELECT COUNT(DISTINCT p.productid) AS totalProductsCount FROM products p';
-
   connection.query(countQuery, (countError, countResults) => {
     if (countError) {
       console.error('Error counting products: ' + countError);
@@ -2182,6 +2239,7 @@ app.get('/adminproductdetails', (req, res) => {
 
     const totalProductsCount = countResults[0].totalProductsCount;
 
+    // Query to get admin name and category
     const adminNameQuery = 'SELECT adminname, admincategory FROM admin WHERE adminid = ?';
     connection.query(adminNameQuery, [adminId], (adminError, adminResult) => {
       if (adminError) {
@@ -2198,115 +2256,153 @@ app.get('/adminproductdetails', (req, res) => {
       const adminName = adminResult[0].adminname;
       const admincategory = adminResult[0].admincategory;
 
-      const searchTerm = req.query.search || ''; 
-      const sort = req.query.sort || 'default'; 
+      const searchTerm = req.query.search || '';
+      let sort = req.query.sort || 'default';
+      let isAscending = req.query.isAscending === 'true'; 
+      let sortKey = req.query.sortKey || 'productid'; 
 
       let query = `
-        SELECT p.*, pi.imagepath
-        FROM products p
-        LEFT JOIN (
-          SELECT productid, imagepath
-          FROM (
-            SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
-            FROM productimages
-          ) ranked_images
-          WHERE row_num = 1
-        ) pi ON p.productid = pi.productid
-      `;
+      SELECT p.*, pi.imagepath
+      FROM products p
+      LEFT JOIN (
+        SELECT productid, imagepath
+        FROM (
+          SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
+          FROM productimages
+        ) ranked_images
+        WHERE row_num = 1
+      ) pi ON p.productid = pi.productid
+    `;
+    
+    const queryParams = [];
+    
+    if (searchTerm) {
+      query += ` WHERE p.productname LIKE ? `;
+      queryParams.push(`%${searchTerm}%`);
+    }
+    
+    if (category) {
+      query += searchTerm ? ` AND ` : ` WHERE `;
+      query += ` p.category = ? `;
+      queryParams.push(category);
+    }
+    
+    if (sortKey === 'productname') {
+      query += isAscending ? ' ORDER BY p.productname ASC' : ' ORDER BY p.productname DESC';
+    } else if (sortKey === 'category') {
+      query += isAscending ? ' ORDER BY p.category ASC' : ' ORDER BY p.category DESC';
+    } else if (sortKey === 'salesprice') {
+      query += isAscending ? ' ORDER BY p.salesprice ASC' : ' ORDER BY p.salesprice DESC';
+    } else if (sortKey === 'qty') {
+      query += isAscending ? ' ORDER BY p.qty ASC' : ' ORDER BY p.qty DESC';
+    } else {
+      query += ' ORDER BY p.productid'; 
+    }
+    
+    const page = req.query.page || 1;
+    const pageSize = 16;
+    const offset = (page - 1) * pageSize;
+    
+    query += ` LIMIT ? OFFSET ?; `;
+    queryParams.push(pageSize, offset);
 
-      const queryParams = [];
-
-      if (searchTerm) {
-        query += ` WHERE p.productname LIKE ? `;
-        queryParams.push(`%${searchTerm}%`);
+    // Query to get all product details for stock value calculation
+    const allProductsQuery = `
+      SELECT p.salesprice, p.qty
+      FROM products p
+      LEFT JOIN (
+        SELECT productid, imagepath
+        FROM (
+          SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
+          FROM productimages
+        ) ranked_images
+        WHERE row_num = 1
+      ) pi ON p.productid = pi.productid
+      ${searchTerm ? 'WHERE p.productname LIKE ? ' : ''}
+      ${category ? (searchTerm ? 'AND ' : 'WHERE ') + 'p.category = ? ' : ''}
+    `;
+    
+    const allQueryParams = [];
+    if (searchTerm) allQueryParams.push(`%${searchTerm}%`);
+    if (category) allQueryParams.push(category);
+    
+    connection.query(allProductsQuery, allQueryParams, (allProductsError, allProductsResults) => {
+      if (allProductsError) {
+        console.error('Error fetching all product details: ' + allProductsError);
+        res.status(500).send('Internal Server Error');
+        return;
       }
 
-      if (category) {
-        query += searchTerm ? ` AND ` : ` WHERE `;
-        query += ` p.category = ? `;
-        queryParams.push(category);
-      }
-
-      if (sort === 'low_qty') {
-        query += ' ORDER BY p.qty ASC';
-      } else if (sort === 'high_qty') {
-        query += ' ORDER BY p.qty DESC';
-      } else {
-        query += ' ORDER BY p.productid'; 
-      }
-
-      const page = req.query.page || 1;
-      const pageSize = 16;
-      const offset = (page - 1) * pageSize;
-
-      query += ` LIMIT ? OFFSET ?; `;
-      queryParams.push(pageSize, offset);
+      // Calculate overall stock value
+      const overallStockValue = allProductsResults.reduce((total, product) => {
+        return total + (product.salesprice * product.qty);
+      }, 0);
 
       connection.query(query, queryParams, (error, results) => {
         if (error) {
-          console.error('Error fetching product details: ' + error);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
-
-        const productsWithImages = results.map(product => {
-          const imageBase64 = product.imagepath && Buffer.isBuffer(product.imagepath)
-            ? product.imagepath.toString('base64') 
-            : null; 
-        
-          let decodedImagePath;
-          if (imageBase64) {
-            decodedImagePath = Buffer.from(imageBase64, 'base64');
-          }
-          return {
-            ...product,
-            imagepath: decodedImagePath
-              ? `data:image/jpeg;base64,${decodedImagePath}`  
-              : '/images/default-product.jpg' 
-          };
-        });
-        
-
-        const totalStockValue = productsWithImages.reduce((total, product) => {
-          return total + (product.salesprice * product.qty);
-        }, 0);
-
-        const totalPages = Math.ceil(totalProductsCount / pageSize);
-        const startSerialNumber = (page - 1) * pageSize + 1;
-
-        const categoryQuery = 'SELECT DISTINCT category FROM products';
-        connection.query(categoryQuery, (categoryError, categoryResults) => {
-          if (categoryError) {
-            console.error('Error fetching categories: ' + categoryError);
+            console.error('Error fetching product details: ' + error);
             res.status(500).send('Internal Server Error');
             return;
-          }
-
-          const categories = categoryResults.map(category => category.category);
-          const selectedCategory = category;
-
-          res.render('adminproductdetails', {
-            hideDropdownItems: false,
-            productDetails: productsWithImages,
-            totalPages: totalPages,
-            currentPage: page,
-            pageSize: pageSize,
-            totalProductsCount: totalProductsCount,
-            totalStockValue: totalStockValue,
-            adminId: adminId,
-            adminName: adminName,
-            admincategory:admincategory,
-            startSerialNumber: startSerialNumber,
-            search: search,
-            sort: sort,
-            categories: categories,
-            selectedCategory: selectedCategory
+        }
+    
+        const productsWithImages = results.map(product => {
+            const imageBase64 = product.imagepath && Buffer.isBuffer(product.imagepath)
+                ? product.imagepath.toString('base64') 
+                : null; 
+    
+            let decodedImagePath;
+            if (imageBase64) {
+                decodedImagePath = Buffer.from(imageBase64, 'base64');
+            }
+            return {
+                ...product,
+                imagepath: decodedImagePath
+                    ? `data:image/jpeg;base64,${decodedImagePath}`  
+                    : '/images/default-product.jpg' 
+            };
+        });
+    
+        const totalPages = Math.ceil(totalProductsCount / pageSize);
+        const startSerialNumber = (page - 1) * pageSize + 1;
+    
+        const categoryQuery = 'SELECT DISTINCT category FROM products';
+        connection.query(categoryQuery, (categoryError, categoryResults) => {
+            if (categoryError) {
+                console.error('Error fetching categories: ' + categoryError);
+                res.status(500).send('Internal Server Error');
+                return;
+            }
+    
+            const categories = categoryResults.map(category => category.category);
+            const selectedCategory = category;
+    
+            res.render('adminproductdetails', {
+                hideDropdownItems: false,
+                productDetails: productsWithImages,
+                totalPages: totalPages,
+                currentPage: page,
+                pageSize: pageSize,
+                totalProductsCount: totalProductsCount,
+                totalStockValue: overallStockValue, // Include the overall stock value here
+                adminId: adminId,
+                adminName: adminName,
+                admincategory: admincategory,
+                startSerialNumber: startSerialNumber,
+                search: search,
+                sort: sort,
+                isAscending: isAscending,
+                sortKey: sortKey,
+                categories: categories,
+                selectedCategory: selectedCategory   
+            });
           });
         });
       });
     });
   });
 });
+
+
 
 app.get('/getFilteredProductCount', (req, res) => {
   const { search, category } = req.query;
@@ -3457,12 +3553,18 @@ app.get('/myorders', (req, res) => {
   }
 
   const orderQuery = `
-    SELECT * 
-    FROM \`order\` 
+    SELECT 
+      orderid, 
+      storeid, 
+      orderdate, 
+      SUM(totalprice) AS totalamount, 
+      status
+    FROM \`order\`
     WHERE userid = ? 
-      AND orderdate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) 
+      AND orderdate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+    GROUP BY orderid, storeid, orderdate, status
     ORDER BY orderdate DESC 
-    LIMIT 20`; 
+    LIMIT 20`;
 
   connection.query(orderQuery, [userId], (orderErr, orderResults) => {
     if (orderErr) {
@@ -3472,10 +3574,11 @@ app.get('/myorders', (req, res) => {
 
     if (orderResults.length === 0) {
       console.error('No orders found for this user.');
-      return res.status(500).send('No orders found for this user.');
+      return res.status(404).send('No orders found for this user.');
     }
 
     const storeId = orderResults[0].storeid;
+    console.log('Order Results:', orderResults);
 
     const userNameQuery = 'SELECT name FROM usersignin WHERE idusersignin = ?';
     connection.query(userNameQuery, [userId], (userNameErr, userNameResult) => {
@@ -3484,7 +3587,7 @@ app.get('/myorders', (req, res) => {
         return res.status(500).send('Error querying userName');
       }
 
-      const userName = userNameResult[0].name;
+      const userName = userNameResult[0]?.name;
 
       const storeNameQuery = 'SELECT name FROM storesignin WHERE storeid = ?';
       connection.query(storeNameQuery, [storeId], (storeNameErr, storeNameResult) => {
@@ -3493,7 +3596,7 @@ app.get('/myorders', (req, res) => {
           return res.status(500).send('Error querying storeName');
         }
 
-        const storeName = storeNameResult[0].name;
+        const storeName = storeNameResult[0]?.name;
 
         res.render('myorders', {
           userOrders: orderResults,
@@ -3501,6 +3604,73 @@ app.get('/myorders', (req, res) => {
           storeName: storeName,
           storeId, 
           userId,  
+        });
+      });
+    });
+  });
+});
+
+app.get('/userorderdetails/:orderid', (req, res) => {
+  const orderId = req.params.orderid; 
+  const storeId = req.query.storeid;  
+  const userId = req.session.userId;  
+
+  if (!storeId) {
+    return res.status(400).send('Store ID is missing in query parameters');
+  }
+
+  if (!userId) {
+    return res.status(401).send('User ID is missing in session');
+  }
+
+  const orderDetailsQuery = `
+    SELECT 
+      productname, 
+      price, 
+      quantity, 
+      orderdate, 
+      totalprice, 
+      status,
+      overallstatus
+    FROM \`order\`
+    WHERE orderid = ? AND storeid = ?`;
+
+  connection.query(orderDetailsQuery, [orderId, storeId], (err, results) => {
+    if (err) {
+      console.error('Error querying order details:', err);
+      return res.status(500).send('Error querying order details');
+    }
+
+    if (results.length === 0) {
+      console.error('No details found for the given order ID and store ID');
+      return res.status(404).send('No details found for the given order ID');
+    }
+
+    const storeNameQuery = 'SELECT name FROM storesignin WHERE storeid = ?';
+    connection.query(storeNameQuery, [storeId], (storeNameErr, storeNameResult) => {
+      if (storeNameErr) {
+        console.error('Error querying storeName:', storeNameErr);
+        return res.status(500).send('Error querying storeName');
+      }
+
+      const storeName = storeNameResult[0]?.name;
+
+      const userNameQuery = 'SELECT name FROM usersignin WHERE idusersignin = ?';
+      connection.query(userNameQuery, [userId], (userNameErr, userNameResult) => {
+        if (userNameErr) {
+          console.error('Error querying userName:', userNameErr);
+          return res.status(500).send('Error querying userName');
+        }
+
+        const userName = userNameResult[0]?.name;
+
+        res.render('userorderdetails', {
+          orderDetails: results,
+          orderId: orderId,
+          storeName: storeName,  
+          userName: userName,    
+          storeId: storeId,
+          userId: userId,      
         });
       });
     });
@@ -3610,9 +3780,13 @@ app.get('/editprofile', (req, res) => {
 app.get('/storedetails/:storeid', (req, res) => {
   const storeId = req.params.storeid;
   req.session.storeId = storeId;
+
   const currentPage = parseInt(req.query.page) || 1;
   const itemsPerPage = 25;
-  const sort = req.query.sort || 'default';
+  const sortKey = req.query.sortKey || 'productname';
+  const sortOrder = req.query.sortOrder || 'asc';
+  
+  const searchQuery = req.query.search || '';
 
   const storeQuery = 'SELECT storeid, name, contactname FROM storesignin WHERE storeid = ?';
 
@@ -3631,18 +3805,25 @@ app.get('/storedetails/:storeid', (req, res) => {
                IFNULL(s.storeproductid, 0) AS storeproductid, IFNULL(s.qty, 0) AS qty
         FROM products AS p
         LEFT JOIN storeproducts AS s ON p.productid = s.productid AND s.storeid = ?
-        WHERE p.producttype != 'productfamily'
-      `;
+        WHERE p.producttype != 'productfamily'`;
 
-      if (sort === 'low_qty') {
-        productsQuery += ' ORDER BY s.qty ASC';
-      } else if (sort === 'high_qty') {
-        productsQuery += ' ORDER BY s.qty DESC';
-      } else {
-        productsQuery += ' ORDER BY p.productname ASC';
+      if (searchQuery) {
+        productsQuery += ` AND p.productname LIKE ?`;
       }
+      if (sortKey === 'productname') {
+        productsQuery += ` ORDER BY p.productname ${sortOrder}`;
+      } else if (sortKey === 'qty') {
+        productsQuery += ` ORDER BY s.qty ${sortOrder}`;
+      } else if (sortKey === 'salesprice') {
+        productsQuery += ` ORDER BY p.salesprice ${sortOrder}`;
+      } else if (sortKey === 'category') {
+        productsQuery += ` ORDER BY p.category ${sortOrder}`;
+      } else {
+        productsQuery += ' ORDER BY p.productname ASC'; 
+      }
+      
 
-      connection.query(productsQuery, [storeId], (error, productsResults) => {
+      connection.query(productsQuery, [storeId, `%${searchQuery}%`], (error, productsResults) => {
         if (error) {
           console.error('Error fetching products:', error);
           return res.status(500).send('Internal Server Error');
@@ -3658,7 +3839,6 @@ app.get('/storedetails/:storeid', (req, res) => {
 
         if (productIdsToInsert.length > 0) {
           const insertQuery = 'INSERT INTO storeproducts (storeid, productid, qty) VALUES (?, ?, 0)';
-
           productIdsToInsert.forEach(productId => {
             connection.query(insertQuery, [storeId, productId], (error) => {
               if (error) {
@@ -3680,13 +3860,9 @@ app.get('/storedetails/:storeid', (req, res) => {
             }
 
             images = imageResults.map(image => ({
-              imagepath: image.imagepath
-                ? `data:image/jpeg;base64,${image.imagepath}`  
-                : '', 
+              imagepath: image.imagepath ? `data:image/jpeg;base64,${image.imagepath}` : '',
               productid: image.productid,
             }));
-
-        //    console.log('Fetched image paths:', images);
 
             renderPage(products, images);
           });
@@ -3710,7 +3886,10 @@ app.get('/storedetails/:storeid', (req, res) => {
             totalPages,
             totalProducts,
             totalStockValue,
-            sort,
+            sortKey,
+            sortOrder,
+            itemsPerPage,
+            searchQuery 
           });
         }
       });
@@ -3725,13 +3904,14 @@ app.get('/storedetails/:storeid', (req, res) => {
         totalPages: 1,
         totalProducts: 0,
         totalStockValue: 0,
-        sort,
+        sortKey,
+        sortOrder,
+        itemsPerPage,
+        searchQuery 
       });
     }
   });
 });
-
-
 
 
 
@@ -4253,8 +4433,15 @@ app.get('/storeorder/:storeid', (req, res) => {
     if (fromDate && toDate) {
       orderQuery += ' AND DATE(orderdate) BETWEEN ? AND ?';
       queryParams.push(fromDate, toDate);
+    } else if (fromDate) {
+      orderQuery += ' AND DATE(orderdate) >= ?';
+      queryParams.push(fromDate);
+    } else if (toDate) {
+      orderQuery += ' AND DATE(orderdate) <= ?';
+      queryParams.push(toDate);
     }
-
+    
+    
     connection.query(orderQuery, queryParams, (error, orderResults) => {
       if (error) {
         console.error('Error retrieving orders:', error);
@@ -4282,7 +4469,14 @@ app.get('/storeorder/:storeid', (req, res) => {
 
         orderResults.forEach(order => {
           order.userDetails = userMap[order.userid];
+        
+          const orderDate = new Date(order.orderdate);
+          order.formattedOrderDate = orderDate.toLocaleString('en-GB', {
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+          }).replace(',', '');  
         });
+        
+        
 
         const totalOrderedItems = orderResults.reduce((total, order) => total + order.quantity, 0);
 
@@ -4315,6 +4509,7 @@ app.get('/storeorder/:storeid', (req, res) => {
     });
   });
 });
+
 
 app.get('/storeorderdetails/:orderid', (req, res) => {
   let orderId = req.params.orderid.padStart(4, '0');
@@ -4439,7 +4634,6 @@ app.post('/updateOrderStatus/:orderid/:productid?', (req, res) => {
   });
 });
 
-// updateOverallStatus route
 app.post('/updateOverallStatus/:orderid', (req, res) => {
   const orderId = req.params.orderid;
   const newOverallStatus = req.body.overallStatus;

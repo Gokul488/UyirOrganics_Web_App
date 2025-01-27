@@ -395,9 +395,8 @@
   </div>
 
   <script>
-  
   function validateMobileInput(input) {
-    input.value = input.value.replace(/[^0-9]/g, ''); 
+    input.value = input.value.replace(/[^0-9]/g, '');
   }
 
   function validateForm() {
@@ -470,8 +469,7 @@
 
       const data = await response.json();
 
-      setCookie('token', data.token, 7);
-
+      setCookie('example', 'value', 10); 
       window.location.href = data.redirectUrl;
     } catch (error) {
       console.error('Error:', error);
@@ -480,12 +478,14 @@
     }
   });
 
-  function setCookie(name, value, days) {
+  function setCookie(name, value, minutes) {
     const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    date.setTime(date.getTime() + minutes * 60 * 1000); 
     const expires = 'expires=' + date.toUTCString();
     document.cookie = name + '=' + value + ';' + expires + ';path=/';
-  }
+}
+
+
   </script>
 </body>
 </html>

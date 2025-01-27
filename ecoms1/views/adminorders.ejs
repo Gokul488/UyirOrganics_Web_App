@@ -6,133 +6,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Admin Orders</title>
     <style>
-        .filter-section {
-            display: flex;
-            align-items: center;
-            margin-left: -105px;
-            font-weight: bold;
-            margin-top: -20px;
-        }
-  .filter-section button{
-    padding: 6px 12px;
-    background-color: #008CBA;
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    padding: 10px 20px;
+    gap: 10px;
+    flex-wrap: nowrap; 
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+.header h1 {
+    flex-grow: 1; 
+    text-align: center;
+    margin-left: 100px;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 9px 9px;
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.back-button:hover {
+    background-color: #0d5dbb;
+}
+
+.print-button {
+    background-color: #0A2472;
     color: white;
     border: none;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-  }
-        h1 {
-        text-align: center;
-        margin: 0 auto;
-        order: 2;
-        margin-top: -7.5px;
-        font-size: 30px;
-        font-weight: bold;
-        margin-right: 350px;
-        }
+    align-self: center; 
+    margin-left: 300px;
+}
 
-        a {
-            text-decoration: none;
-        }
+.print-button:hover {
+    background-color: #0d5dbb; 
+}
 
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            text-align: center;
-            align-items: center;
-            margin-left: -50px;
-        }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        .table-container {
-            text-align: center;
-            width: 1200px;
-            margin-left: 260px;
-        }
-
-        .table thead {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .table th {
-            padding: 10px;
-        }
-
-        .form-label,
-        .form-control {
-            width: 80%;
-        }
-
-        .btn-primary {
-            width: 80%;
-        }
-        .filter-store {
+.filter-store {
     display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    margin-left: 210px;
+    align-items: center; 
+    gap: 10px;
+    flex-wrap: nowrap;
 }
 
-.filter-store label {
-    margin-right: 10px;
-    font-weight: bold;
-    font-size: 16px;
+.filter-section {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+    flex-wrap: nowrap;
+    margin-right: -350px;
 }
 
-.filter-store select {
+.filter-store select,
+.filter-section input {
+    width: 180px; 
+    font-size: 12px;
     padding: 5px;
-    font-size: 14px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    margin-right: 10px;
 }
 
-.filter-store button {
-    padding: 6px 12px;
-    background-color: #008CBA;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.filter-store button:hover {
-    background-color: #007bb5;
-}
-.filter-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-
-.filter-store, .filter-section, .print-button {
-    display: flex;
-    align-items: center;
-    margin-right: 20px; 
-}
-
-
-.filter-store label, .filter-section label {
-    margin-right: 10px;
-}
-
-.filter-store button, .filter-section button, .print-button {
-    margin-left: 10px;
+.filter-store button,
+.filter-section button {
     padding: 6px 12px;
     background-color: #0A2472;
     color: white;
@@ -140,291 +94,424 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    margin-right: 100px;
+}
+
+.filter-store button:hover,
+.filter-section button:hover {
+    background-color: #0d5dbb; 
+}
+
+
+.table-container {
+    margin-top: 20px;
+    width: 100%;
+    padding-right: 0;
+    overflow-x: auto;
+    box-sizing: border-box; 
+    margin-left: 120px !important;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px auto;
+    table-layout: auto; 
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+thead {
+    background-color: #333;
+    color: #fff;
+}
+
+th {
+    background-color: #0A2472;
+    color: #fff;
+}
+
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 5%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 10%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    width: 15%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+    width: 25%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+    width: 15%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+    width: 10%;
+    text-align: right;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+    width: 10%;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+    width: 15%;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background-color: #0d5dbb; 
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    title {
+        display: none; /* Hides the title content in the print page */
+    }
+    .admin-app-bar, .logo, .name, #Backend, .filter-container, .filter-store, .back-button{
+        display: none !important;
+    }
+.table-container, .table{
+    margin-left: 75px !important;
+}
+    th.action-column,
+    td.action-column {
+        display: none;
+    }
+
+    .print-header {
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}
+@media(max-width:1443px){
+    .container {
+        display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    padding: 5px 10px;
+    gap: 5px;
+    flex-wrap: nowrap; 
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+.header h1 {
+    font-size: 30px; 
+    margin: 0; 
+    width: 100%; 
+    text-align: center; 
+    white-space: nowrap;;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 9px 9px;
+    background-color: #0A2472;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.back-button:hover {
+    background-color: #0d5dbb;
 }
 
 .print-button {
-    margin-left: -70px;
-    margin-top: -20px;
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: center; 
+    margin-left: 300px;
 }
 
-.filter-store button:hover, .filter-section button:hover, .print-button:hover {
-    background-color:  #0d5dbb;
+.print-button:hover {
+    background-color: #0d5dbb; 
 }
-        .back-button {
-            display: inline-block;
-            padding: 9px 9px;
-            background-color: #0A2472;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            margin-right: 250px;
-        }
 
-        .back-button::before { 
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background-color: #04274d;
-            transition: width 0.3s ease;
-        }
 
-        .back-button:hover::before {
-            width: 100%;
-        }
-        .back-button:hover{
-  background-color: #0d5dbb;
+.filter-store {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+    flex-wrap: nowrap;
 }
-        .product-list-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
 
-        .container {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            border: none;
-        }
+.filter-section {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+    flex-wrap: nowrap;
+    margin-right: -350px;
+}
 
-        .header {
-            text-align: center;
-            flex-grow: 1;
-        }
+.filter-store select,
+.filter-section input {
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.filter-store select{
+    width: 150px;
+}
+.filter-section input{
+    width: 90px;
+    margin-left: -15px;
+}
+.filter-store button,
+.filter-section button {
+    padding: 4px 10px;
+    background-color: #0A2472;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
 
-        .rightalign {
-            text-align: right;
-        }
+.filter-store button:hover,
+.filter-section button:hover {
+    background-color: #0d5dbb; 
+}
 
-        @media print {
-            .no-print {
-                display: none !important;
-            }
 
-            .admin-app-bar, .logo, .name, #Backend, .filter-container{
-                display: none !important;
-            }
-            .body {
-                margin-left: 20px;
-            }
+.table-container {
+    width: 80%;
+    padding-right: 0;
+    overflow-x: auto;
+    box-sizing: border-box; 
+    margin-left: 70px;
+}
 
-            th.action-column,
-            td.action-column {
-                display: none;
-            }
-        }
+.table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: 10px auto;
+    table-layout: auto; 
+}
 
-        @media screen {
-            .print-header {
-                display: none;
-            }
-        }
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        @media print {
-            .print-header {
-                display: block;
-                text-align: center;
-                margin-bottom: 20px;
-            }
+}
+@media (max-width: 1200px) {
+    .header h1 {
+        font-size: 24px;
+    }
+}
 
-            .back-button,
-            .filter-section,
-            .print-button {
-                display: none;
-            }
-        }
-    
-        @media (max-width: 1460px) {
-            .app-bar {
-                width: 100%;
-                min-width: 1460px; 
-            }
-        }
+@media (max-width: 992px) {
+    .header h1 {
+        font-size: 20px;
+    }
 
-        @media (max-width: 1196px) {
-            .container {
-                width: 100%; 
-                padding: 40px; 
-            }
-        }
-        @media (max-width: 1156px){
-            .header h1{
-                font-size: larger;
-            }
-        }
-      
-        @media (max-width:1076px) {
-            .header h1{
-                font-size: large;
-                left: -20px;
-                margin: auto;
-            }
-        }
+    .filter-store {
+        flex-wrap: wrap;
+    }
+}
 
-        @media (max-width: 1037px) {
-            .container {
-                margin-left: 200px; 
-            }
-            .print-button{
-                margin-left: 50px;
-                margin-right: 10px;
-            }
-            .back-button{
-                margin-right: 200px;
-                padding-right: 20px;
-                margin-right:50px ;
-            }
-        }
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .filter-store, .filter-section {
+        flex-direction: column;
+    }
+}
+
+
     </style>
+    
 </head>
 <body>
 
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
-<div class="container">
-    <button onclick="goBack()" class="back-button">Back</button>
-
-    <div class="header">
-        <h1>ADMIN ORDERS</h1>
+    <div class="container">
+        <button onclick="goBack()" class="back-button">Back</button>
+    
+        <div class="filter-store">
+            <label for="storename"></label>
+            <select id="storename">
+                <option value="">All Stores</option>
+                <% storeNames.forEach(function(store) { %>
+                    <option value="<%= store.name %>" <%= store.name === selectedStore ? 'selected' : '' %>><%= store.name %></option>
+                <% }); %>
+            </select>
+            <button onclick="filterStoreNames()">Filter</button>
+        </div>
+    
+        <div class="header">
+            <h1>ADMIN ORDERS</h1>
+        </div>
+    
+        <div class="filter-container">    
+            <div class="filter-section">
+                <label for="fromdate">From:</label>
+                <input type="date" id="fromdate">
+                <label for="todate">To:</label>
+                <input type="date" id="todate">
+                <button onclick="filterOrders()">Filter</button>
+            </div>
+        </div>
+        <button class="print-button no-print" onclick="window.print()">Print</button>
     </div>
-</div>
-
-
-<div class="filter-container">
-    <div class="filter-store">
-        <label for="storename">Store Name:</label>
-        <select id="storename">
-            <option value="">All Stores</option>
-            <% storeNames.forEach(function(store) { %>
-                <option value="<%= store.name %>" <%= store.name === selectedStore ? 'selected' : '' %>><%= store.name %></option>
-            <% }); %>
-        </select>
-        <button onclick="filterStoreNames()">Filter</button>
+    
+    <div class="table-container">
+        <table id="orderTable">
+            <thead>
+                <tr>
+                    <th>Sl No</th> 
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Store Name</th>
+                    <th>Store Place</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th class="action-column">Action</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <% orders.forEach(function(order, index) { %>
+                    <tr>
+                        <td><%= index + 1 %></td> 
+                        <td><%= `${order.storeid} - ${order.orderid}` %></td>
+                        <td><%= order.formattedOrderDate %></td>  
+                        <td><%= order.storename %></td>
+                        <td><%= order.place %></td>
+                        <td class="rightalign">₹<%= order.totalprice %></td>
+                        <td><%= order.status %></td>
+                        <td class="action-column">
+                            <a href="/order-details/<%= order.orderid %>?storeid=<%= order.storeid %>" class="btn btn-primary">View Details</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
 
-    <div class="filter-section">
-        <label for="fromdate">From:</label>
-        <input type="date" id="fromdate">
-        <label for="todate">To:</label>
-        <input type="date" id="todate">
-        <button onclick="filterOrders()">Filter</button>
-    </div>
-
-    <button class="print-button no-print" onclick="window.print()">Print</button>
-</div>
-
-
-<div class="table-container">
-    <table id="orderTable">
-        <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Store Name</th>
-            <th>Store Place</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th class="action-column">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% orders.forEach(function(order) { %>
-        <tr>
-            <td><%= `${order.storeid} - ${order.orderid}` %></td>
-            <td><%= order.formattedOrderDate %></td>
-            <td><%= order.storename %></td>
-            <td><%= order.place %></td>
-            <td class="rightalign">₹<%= order.totalprice %></td>
-            <td><%= order.status %></td>
-            <td class="action-column"><a href="/order-details/<%= order.orderid %>?storeid=<%= order.storeid %>">View Details</a></td>
-        </tr>
-        <% }); %>
-        </tbody>
-    </table>
-</div>
-
-<script>
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-        var today = new Date().toISOString().split('T')[0];
-        document.getElementById("todate").value = today;
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById("todate").value = today;
 
-        var fromDate = new Date();
-        fromDate.setDate(fromDate.getDate() - 90);
-        var formattedFromDate = fromDate.toISOString().split('T')[0];
-        document.getElementById("fromdate").value = formattedFromDate;
+            var fromDate = new Date();
+            fromDate.setDate(fromDate.getDate() - 90);
+            var formattedFromDate = fromDate.toISOString().split('T')[0];
+            document.getElementById("fromdate").value = formattedFromDate;
 
-        window.goBack = function() {
-            window.history.back();
-        };
-    
-        window.filterOrders = function() {
-            console.log("Filtering orders..."); 
-    
-            var fromdate = document.getElementById("fromdate").value;
-            var todate = document.getElementById("todate").value;
-            var table = document.getElementById("orderTable");
-            var rows = table.getElementsByTagName("tr");
-    
-            if (!fromdate || !todate) {
-                alert("Please select both from and to dates.");
-                return;
-            }
-    
-            console.log("From Date:", fromdate);
-            console.log("To Date:", todate);
-    
-            fromdate = parseDateInput(fromdate);
-            todate = parseDateInput(todate);
-            todate.setDate(todate.getDate() + 1); 
-    
-            console.log("Parsed From Date:", fromdate);
-            console.log("Parsed To Date:", todate);
-    
-            for (var i = 1; i < rows.length; i++) { 
-                var orderDateCell = rows[i].getElementsByTagName("td")[1];
-                if (orderDateCell) {
-                    var orderDateStr = orderDateCell.innerText.trim();
-                    console.log("Order Date String:", orderDateStr);
-                    var orderDate = parseTableDate(orderDateStr);
-                    console.log("Parsed Order Date:", orderDate);
-                    if (orderDate >= fromdate && orderDate < todate) {
-                        rows[i].style.display = ""; 
-                    } else {
-                        rows[i].style.display = "none"; 
+            window.goBack = function () {
+                window.history.back();
+            };
+
+            window.filterOrders = function () {
+                var fromdate = document.getElementById("fromdate").value;
+                var todate = document.getElementById("todate").value;
+                var table = document.getElementById("orderTable");
+                var rows = table.getElementsByTagName("tr");
+
+                if (!fromdate || !todate) {
+                    alert("Please select both from and to dates.");
+                    return;
+                }
+
+                var fromdateParsed = new Date(fromdate);
+                var todateParsed = new Date(todate);
+                todateParsed.setDate(todateParsed.getDate() + 1); 
+
+                for (var i = 1; i < rows.length; i++) { 
+                    var orderDateCell = rows[i].getElementsByTagName("td")[2];
+                    if (orderDateCell) {
+                        var orderDateStr = orderDateCell.innerText.trim();
+                        var orderDate = parseTableDate(orderDateStr);
+
+                        if (orderDate >= fromdateParsed && orderDate < todateParsed) {
+                            rows[i].style.display = ""; 
+                        } else {
+                            rows[i].style.display = "none"; 
+                        }
                     }
                 }
+            };
+
+            function parseTableDate(dateStr) {
+                var parts = dateStr.split(/[-: ]+/); 
+                return new Date(parts[2], parts[1] - 1, parts[0], parts[3] || 0, parts[4] || 0); 
             }
-        };
-    
-        function parseDateInput(dateStr) {
-            var parts = dateStr.split("-");
-            return new Date(parts[0], parts[1] - 1, parts[2]);
+        });
+
+        function filterStoreNames() {
+            const selectedStore = document.getElementById('storename').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminId = urlParams.get('adminid');
+
+            let query = `/adminorders?adminid=${adminId}`;
+            if (selectedStore) {
+                query += `&storename=${encodeURIComponent(selectedStore)}`;
+            }
+
+            window.location.href = query;
         }
-    
-        function parseTableDate(dateStr) {
-            var parts = dateStr.split("-");
-            return new Date(parts[2], parts[1] - 1, parts[0]);
-        }
-    });
 
-    function filterStoreNames() {
-    const selectedStore = document.getElementById('storename').value;
-    const urlParams = new URLSearchParams(window.location.search);
-    const adminId = urlParams.get('adminid');
+    </script> 
 
-    let query = `/adminorders?adminid=${adminId}`;
-    if (selectedStore) {
-        query += `&storename=${encodeURIComponent(selectedStore)}`;
-    }
-
-    window.location.href = query;
-}
-</script>
 </body>
+
 </html>

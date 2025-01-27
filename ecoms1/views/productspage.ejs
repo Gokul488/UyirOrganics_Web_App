@@ -46,13 +46,20 @@
       color: #e8ebee;
     }
 
-    h1 {
-      text-align: center; 
-  margin: 0 auto; 
-  order: 2;
+    .first {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  padding: 10px; 
+}
+
+.first h1 {
+  flex: 1; 
+  text-align: center;
   font-size: 30px;
   font-weight: bold;
-    }
+  margin-right:50px; 
+}
 
     .product-container {
       display: flex;
@@ -210,33 +217,35 @@
     }
 
     .back-button {
-      order: 1;
-      display: inline-block;
-      padding: 5px 6px;
-      background-color: #0A2472;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      font-size: smaller;
-    }
+  display: inline-block;
+  padding: 5px 10px; /* Adjust padding for consistent look */
+  background-color: #0A2472;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: smaller;
+  position: relative;
+  overflow: hidden;
+}
 
-    .back-button::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-color: #0056b3;
-      transition: width 0.3s ease;
-    }
+.back-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: #0056b3;
+  transition: width 0.3s ease;
+  z-index: 0; /* Keeps it behind the text */
+}
 
-    .back-button:hover::before {
-      width: 100%;
-    }
-    .back-button:hover{
+.back-button:hover::before {
+  width: 100%;
+}
+
+.back-button:hover {
   background-color: #0d5dbb;
 }
     .description-list {
@@ -284,6 +293,7 @@
     <button onclick="goBack()" class="back-button">Back</button>
     <h1>PRODUCT DETAILS</h1>
   </div>
+
 
   <div class="product-container" data-salesprice="<%= product.salesprice %>" data-discountprice="<%= specialOfferDiscountPrice %>">
     <div class="product-image-container">
