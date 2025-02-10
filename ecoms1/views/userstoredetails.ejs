@@ -147,8 +147,8 @@
             padding: 10px;
             margin-top: 10px;
             margin-bottom: 10px;
+            white-space: nowrap;
         }
-
   
         .search-container {
             order: 2;
@@ -233,12 +233,16 @@ button[type="submit"]:hover{
         transform: scale(1.2);
     }
 }
-
+@media(max-width:1084px){
+    .filter{
+        margin-left: -100px;
+    }
+}
         @media screen and (max-width: 768px) {
-            .product-grid {
+            /* .product-grid {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 10px;
-            }
+            } */
             .cart {
                 color: white;
                 font-size: 14px;
@@ -250,23 +254,6 @@ button[type="submit"]:hover{
             }
         }
 
-        @media screen and (min-width: 901px) and (max-width: 1200px) {
-            .product-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media screen and (min-width: 1201px) and (max-width: 1500px) {
-            .product-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media screen and (min-width: 1501px) {
-            .product-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
 
   </style>
   <link rel="stylesheet" href="/path/to/your/css/styles.css">

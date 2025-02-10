@@ -2819,13 +2819,18 @@ app.get('/usersignup',
 app.post('/register', (req, res) => {
   const { name, mobilenumber, address, pincode, username, password } = req.body;
 
+  if (!name || !mobilenumber || !address || !pincode || !username || !password) {
+    return res.status(400).json({ success: false, message: "Please fill all required fields." });
+  }
+
+  // Hash the password
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
       console.error('Error hashing password: ', err);
-      res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
-      return;
+      return res.status(500).json({ success: false, message: "An error occurred while hashing the password." });
     }
 
+    // Check if mobile number already exists in any of the tables (usersignin, storesignin, or admin)
     const query = `SELECT mobilenumber FROM usersignin WHERE mobilenumber = ? 
                   UNION 
                   SELECT mobilenumber FROM storesignin WHERE mobilenumber = ? 
@@ -2835,23 +2840,28 @@ app.post('/register', (req, res) => {
     connection.query(query, [mobilenumber, mobilenumber, mobilenumber], (err, results) => {
       if (err) {
         console.error('Error querying the database: ', err);
-        res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
-        return;
+        return res.status(500).json({ success: false, message: "An error occurred while checking the mobile number." });
       }
 
+      // If mobile number already exists, return error
       if (results.length > 0) {
-        res.render('usermobileerror');
-      } else {
-        const insertQuery = `INSERT INTO usersignin (name, mobilenumber, address, pincode, email, password) VALUES (?, ?, ?, ?, ?, ?)`;
-        connection.query(insertQuery, [name, mobilenumber, address, pincode, username, hashedPassword], (err, result) => {
-          if (err) {
-            console.error('Error inserting data into the database: ', err);
-            res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
-            return;
-          }
-          res.render('registration-success');
-        });
+        return res.status(400).json({ success: false, message: "Mobile number already exists." });
       }
+
+      // Insert the new user data into the usersignin table
+      const insertQuery = `INSERT INTO usersignin (name, mobilenumber, address, pincode, email, password) 
+                          VALUES (?, ?, ?, ?, ?, ?)`;
+
+      connection.query(insertQuery, [name, mobilenumber, address, pincode, username, hashedPassword], (err, result) => {
+        if (err) {
+          console.error('Error inserting data into the database: ', err);
+          return res.status(500).json({ success: false, message: "An error occurred while inserting data into the database." });
+        }
+
+        // Successfully registered the user
+        console.log('User registered successfully:', result);
+        res.status(200).json({ success: true, message: "User registered successfully!" });
+      });
     });
   });
 });
@@ -3573,12 +3583,17 @@ app.get('/myorders', (req, res) => {
     }
 
     if (orderResults.length === 0) {
-      console.error('No orders found for this user.');
-      return res.status(404).send('No orders found for this user.');
+      console.log('No orders found for this user.');
+      return res.render('myorders', { 
+        userOrders: [], // Send empty array
+        userName: '',
+        storeName: '',
+        storeId: '',
+        userId
+      });
     }
 
     const storeId = orderResults[0].storeid;
-    console.log('Order Results:', orderResults);
 
     const userNameQuery = 'SELECT name FROM usersignin WHERE idusersignin = ?';
     connection.query(userNameQuery, [userId], (userNameErr, userNameResult) => {
@@ -3587,7 +3602,7 @@ app.get('/myorders', (req, res) => {
         return res.status(500).send('Error querying userName');
       }
 
-      const userName = userNameResult[0]?.name;
+      const userName = userNameResult[0]?.name || '';
 
       const storeNameQuery = 'SELECT name FROM storesignin WHERE storeid = ?';
       connection.query(storeNameQuery, [storeId], (storeNameErr, storeNameResult) => {
@@ -3596,7 +3611,7 @@ app.get('/myorders', (req, res) => {
           return res.status(500).send('Error querying storeName');
         }
 
-        const storeName = storeNameResult[0]?.name;
+        const storeName = storeNameResult[0]?.name || '';
 
         res.render('myorders', {
           userOrders: orderResults,
@@ -3609,6 +3624,9 @@ app.get('/myorders', (req, res) => {
     });
   });
 });
+
+
+
 
 app.get('/userorderdetails/:orderid', (req, res) => {
   const orderId = req.params.orderid; 

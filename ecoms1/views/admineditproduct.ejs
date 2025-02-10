@@ -40,8 +40,8 @@ body {
 .back-button:hover{
   background-color: #0d5dbb;
 }
-.header h2 {
-    margin: 0;
+.header h1 {
+    font-size: 30px;
 }
 
 .container {
@@ -403,11 +403,11 @@ h3 {
     <div class="header">
         <button class="back-button" onclick="goBack()">Back</button>
         <% if (product.producttype === 'productfamily') { %>
-            <h2 style="margin:auto;">EDIT PRODUCT FAMILY</h2>
+            <h1 style="margin:auto;">EDIT PRODUCT FAMILY</h1>
         <% } else if (product.producttype === 'product') { %>
-            <h2 style="margin:auto;">EDIT PRODUCT</h2>
+            <h1 style="margin:auto;">EDIT PRODUCT</h1>
         <% } else { %>
-            <h2 style="margin:auto;">EDIT PRODUCT MEMBER</h2>
+            <h1 style="margin:auto;">EDIT PRODUCT MEMBER</h1>
         <% } %>
     </div>
     

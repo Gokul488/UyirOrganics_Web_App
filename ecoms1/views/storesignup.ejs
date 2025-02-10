@@ -8,7 +8,9 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <style>
-  
+  body{
+    overflow-x: hidden;
+  }
   .back-button {
             display: inline-block;
             padding: 10px 13px;
@@ -105,12 +107,13 @@ button {
   padding: 8px;
   background-color:#0A2472;
   color: #fff;
-  margin-left: -50px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 20px;
+  margin-left: -50px;
 }
+
 .signup-btn:hover{
   background-color:#0d5dbb;
 }
@@ -194,7 +197,7 @@ button {
     <div class="main-container">
         <div class="container">
           <div class="upper">
-            <h2>CREATE NEW STORE</h2>
+            <h1>CREATE NEW STORE</h1>
           </div>
           <br />  
 
@@ -265,7 +268,7 @@ button {
     <input type="hidden" name="adminId" value="<%= adminId %>">
 
     <div style="margin-left: 50%;">
-      <input type="submit" class="signup-btn" id="registerButton" value="Register" disabled>
+      <input type="submit" class="signup-btn" id="registerButton" value="Register">
   </div>
   
 </form>

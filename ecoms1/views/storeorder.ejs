@@ -68,16 +68,17 @@ body {
   margin-right: 5px;
 }
 
-button {
+.filter-print {
   background-color: #0A2472;
   color: #fff;
   border: none;
-  padding: 10px 15px;
+  padding: 6px 12px !important;
   cursor: pointer;
   border-radius: 4px;
+  font-size: 13px !important;
 }
 
-button:hover {
+.filter-print:hover {
   background-color: #0d5dbb;
 }
 
@@ -112,6 +113,7 @@ button:hover {
 .btn-primary {
   background-color: #0A2472;
   color: #fff;
+  font-size: 13px;
 }
 
 .btn-primary:hover {
@@ -129,7 +131,7 @@ button:hover {
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      font-size: 14px !important;
+      font-size: 13px !important;
     }
 
     .back-button::before {
@@ -164,6 +166,9 @@ button:hover {
       .print-button, .back-button, .filters{
         display: none !important;
       }
+      th.action-column, td.action-column {
+        display: none !important;
+    }
  .app-bar .logo, .app-bar .dropdown, .app-bar #Backend, .app-bar #common-name{
             display: none;
         }
@@ -274,12 +279,12 @@ button:hover {
         <input type="date" name="fromDate" id="fromDateFilter">
         <span>to</span>
         <input type="date" name="toDate" id="toDateFilter">
-        <button type="button" onclick="handleFilter()">Filter</button>
+        <button type="button" onclick="handleFilter()" class="filter-print">Filter</button>
       </div>
     </div>
   
     <div class="print1">
-      <button onclick="printOrders()" class="print-button">Print</button>
+      <button onclick="printOrders()" class="filter-print">Print</button>
     </div>
   </div>
   
@@ -298,7 +303,7 @@ button:hover {
         <th>Address</th>
         <th>Total Amount</th>
         <th>Overall Status</th>
-        <th>View Details</th>
+        <th class="action-column">View Details</th>
       </tr>
     </thead>
     <tbody>
@@ -328,7 +333,7 @@ button:hover {
         <td><%= groupedOrder.userDetails ? groupedOrder.userDetails.address : 'N/A' %></td>
         <td class="amount-column">₹<%= groupedOrder.totalprice.toFixed(2) %></td>
         <td><%= groupedOrder.overallstatus %></td>
-        <td>
+        <td class="action-column">
           <a href="/storeorderdetails/<%= groupedOrder.orderid %>?storeid=<%= storeId %>" class="btn btn-primary">View Details</a>
         </td>
       </tr>
@@ -417,20 +422,22 @@ function handleFilter() {
 }
  
 
-    function filterByStatus() {
-      const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
-      const rows = document.querySelectorAll('.table tbody tr');
+function filterByStatus() {
+  const statusFilter = document.getElementById('statusFilter').value.trim();
+  const rows = document.querySelectorAll('.table tbody tr');
 
-      rows.forEach(row => {
-        const statusCell = row.querySelector('td:nth-child(7)').textContent.trim().toLowerCase();
-        const statusMatch = (statusFilter === '' || statusCell.includes(statusFilter));
-        if (statusMatch) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
+  rows.forEach(row => {
+    const statusCell = row.querySelector('td:nth-child(7)').textContent.trim();
+    const statusMatch = (statusFilter === '' || statusCell === statusFilter);
+
+    if (statusMatch) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
     }
+  });
+}
+
   
     function goBack() {
       window.history.back();

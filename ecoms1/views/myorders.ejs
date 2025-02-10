@@ -70,36 +70,21 @@ table th{
       background-color: #fff;
     }
     .back-button {
-      order: 1;
-      display: inline-block;
-      padding: 9px 9px;
+      position: absolute;
+      left: 20px;
       background-color: #0A2472;
       color: #fff;
       border: none;
+      padding: 7px 9px;
       border-radius: 5px;
-      margin-top: -7px;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      margin-left: 10px;
+      font-size: 13px;
+      transition: background-color 0.3s;
     }
 
-    .back-button::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background-color: #0056b3;
-      transition: width 0.3s ease;
+    .back-button:hover {
+      background-color: #0d5dbb;
     }
-
-    .back-button:hover::before {
-      width: 100%;
-    }
-.back-button:hover{
-  background-color: #0d5dbb;
-}
 
 h1 {
   text-align: center; 
@@ -107,7 +92,6 @@ h1 {
   order: 2;
   font-size: 30px;
   font-weight: bold;
-  margin-top: -30px;
 }  
 .price{
   text-align: right;
@@ -115,56 +99,70 @@ h1 {
 .header{
   margin-top: 1.5rem;
 }
+.no-orders {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff0000;
+    margin-top: 20px;
+  }
     </style>
   <link rel="stylesheet" href="/path/to/your/css/styles.css">
 <script src="/path/to/your/fontawesome.js"></script>
 </head>
 <body>
   <%- include('./userappbar.ejs') %>
- <div class="header">
-  <button onclick="goBack()" class="back-button">Back</button>
-  <h1>MY ORDERS</h1>
-</div>
+
+  <div class="header">
+    <button onclick="goBack()" class="back-button">Back</button>
+    <h1>MY ORDERS</h1>
+  </div>
 
   <div class="orders-container">
-    <table>
-      <thead>
-        <tr>
-          <th>S.No</th>
-          <th>Order ID</th>
-          <th>Total Amount</th>
-          <th>Order Date (IST)</th>
-          <th>Status</th>
-          <th>Actions</th> 
-        </tr>
-      </thead>
-      <tbody>
-        <% sNo = 1; %> 
-        <% userOrders.forEach(order => { %>
+    <% if (userOrders.length === 0) { %>
+      <div class="no-orders">
+        <p>No orders found.</p>
+      </div>
+    <% } else { %>
+      <table>
+        <thead>
           <tr>
-            <td><%= sNo %></td>
-            <td><%= order.orderid %></td>
-            <td class="price">₹<%= order.totalamount %></td>
-            <td><%= new Date(order.orderdate).toLocaleString("en-GB", { 
-              timeZone: "Asia/Kolkata", 
-              day: "2-digit", 
-              month: "2-digit", 
-              year: "numeric", 
-              hour: "2-digit", 
-              minute: "2-digit",
-              hour12: false
-            }) %></td>
-            <td><%= order.status %></td>
-            <td>
-              <a href="/userorderdetails/<%= order.orderid %>?storeid=<%= storeId %>" class="btn btn-primary">View Order</a>
-            </td>
+            <th>S.No</th>
+            <th>Order ID</th>
+            <th>Total Amount</th>
+            <th>Order Date (IST)</th>
+            <th>Status</th>
+            <th>Actions</th> 
           </tr>
-          <% sNo++; %>
-        <% }); %>
-      </tbody>
-    </table>
-    
+        </thead>
+        <tbody>
+          <% sNo = 1; %> 
+          <% userOrders.forEach(order => { %>
+            <tr>
+              <td><%= sNo %></td>
+              <td><%= order.orderid %></td>
+              <td class="price">₹<%= order.totalamount %></td>
+              <td><%= new Date(order.orderdate).toLocaleString("en-GB", { 
+                timeZone: "Asia/Kolkata", 
+                day: "2-digit", 
+                month: "2-digit", 
+                year: "numeric", 
+                hour: "2-digit", 
+                minute: "2-digit",
+                hour12: false
+              }) %></td>
+              <td><%= order.status %></td>
+              <td>
+                <a href="/userorderdetails/<%= order.orderid %>?storeid=<%= storeId %>" class="btn btn-primary">View Order</a>
+              </td>
+            </tr>
+            <% sNo++; %>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
   </div>
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 </html>

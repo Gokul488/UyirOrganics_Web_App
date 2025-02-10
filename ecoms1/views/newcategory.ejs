@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,21 +16,21 @@
         }
         .header-container {
     display: flex;
-    align-items: center; /* Vertically centers items */
+    align-items: center; 
     justify-content: space-between;
-}
+    }
 
         h1 {
-            margin: 0 auto; /* Centers the heading in the row */
-            text-align: center;
-            flex: 1;
-            margin-top: -35px;
+    margin: 0 auto; 
+    text-align: center;
+    flex: 1;
+    margin-left: -80px;
+
         }
 
         form {
             max-width: 500px;
             margin: 0 auto;
-            margin-top: 30px;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -50,11 +51,13 @@
             box-sizing: border-box;
         }
 
-        button {
+        .submitbtn {
             background-color: #0A2472;
             color: #fff;
             font-size: 16px;
             cursor: pointer;
+            width: 100px;
+            margin-left: 200px;
         }
 
         button:hover {
@@ -71,8 +74,7 @@
 
         .back-button {
             display: inline-block;
-            padding: 9px 9px; 
-            font-size: 13px;
+            padding: 5px 7px; 
             background-color: #0A2472;
             color: #fff;
             border: none;
@@ -127,22 +129,28 @@
         .back-button{
         width:50px;
         flex-shrink: 0;        }
-}
-
+    }
+    .app-bar .dropdown{
+    white-space: nowrap;
+    }
+    .app-bar .dropdown .dropdown-button{
+        margin-top: 15px;
+    }
     </style>
 </head>
 <body>
     <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
-
+    <div class="header-container">
     <button onclick="goBack()" class="back-button">Back</button>
-    <h1>ADD CATEGORY</h1>
+    <h1>Add Category</h1>
+    </div>
     <form id="categoryForm" enctype="multipart/form-data">
         <label for="name">Category Name:</label>
         <input type="text" id="name" name="name" required><br>
         <label for="imagePath">Image Path:</label>
         <input type="file" id="imagePath" name="imagePath" accept="image/*" required onchange="previewImage(event)"><br>
         <img id="image-preview" src="#" alt="Preview Image">
-        <button type="submit">Add Category</button>
+        <button class="submitbtn" type="submit">Submit</button>
     </form>
 
     <script>
@@ -211,3 +219,4 @@
     </script>
 </body>
 </html>
+
