@@ -308,7 +308,7 @@ padding: 2px 5px;
         }
     
         $(document).ready(function () {
-            // Toggle dropdown menu
+           
             $('.person-icon').click(function () {
                 $('.dropdown-menu').toggleClass('show');
             });
@@ -319,26 +319,26 @@ padding: 2px 5px;
                 }
             });
     
-            // Reset Button Functionality
+          
             $('#reset-button').click(function () {
-                $('#product-search').val(''); // Clear the search input
-                $('.product-table tbody tr').show(); // Show all rows
+                $('#product-search').val(''); 
+                $('.product-table tbody tr').show(); 
             });
     
-            // Search Button Functionality
+       
             $('#search-button').click(function () {
-                const query = $('#product-search').val().toLowerCase(); // Get the search query
+                const query = $('#product-search').val().toLowerCase(); 
                 $('.product-table tbody tr').each(function () {
                     const productName = $(this).find('td:first').text().toLowerCase();
                     if (productName.includes(query)) {
-                        $(this).show(); // Show matching rows
+                        $(this).show(); 
                     } else {
-                        $(this).hide(); // Hide non-matching rows
+                        $(this).hide(); 
                     }
                 });
             });
     
-            // Add Selected Products Button
+          
             $('#add-selected-products-button').click(function () {
                 console.log('Add Selected Products button clicked');
                 
@@ -425,6 +425,5 @@ padding: 2px 5px;
             window.history.back();
         }
     </script>
-    
 </body>
 </html>

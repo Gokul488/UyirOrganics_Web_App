@@ -536,13 +536,12 @@ document.getElementById('pincode').addEventListener('input', function (e) {
     }
 });
 function handleFormSubmission(event) {
-    event.preventDefault();  // Prevent default form submission
+    event.preventDefault(); 
 
-    // Validate form before submitting
+   
     const isValid = validateForm();
     if (!isValid) return false;
 
-    // Send the form data to the server via AJAX (fetch)
     const formData = {
         name: document.getElementById("name").value,
         mobilenumber: document.getElementById("mobilenumber").value,
@@ -562,7 +561,7 @@ function handleFormSubmission(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Show success notification
+      
             Swal.fire({
                 title: 'Registration Successful!',
                 text: data.message,
@@ -571,11 +570,11 @@ function handleFormSubmission(event) {
                 timer: 3000,
                 timerProgressBar: true,
                 willClose: () => {
-                    window.location.href = "http://localhost:7777/login";  // Redirect to login page after 3 seconds
+                    window.location.href = "http://localhost:7777/login";  
                 }
             });
         } else {
-            // Show error notification
+      
             Swal.fire({
                 title: 'Error',
                 text: data.message,
@@ -585,7 +584,7 @@ function handleFormSubmission(event) {
         }
     })
     .catch(error => {
-        // Handle network or other errors
+      
         console.error('Error:', error);
         Swal.fire({
             title: 'Error',
@@ -595,7 +594,7 @@ function handleFormSubmission(event) {
         });
     });
 
-    return false; // Prevent form submission
+    return false; 
 }
 
 

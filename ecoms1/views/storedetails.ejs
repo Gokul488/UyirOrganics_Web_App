@@ -541,9 +541,7 @@ body {
   
         <button onclick="printOrders()" id="print-list-view">Print</button>      
       </div> 
-<!-- Toggle View Buttons -->
 
-        <!-- List View -->
         <div class="product-list">
             <% if (products && products.length > 0) { %>
                 <table class="table table-bordered">
@@ -598,7 +596,6 @@ body {
             <% } %>
         </div>
 
-        <!-- Grid View (Initially Hidden) -->
         <div id="product-grid" class="row d-none">
             <% products.forEach(function(product) { %>
 
@@ -624,7 +621,7 @@ body {
                     </div>
             <% }); %>
         </div>
-        <!-- Pagination -->
+
         <div class="pagination">
             <% if (totalPages > 0) { %>
                 <% if (currentPage > 1) { %>
@@ -766,8 +763,7 @@ body {
                 document.cookie = name + '=; Max-Age=0; path=/; domain=' + window.location.hostname;
             }
         
-           
-        // Logout confirmation function
+
         window.confirmLogout = function () {
             Swal.fire({
                 title: "Are you sure?",
@@ -779,7 +775,7 @@ body {
                 confirmButtonText: "Yes, logout"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/login"; // Redirects to login page
+                    window.location.href = "/login"; 
                 }
             });
         };
@@ -828,45 +824,43 @@ body {
     const gridViewBtn = document.getElementById("grid-view-btn");
     const productList = document.querySelector(".product-list");
     const productGrid = document.getElementById("product-grid");
-  // Check localStorage for the stored view preference
+
   const savedView = localStorage.getItem("viewMode");
 
 if (savedView === "grid") {
-    // Show grid view, hide list view
+
     productList.classList.add("d-none");
     productGrid.classList.remove("d-none");
 
-    // Toggle active button styling
+
     gridViewBtn.classList.add("active");
     listViewBtn.classList.remove("active");
 } else {
-    // Show list view, hide grid view
+
     productList.classList.remove("d-none");
     productGrid.classList.add("d-none");
 
-    // Toggle active button styling
     listViewBtn.classList.add("active");
     gridViewBtn.classList.remove("active");
 }
 
     listViewBtn.addEventListener("click", function () {
-        // Show list view, hide grid view
+
         productList.classList.remove("d-none");
         productGrid.classList.add("d-none");
         localStorage.setItem("viewMode", "list");
 
-        // Toggle active button styling
         listViewBtn.classList.add("active");
         gridViewBtn.classList.remove("active");
     });
 
     gridViewBtn.addEventListener("click", function () {
-        // Show grid view, hide list view
+    
         productList.classList.add("d-none");
         productGrid.classList.remove("d-none");
         localStorage.setItem("viewMode", "grid");
 
-        // Toggle active button styling
+    
         gridViewBtn.classList.add("active");
         listViewBtn.classList.remove("active");
     });
@@ -874,8 +868,6 @@ if (savedView === "grid") {
 function printOrders() {
                 window.print();
             }
-
-        </script>
-        
+</script>
 </body>
 </html>

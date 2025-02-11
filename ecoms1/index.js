@@ -2228,7 +2228,6 @@ app.get('/adminproductdetails', (req, res) => {
 
   console.log('adminId:', adminId);
   
-  // Query to count the total products for pagination
   const countQuery = 'SELECT COUNT(DISTINCT p.productid) AS totalProductsCount FROM products p';
   connection.query(countQuery, (countError, countResults) => {
     if (countError) {
@@ -2239,7 +2238,6 @@ app.get('/adminproductdetails', (req, res) => {
 
     const totalProductsCount = countResults[0].totalProductsCount;
 
-    // Query to get admin name and category
     const adminNameQuery = 'SELECT adminname, admincategory FROM admin WHERE adminid = ?';
     connection.query(adminNameQuery, [adminId], (adminError, adminResult) => {
       if (adminError) {
@@ -2306,7 +2304,6 @@ app.get('/adminproductdetails', (req, res) => {
     query += ` LIMIT ? OFFSET ?; `;
     queryParams.push(pageSize, offset);
 
-    // Query to get all product details for stock value calculation
     const allProductsQuery = `
       SELECT p.salesprice, p.qty
       FROM products p
@@ -2333,7 +2330,6 @@ app.get('/adminproductdetails', (req, res) => {
         return;
       }
 
-      // Calculate overall stock value
       const overallStockValue = allProductsResults.reduce((total, product) => {
         return total + (product.salesprice * product.qty);
       }, 0);
@@ -2383,7 +2379,7 @@ app.get('/adminproductdetails', (req, res) => {
                 currentPage: page,
                 pageSize: pageSize,
                 totalProductsCount: totalProductsCount,
-                totalStockValue: overallStockValue, // Include the overall stock value here
+                totalStockValue: overallStockValue, 
                 adminId: adminId,
                 adminName: adminName,
                 admincategory: admincategory,
@@ -2803,9 +2799,6 @@ app.delete('/admindeleteproductfamily', (req, res) => {
   });
 });
 
-
-//user***********
-
 //usersignup
 
 app.use(express.urlencoded({ extended: true }));
@@ -2823,14 +2816,12 @@ app.post('/register', (req, res) => {
     return res.status(400).json({ success: false, message: "Please fill all required fields." });
   }
 
-  // Hash the password
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
       console.error('Error hashing password: ', err);
       return res.status(500).json({ success: false, message: "An error occurred while hashing the password." });
     }
 
-    // Check if mobile number already exists in any of the tables (usersignin, storesignin, or admin)
     const query = `SELECT mobilenumber FROM usersignin WHERE mobilenumber = ? 
                   UNION 
                   SELECT mobilenumber FROM storesignin WHERE mobilenumber = ? 
@@ -2843,12 +2834,10 @@ app.post('/register', (req, res) => {
         return res.status(500).json({ success: false, message: "An error occurred while checking the mobile number." });
       }
 
-      // If mobile number already exists, return error
       if (results.length > 0) {
         return res.status(400).json({ success: false, message: "Mobile number already exists." });
       }
 
-      // Insert the new user data into the usersignin table
       const insertQuery = `INSERT INTO usersignin (name, mobilenumber, address, pincode, email, password) 
                           VALUES (?, ?, ?, ?, ?, ?)`;
 
@@ -2857,8 +2846,6 @@ app.post('/register', (req, res) => {
           console.error('Error inserting data into the database: ', err);
           return res.status(500).json({ success: false, message: "An error occurred while inserting data into the database." });
         }
-
-        // Successfully registered the user
         console.log('User registered successfully:', result);
         res.status(200).json({ success: true, message: "User registered successfully!" });
       });
@@ -3092,8 +3079,6 @@ app.get('/userstoredetails/:storeid', (req, res) => {
 });
 
 
-
-
 app.get('/api/cart/count', (req, res) => {
   const userId = req.session.userId;
 
@@ -3110,7 +3095,6 @@ app.get('/api/cart/count', (req, res) => {
     res.json({ count });
   });
 });
-
 
 
 app.get('/productspage/:productid', (req, res) => {
@@ -3186,8 +3170,6 @@ app.get('/productspage/:productid', (req, res) => {
     }
   });
 });
-
-
 
 
 app.post('/buynow', (req, res) => {
@@ -3467,7 +3449,6 @@ app.get('/checkout', (req, res) => {
 });
 
 
-
 app.post('/checkout', (req, res) => {
 
   const userId = req.session.userId;
@@ -3546,8 +3527,6 @@ app.post('/placeorder', (req, res) => {
   });
 });
 
-
-
 app.get('/order-success', (req, res) => {
   const storeId = req.query.storeid;
   const userId = req.query.userid;
@@ -3561,7 +3540,6 @@ app.get('/myorders', (req, res) => {
   if (!userId) {
     return res.status(400).send('User ID is missing');
   }
-
   const orderQuery = `
     SELECT 
       orderid, 
@@ -3585,7 +3563,7 @@ app.get('/myorders', (req, res) => {
     if (orderResults.length === 0) {
       console.log('No orders found for this user.');
       return res.render('myorders', { 
-        userOrders: [], // Send empty array
+        userOrders: [], 
         userName: '',
         storeName: '',
         storeId: '',
@@ -3624,8 +3602,6 @@ app.get('/myorders', (req, res) => {
     });
   });
 });
-
-
 
 
 app.get('/userorderdetails/:orderid', (req, res) => {
@@ -3694,8 +3670,6 @@ app.get('/userorderdetails/:orderid', (req, res) => {
     });
   });
 });
-
-
 
 
 app.get('/storeinfo', (req, res) => {
@@ -3790,10 +3764,7 @@ app.get('/editprofile', (req, res) => {
   });
 });
 
-
 //store****
-
-
 
 app.get('/storedetails/:storeid', (req, res) => {
   const storeId = req.params.storeid;
@@ -3932,8 +3903,6 @@ app.get('/storedetails/:storeid', (req, res) => {
 });
 
 
-
-
 app.get('/addSpecialOfferForm/:storeid', (req, res) => {
   const storeId = req.params.storeid;
 
@@ -3964,16 +3933,13 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
         res.status(500).send('Internal Server Error');
         return;
       }
-
       connection.query(storeProductsQuery, [storeId], (err, storeProductsResult) => {
         if (err) {
           console.error('Error fetching store products:', err);
           res.status(500).send('Internal Server Error');
           return;
         }
-
         const productIds = storeProductsResult.map(product => product.productid);
-
         if (productIds.length === 0) {
           res.render('specialoffer', {
             storeId: storeId,
@@ -3986,7 +3952,6 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
         }
 
         const productsQuery = 'SELECT productid, productname FROM products WHERE productid IN (?)';
-
         connection.query(productsQuery, [productIds], (err, productsResult) => {
           if (err) {
             console.error('Error fetching products:', err);
@@ -4008,17 +3973,13 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
 });
 
 
-
 app.post('/uploadOffer', (req, res) => {
   console.log(req.body);
-
   let { storeId, productId, content, expiryDate, discountPrice } = req.body;
-
   if (!productId) {
     res.status(400).json({ message: 'Product ID is required' });
     return;
   }
-
   const selectExpiredSql = 'SELECT offerid FROM specialoffers WHERE storeid = ? AND expirydate < CURRENT_TIMESTAMP';
   connection.query(selectExpiredSql, [storeId], (selectErr, expiredOffers) => {
     if (selectErr) {
@@ -4150,7 +4111,6 @@ app.delete('/deleteOffer/:offerid', (req, res) => {
       return;
     }
 
-  
     const deleteOfferSql = 'DELETE FROM specialoffers WHERE offerid = ?';
     connection.query(deleteOfferSql, [offerId], (deleteOfferErr, deleteOfferResult) => {
       if (deleteOfferErr) {
@@ -4160,7 +4120,6 @@ app.delete('/deleteOffer/:offerid', (req, res) => {
         });
       }
 
-      
       const updateStoreProductSql = 'UPDATE storeproducts SET offerid = NULL WHERE offerid = ?';
       connection.query(updateStoreProductSql, [offerId], (updateStoreProductErr, updateStoreProductResult) => {
         if (updateStoreProductErr) {
@@ -4184,6 +4143,8 @@ app.delete('/deleteOffer/:offerid', (req, res) => {
     });
   });
 });
+
+
 app.get('/getSpecialOffer/:storeId', (req, res) => {
   const storeId = req.params.storeId;
   const currentDate = new Date().toISOString().split('T')[0];
