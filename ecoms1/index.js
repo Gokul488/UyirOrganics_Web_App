@@ -2854,6 +2854,7 @@ app.post('/register', (req, res) => {
 });
 
 
+
 app.get('/userstoredetails/:storeid', (req, res) => {
   const userId = req.query.userId;
   const storeId = req.params.storeid;
