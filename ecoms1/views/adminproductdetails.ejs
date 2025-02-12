@@ -607,188 +607,194 @@ table.list-view th.sortable-column {
   </div>
   
 </div>
-  <script>
-function resetSearch() {
-    document.getElementById('searchInput').value = '';
-    document.querySelector('input[name="page"]').value = 1; 
-    document.getElementById('productSearchForm').submit();
-  }
-
-  function redirectToCreateCategory() {
-      window.location.href = '/createcategory';
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-  const listViewButton = document.getElementById('list-view-button');
-  const gridViewButton = document.getElementById('grid-view-button');
-  const listView = document.querySelector('.list-view');
-  const gridView = document.querySelector('.grid-view');
-
-  let selectedView = localStorage.getItem('productView') || 'list';
-  toggleView(selectedView);
-
-  listViewButton.addEventListener('click', function() {
-    toggleView('list');
-  });
-
-  gridViewButton.addEventListener('click', function() {
-    toggleView('grid');
-  });
-
-  function toggleView(view) {
-    if (view === 'list') {
-      listView.style.display = 'block';
-      gridView.style.display = 'none';
-      listViewButton.disabled = true;
-      gridViewButton.disabled = false;
-    } else {
-      listView.style.display = 'none';
-      gridView.style.display = 'block';
-      listViewButton.disabled = false;
-      gridViewButton.disabled = true;
+<script>
+  function resetSearch() {
+      document.getElementById('searchInput').value = '';
+      document.querySelector('input[name="page"]').value = 1; 
+      document.getElementById('productSearchForm').submit();
     }
-    localStorage.setItem('productView', view);
-  }
-
-  const headers = document.querySelectorAll('.sortable-column');
-  headers.forEach(header => {
-    header.addEventListener('click', () => {
-      const sortKey = header.dataset.sort;
-      const isAscending = !header.classList.contains('ascending');
-      const currentURL = new URL(window.location.href);
-      currentURL.searchParams.set('sortKey', sortKey);
-      currentURL.searchParams.set('isAscending', isAscending ? 'true' : 'false');
-      window.location.href = currentURL.toString();
-    });
-  });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
+  
+    function redirectToCreateCategory() {
+        window.location.href = '/createcategory';
+    }
+  
+    document.addEventListener('DOMContentLoaded', function () {
     const listViewButton = document.getElementById('list-view-button');
     const gridViewButton = document.getElementById('grid-view-button');
-
-    listViewButton.addEventListener('click', () => {
-      listViewButton.classList.add('active');
-      gridViewButton.classList.remove('active');
+    const listView = document.querySelector('.list-view');
+    const gridView = document.querySelector('.grid-view');
+  
+    // Set list view as default
+    listView.style.display = 'block';
+    gridView.style.display = 'none';
+    listViewButton.classList.add('active');
+    gridViewButton.classList.remove('active');
+    listViewButton.disabled = true;
+    gridViewButton.disabled = false;
+  
+    listViewButton.addEventListener('click', function () {
+      toggleView('list');
     });
-
-    gridViewButton.addEventListener('click', () => {
-      gridViewButton.classList.add('active');
-      listViewButton.classList.remove('active');
+  
+    gridViewButton.addEventListener('click', function () {
+      toggleView('grid');
     });
-  });
-
-      function sortProducts(sortKey, isAscending) {
-          const rows = Array.from(document.querySelectorAll('.list-view tbody tr'));
-          const products = rows.map(row => ({
-              element: row,
-              productname: row.querySelector('[data-column="productname"]').textContent.trim(),
-              salesprice: parseFloat(row.querySelector('[data-column="salesprice"]').textContent.replace(/[^\d.-]/g, '')) || 0,
-              gst: parseFloat(row.querySelector('[data-column="gst"]').textContent.replace(/[^\d.-]/g, '')) || 0,
-              qty: parseInt(row.querySelector('[data-column="qty"]').textContent) || 0,
-          }));
-
-          products.sort((a, b) => {
-              const aValue = a[sortKey];
-              const bValue = b[sortKey];
-
-              if (isAscending) {
-                  return aValue > bValue ? 1 : -1;
-              } else {
-                  return aValue < bValue ? 1 : -1;
-              }
-          });
-
-          const listBody = document.getElementById('list-view-body');
-          listBody.innerHTML = '';
-          products.forEach(p => listBody.appendChild(p.element));
-
-          const gridProducts = Array.from(document.querySelectorAll('.grid-view .product-item'));
-          const gridMap = new Map(
-              gridProducts.map(item => [
-                  item.querySelector('h3').textContent.trim(),
-                  item
-              ])
-          );
-
-          const gridBody = document.getElementById('grid-view-body');
-          gridBody.innerHTML = '';
-          products.forEach(p => {
-              const gridItem = gridMap.get(p.productname);
-              if (gridItem) gridBody.appendChild(gridItem);
-          });
+  
+    function toggleView(view) {
+      if (view === 'list') {
+        listView.style.display = 'block';
+        gridView.style.display = 'none';
+        listViewButton.classList.add('active');
+        gridViewButton.classList.remove('active');
+        listViewButton.disabled = true;
+        gridViewButton.disabled = false;
+      } else {
+        listView.style.display = 'none';
+        gridView.style.display = 'block';
+        gridViewButton.classList.add('active');
+        listViewButton.classList.remove('active');
+        listViewButton.disabled = false;
+        gridViewButton.disabled = true;
       }
-      document.addEventListener('DOMContentLoaded', function () {
-    const search = new URLSearchParams(window.location.search).get('search') || '';
-    const category = new URLSearchParams(window.location.search).get('category') || '';
-
-    fetch(`/getFilteredProductCount?search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}`)
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('filtered-count').textContent = data.filteredProductsCount || 0;
-      })
-      .catch(error => {
-        console.error('Error fetching filtered product count:', error);
-        document.getElementById('filtered-count').textContent = 'Error';
-      });
-
-    fetch(`/getSearchedProductCount?search=${encodeURIComponent(search)}`)
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('searched-count').textContent = data.searchedProductsCount || 0;
-      })
-      .catch(error => {
-        console.error('Error fetching searched product count:', error);
-        document.getElementById('searched-count').textContent = 'Error';
-      });
-  });
-  document.addEventListener("DOMContentLoaded", function () {
-    const listViewButton = document.getElementById("list-view-button");
-    const gridViewButton = document.getElementById("grid-view-button");
-
-    const activeView = localStorage.getItem("activeView");
-    if (activeView === "list") {
-      setActiveButton(listViewButton, gridViewButton);
-    } else if (activeView === "grid") {
-      setActiveButton(gridViewButton, listViewButton);
     }
-
-    listViewButton.addEventListener("click", function () {
-      localStorage.setItem("activeView", "list");
+  
+  
+  
+    const headers = document.querySelectorAll('.sortable-column');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const sortKey = header.dataset.sort;
+        const isAscending = !header.classList.contains('ascending');
+        const currentURL = new URL(window.location.href);
+        currentURL.searchParams.set('sortKey', sortKey);
+        currentURL.searchParams.set('isAscending', isAscending ? 'true' : 'false');
+        window.location.href = currentURL.toString();
+      });
+    });
+  });
+  
+  document.addEventListener('DOMContentLoaded', () => {
+      const listViewButton = document.getElementById('list-view-button');
+      const gridViewButton = document.getElementById('grid-view-button');
+  
+      listViewButton.addEventListener('click', () => {
+        listViewButton.classList.add('active');
+        gridViewButton.classList.remove('active');
+      });
+  
+      gridViewButton.addEventListener('click', () => {
+        gridViewButton.classList.add('active');
+        listViewButton.classList.remove('active');
+      });
+    });
+  
+        function sortProducts(sortKey, isAscending) {
+            const rows = Array.from(document.querySelectorAll('.list-view tbody tr'));
+            const products = rows.map(row => ({
+                element: row,
+                productname: row.querySelector('[data-column="productname"]').textContent.trim(),
+                salesprice: parseFloat(row.querySelector('[data-column="salesprice"]').textContent.replace(/[^\d.-]/g, '')) || 0,
+                gst: parseFloat(row.querySelector('[data-column="gst"]').textContent.replace(/[^\d.-]/g, '')) || 0,
+                qty: parseInt(row.querySelector('[data-column="qty"]').textContent) || 0,
+            }));
+  
+            products.sort((a, b) => {
+                const aValue = a[sortKey];
+                const bValue = b[sortKey];
+  
+                if (isAscending) {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+  
+            const listBody = document.getElementById('list-view-body');
+            listBody.innerHTML = '';
+            products.forEach(p => listBody.appendChild(p.element));
+  
+            const gridProducts = Array.from(document.querySelectorAll('.grid-view .product-item'));
+            const gridMap = new Map(
+                gridProducts.map(item => [
+                    item.querySelector('h3').textContent.trim(),
+                    item
+                ])
+            );
+  
+            const gridBody = document.getElementById('grid-view-body');
+            gridBody.innerHTML = '';
+            products.forEach(p => {
+                const gridItem = gridMap.get(p.productname);
+                if (gridItem) gridBody.appendChild(gridItem);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+      const search = new URLSearchParams(window.location.search).get('search') || '';
+      const category = new URLSearchParams(window.location.search).get('category') || '';
+  
+      fetch(`/getFilteredProductCount?search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('filtered-count').textContent = data.filteredProductsCount || 0;
+        })
+        .catch(error => {
+          console.error('Error fetching filtered product count:', error);
+          document.getElementById('filtered-count').textContent = 'Error';
+        });
+  
+      fetch(`/getSearchedProductCount?search=${encodeURIComponent(search)}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('searched-count').textContent = data.searchedProductsCount || 0;
+        })
+        .catch(error => {
+          console.error('Error fetching searched product count:', error);
+          document.getElementById('searched-count').textContent = 'Error';
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      const listViewButton = document.getElementById("list-view-button");
+      const gridViewButton = document.getElementById("grid-view-button");
+  
+      // Set default active button to list view
       setActiveButton(listViewButton, gridViewButton);
+  
+      listViewButton.addEventListener("click", function () {
+        setActiveButton(listViewButton, gridViewButton);
+      });
+  
+      gridViewButton.addEventListener("click", function () {
+        setActiveButton(gridViewButton, listViewButton);
+      });
+  
+      function setActiveButton(activeButton, inactiveButton) {
+        activeButton.classList.add("active");
+        inactiveButton.classList.remove("active");
+      }
+  });
+  
+  
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.getElementById('productSearchForm');
+    const categorySelect = document.getElementById('category-select');
+    const hiddenCategoryInput = document.getElementById('hiddenCategoryInput');
+  
+    searchForm.addEventListener('submit', function () {
+      hiddenCategoryInput.value = categorySelect.value;
     });
-
-    gridViewButton.addEventListener("click", function () {
-      localStorage.setItem("activeView", "grid");
-      setActiveButton(gridViewButton, listViewButton);
+  
+    const filterForm = document.getElementById('filter-form');
+  
+    filterForm.addEventListener('submit', function () {
+      hiddenCategoryInput.value = categorySelect.value;
     });
-
-    function setActiveButton(activeButton, inactiveButton) {
-      activeButton.classList.add("active");
-      inactiveButton.classList.remove("active");
-    }
+  
+    categorySelect.addEventListener('change', function (event) {
+  
+      console.log(`Category selected: ${event.target.value}`);
+    });
   });
-
-  document.addEventListener('DOMContentLoaded', function () {
-  const searchForm = document.getElementById('productSearchForm');
-  const categorySelect = document.getElementById('category-select');
-  const hiddenCategoryInput = document.getElementById('hiddenCategoryInput');
-
-  searchForm.addEventListener('submit', function () {
-    hiddenCategoryInput.value = categorySelect.value;
-  });
-
-  const filterForm = document.getElementById('filter-form');
-
-  filterForm.addEventListener('submit', function () {
-    hiddenCategoryInput.value = categorySelect.value;
-  });
-
-  categorySelect.addEventListener('change', function (event) {
-
-    console.log(`Category selected: ${event.target.value}`);
-  });
-});
-  </script>
+  
+    </script>
 </body>
 </html>
