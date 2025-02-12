@@ -215,39 +215,21 @@
       display: flex;
       text-align: center;
     }
-
     .back-button {
-  display: inline-block;
-  padding: 5px 10px;
+  margin: 0;
+  padding: 7px 9px;
   background-color: #0A2472;
   color: #fff;
   border: none;
   border-radius: 5px;
+  font-size: 13px;
   cursor: pointer;
-  font-size: smaller;
-  position: relative;
-  overflow: hidden;
-}
-
-.back-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background-color: #0056b3;
-  transition: width 0.3s ease;
-  z-index: 0; 
-}
-
-.back-button:hover::before {
-  width: 100%;
 }
 
 .back-button:hover {
   background-color: #0d5dbb;
 }
+
     .description-list {
       list-style-type: none !important;
       padding-left: 0;

@@ -2809,49 +2809,6 @@ app.get('/usersignup',
 });
 
 
-app.post('/register', (req, res) => {
-  const { name, mobilenumber, address, pincode, username, password } = req.body;
-
-  if (!name || !mobilenumber || !address || !pincode || !username || !password) {
-    return res.status(400).json({ success: false, message: "Please fill all required fields." });
-  }
-
-  bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
-    if (err) {
-      console.error('Error hashing password: ', err);
-      return res.status(500).json({ success: false, message: "An error occurred while hashing the password." });
-    }
-
-    const query = `SELECT mobilenumber FROM usersignin WHERE mobilenumber = ? 
-                  UNION 
-                  SELECT mobilenumber FROM storesignin WHERE mobilenumber = ? 
-                  UNION 
-                  SELECT mobilenumber FROM admin WHERE mobilenumber = ?`;
-
-    connection.query(query, [mobilenumber, mobilenumber, mobilenumber], (err, results) => {
-      if (err) {
-        console.error('Error querying the database: ', err);
-        return res.status(500).json({ success: false, message: "An error occurred while checking the mobile number." });
-      }
-
-      if (results.length > 0) {
-        return res.status(400).json({ success: false, message: "Mobile number already exists." });
-      }
-
-      const insertQuery = `INSERT INTO usersignin (name, mobilenumber, address, pincode, email, password) 
-                          VALUES (?, ?, ?, ?, ?, ?)`;
-
-      connection.query(insertQuery, [name, mobilenumber, address, pincode, username, hashedPassword], (err, result) => {
-        if (err) {
-          console.error('Error inserting data into the database: ', err);
-          return res.status(500).json({ success: false, message: "An error occurred while inserting data into the database." });
-        }
-        console.log('User registered successfully:', result);
-        res.status(200).json({ success: true, message: "User registered successfully!" });
-      });
-    });
-  });
-});
 
 
 
@@ -3547,11 +3504,11 @@ app.get('/myorders', (req, res) => {
       storeid, 
       orderdate, 
       SUM(totalprice) AS totalamount, 
-      status
+      overallstatus
     FROM \`order\`
     WHERE userid = ? 
       AND orderdate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
-    GROUP BY orderid, storeid, orderdate, status
+    GROUP BY orderid, storeid, orderdate, overallstatus
     ORDER BY orderdate DESC 
     LIMIT 20`;
 
@@ -3905,12 +3862,10 @@ app.get('/storedetails/:storeid', (req, res) => {
 
 
 app.get('/addSpecialOfferForm/:storeid', (req, res) => {
+
   const storeId = req.params.storeid;
-
   const storeDetailsQuery = 'SELECT name, contactname FROM storesignin WHERE storeid = ?';
-
   const specialOffersQuery = 'SELECT * FROM specialoffers WHERE storeid = ?';
-
   const storeProductsQuery = 'SELECT productid FROM storeproducts WHERE storeid = ?';
 
   connection.query(storeDetailsQuery, [storeId], (err, storeResult) => {
@@ -3940,32 +3895,37 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
           res.status(500).send('Internal Server Error');
           return;
         }
+      
         const productIds = storeProductsResult.map(product => product.productid);
+      
+        // Check if productIds is empty before proceeding with the query
         if (productIds.length === 0) {
           res.render('specialoffer', {
             storeId: storeId,
             name: name,
             contactname: contactname,
             specialOffers: specialOffersResult,
-            products: [] 
+            products: [] // Send an empty array to prevent errors
           });
           return;
         }
-
+        
+      
         const productsQuery = 'SELECT productid, productname FROM products WHERE productid IN (?)';
         connection.query(productsQuery, [productIds], (err, productsResult) => {
+        
           if (err) {
             console.error('Error fetching products:', err);
             res.status(500).send('Internal Server Error');
             return;
           }
-
+      
           res.render('specialoffer', {
             storeId: storeId,
             name: name,
             contactname: contactname,
             specialOffers: specialOffersResult,
-            products: productsResult 
+            products: productsResult  // Products found, pass to the view
           });
         });
       });
@@ -3976,11 +3936,12 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
 
 app.post('/uploadOffer', (req, res) => {
   console.log(req.body);
-  let { storeId, productId, content, expiryDate, discountPrice } = req.body;
+  let { storeId, productId, content, startDate, expiryDate, discountPrice } = req.body;
   if (!productId) {
     res.status(400).json({ message: 'Product ID is required' });
     return;
   }
+
   const selectExpiredSql = 'SELECT offerid FROM specialoffers WHERE storeid = ? AND expirydate < CURRENT_TIMESTAMP';
   connection.query(selectExpiredSql, [storeId], (selectErr, expiredOffers) => {
     if (selectErr) {
@@ -4017,12 +3978,14 @@ app.post('/uploadOffer', (req, res) => {
   });
 
   function insertOrUpdateSpecialOffer() {
-    const insertSql = `INSERT INTO specialoffers (storeid, productid, content, discountprice, expirydate) 
-                       VALUES (?, ?, ?, ?, ?)
+    const insertSql = `INSERT INTO specialoffers (storeid, productid, content, discountprice, startdate, expirydate) 
+                       VALUES (?, ?, ?, ?, ?, ?)
                        ON DUPLICATE KEY UPDATE content = VALUES(content), 
                                                discountprice = VALUES(discountprice), 
-                                               expirydate = VALUES(expirydate)`;
-    connection.query(insertSql, [storeId, productId, content, discountPrice, expiryDate], (insertErr, insertResult) => {
+                                               startdate = VALUES(startdate), 
+                                               expirydate = VALUES(expirydate);`;
+    
+    connection.query(insertSql, [storeId, productId, content, discountPrice, startDate, expiryDate], (insertErr, insertResult) => {
       if (insertErr) {
         console.error('Error inserting or updating store product offer:', insertErr);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -4035,7 +3998,30 @@ app.post('/uploadOffer', (req, res) => {
             console.error('Error updating store product with offer ID:', updateErr);
             res.status(500).json({ message: 'Internal Server Error' });
           } else {
-            res.json({ message: 'Offer added successfully' });
+            // Fetch the new offer details along with product name
+            const fetchNewOfferQuery = `
+              SELECT so.offerid, so.productid, so.content, so.discountprice, so.startdate, so.expirydate, p.productname 
+              FROM specialoffers so 
+              JOIN products p ON so.productid = p.productid 
+              WHERE so.storeid = ? AND so.productid = ? 
+              ORDER BY so.offerid DESC LIMIT 1`;
+
+            connection.query(fetchNewOfferQuery, [storeId, productId], (err, offerResult) => {
+              if (err) {
+                console.error('Error fetching new offer details:', err);
+                res.status(500).json({ message: 'Internal Server Error' });
+                return;
+              }
+
+              if (offerResult.length > 0) {
+                res.json({
+                  message: 'Offer added successfully',
+                  newOffer: offerResult[0]
+                });
+              } else {
+                res.json({ message: 'Offer added, but could not fetch details' });
+              }
+            });
           }
         });
       }
@@ -4043,13 +4029,16 @@ app.post('/uploadOffer', (req, res) => {
   }
 });
 
+
+
 app.get('/editOffer/:offerid', (req, res) => {
   const offerId = req.params.offerid;
 
   const offerDetailsQuery = `
-    SELECT si.storeid, si.name, si.contactname, so.*
+    SELECT si.storeid, si.name, si.contactname, so.*, p.productname
     FROM storesignin si
     JOIN specialoffers so ON so.storeid = si.storeid
+    JOIN products p ON so.productid = p.productid
     WHERE so.offerid = ?`;
 
   connection.query(offerDetailsQuery, [offerId], (err, result) => {
@@ -4060,37 +4049,35 @@ app.get('/editOffer/:offerid', (req, res) => {
     }
 
     if (result.length === 0) {
-      res.status(404).send('Offer details updated successfully');
+      res.status(404).send('Offer not found');
       return;
     }
 
     const offer = result[0];
-    const storeId = offer.storeid;
-    const name = offer.name;
-    const contactname = offer.contactname;
 
     res.render('editOffer', {
       offerId: offerId,
-      storeId: storeId, 
-      name: name,
-      contactname: contactname,
+      storeId: offer.storeid,
+      name: offer.name,
+      contactname: offer.contactname,
       offer: offer 
     });
   });
 });
 
 
+
 app.post('/updateOffer1/:offerid', (req, res) => {
   const offerId = req.params.offerid;
-  const { productId, content, discountPrice, expiryDate } = req.body;
+  const { productId, content, discountPrice, startDate, expiryDate } = req.body;
 
   const sql = `
     UPDATE specialoffers 
-    SET productid = ?, content = ?, discountprice = ?, expirydate = ?
+    SET productid = ?, content = ?, discountprice = ?, startdate = ?, expirydate = ?
     WHERE offerid = ?
   `;
 
-  connection.query(sql, [productId, content, discountPrice, expiryDate, offerId], (err, result) => {
+  connection.query(sql, [productId, content, discountPrice, startDate, expiryDate, offerId], (err, result) => {
     if (err) {
       console.error('Error updating special offer:', err);
       res.status(500).send('Internal Server Error');
@@ -4100,6 +4087,7 @@ app.post('/updateOffer1/:offerid', (req, res) => {
     res.json({ message: 'Offer details updated successfully' });
   });
 });
+
 
 
 app.delete('/deleteOffer/:offerid', (req, res) => {

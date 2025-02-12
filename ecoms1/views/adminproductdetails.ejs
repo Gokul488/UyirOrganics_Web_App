@@ -418,7 +418,9 @@ button {
     background-color: #fff8dc;
     color: #8b4513;
   }
-
+  table.list-view th{
+    white-space: nowrap;
+  }
   table.list-view th,
 table.list-view td {
   padding: 8px;
@@ -498,7 +500,7 @@ table.list-view th.sortable-column {
 
           </a>
         </th>
-        <th>Product Type</th>
+        <th>Prod Type</th>
         <th class="sortable-column" data-sort="category">
           <a href="/adminproductdetails?page=<%= currentPage %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>&sortKey=category&isAscending=<%= sortKey === 'category' && isAscending ? 'false' : 'true' %>">
             Category <span class="sort-icon <%= sortKey === 'category' && !isAscending ? 'desc' : '' %>"></span>
@@ -515,7 +517,7 @@ table.list-view th.sortable-column {
         </th>
         <th class="sortable-column" data-sort="qty">
           <a href="/adminproductdetails?page=<%= currentPage %>&adminid=<%= adminId %>&search=<%= search %>&category=<%= selectedCategory %>&sortKey=qty&isAscending=<%= sortKey === 'qty' && isAscending ? 'false' : 'true' %>">
-            Quantity <span class="sort-icon <%= sortKey === 'qty' && !isAscending ? 'desc' : '' %>"></span>
+            Qty <span class="sort-icon <%= sortKey === 'qty' && !isAscending ? 'desc' : '' %>"></span>
           </a>
         </th>
       </tr>

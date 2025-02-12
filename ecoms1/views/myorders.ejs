@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>My Orders</title>
-    <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
     body {
@@ -21,6 +21,7 @@
       border-radius: 5px;
       margin-top: 2rem;
     }
+
     .btn {
       display: inline-block;
       padding: 8px 14px;
@@ -52,12 +53,12 @@
     table th, table td {
       text-align: center;
       padding: 8px;
+      cursor: pointer;
     }
-table th{
-  border-left: 1px solid #ddd;
-  text-align: center;
-}
-    thead {
+
+    table th {
+      border-left: 1px solid #ddd;
+      text-align: center;
       background-color: #0A2472;
       color: #fff;
     }
@@ -69,6 +70,7 @@ table th{
     tbody tr:nth-child(odd) {
       background-color: #fff;
     }
+
     .back-button {
       position: absolute;
       left: 20px;
@@ -86,29 +88,30 @@ table th{
       background-color: #0d5dbb;
     }
 
-h1 {
-  text-align: center; 
-  margin: 0 auto; 
-  order: 2;
-  font-size: 30px;
-  font-weight: bold;
-}  
-.price{
-  text-align: right;
-}
-.header{
-  margin-top: 1.5rem;
-}
-.no-orders {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ff0000;
-    margin-top: 20px;
-  }
-    </style>
-  <link rel="stylesheet" href="/path/to/your/css/styles.css">
-<script src="/path/to/your/fontawesome.js"></script>
+    h1 {
+      text-align: center;
+      margin: 0 auto;
+      order: 2;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .price {
+      text-align: right;
+    }
+
+    .header {
+      margin-top: 1.5rem;
+    }
+
+    .no-orders {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff0000;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <%- include('./userappbar.ejs') %>
@@ -124,19 +127,19 @@ h1 {
         <p>No orders found.</p>
       </div>
     <% } else { %>
-      <table>
+      <table id="ordersTable">
         <thead>
           <tr>
             <th>S.No</th>
-            <th>Order ID</th>
-            <th>Total Amount</th>
-            <th>Order Date (IST)</th>
-            <th>Status</th>
+            <th onclick="sortTable(1, this)">Order ID <span>▲</span></th>
+            <th onclick="sortTable(2, this)">Total Amount <span>▲</span></th>
+            <th onclick="sortTable(3, this)">Order Date (IST) <span>▲</span></th>
+            <th onclick="sortTable(4, this)">Status <span>▲</span></th>
             <th>Actions</th> 
           </tr>
         </thead>
         <tbody>
-          <% sNo = 1; %> 
+          <% sNo = 1; %>
           <% userOrders.forEach(order => { %>
             <tr>
               <td><%= sNo %></td>
@@ -151,7 +154,7 @@ h1 {
                 minute: "2-digit",
                 hour12: false
               }) %></td>
-              <td><%= order.status %></td>
+              <td><%= order.overallstatus %></td>
               <td>
                 <a href="/userorderdetails/<%= order.orderid %>?storeid=<%= storeId %>" class="btn btn-primary">View Order</a>
               </td>
@@ -163,6 +166,33 @@ h1 {
     <% } %>
   </div>
 
+  <script>
+    function sortTable(columnIndex, header) {
+      var table = document.getElementById("ordersTable");
+      var rows = Array.from(table.rows).slice(1);
+      var isAscending = header.getAttribute("data-sort") === "asc";
+      
+      rows.sort((rowA, rowB) => {
+        var cellA = rowA.cells[columnIndex].innerText.trim();
+        var cellB = rowB.cells[columnIndex].innerText.trim();
+
+        if (columnIndex === 2) {
+          cellA = parseFloat(cellA.replace('₹', ''));
+          cellB = parseFloat(cellB.replace('₹', ''));
+        }
+        
+        if (columnIndex === 3) {
+          cellA = new Date(cellA.split('/').reverse().join('-'));
+          cellB = new Date(cellB.split('/').reverse().join('-'));
+        }
+        
+        return isAscending ? (cellA > cellB ? 1 : -1) : (cellA < cellB ? 1 : -1);
+      });
+
+      header.setAttribute("data-sort", isAscending ? "desc" : "asc");
+      header.querySelector("span").innerText = isAscending ? "▼" : "▲";
+      rows.forEach(row => table.appendChild(row));
+    }
+  </script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 </html>

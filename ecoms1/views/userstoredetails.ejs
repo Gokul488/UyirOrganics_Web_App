@@ -268,7 +268,9 @@ button[type="submit"]:hover{
     
  
     <h1 class="center">PRODUCTS</h1>
-
+    <div id="product-count" class="product-count">
+        Total Products: <span id="product-count-span"><%= products.length %></span>
+    </div>
     <div class="filter">
         <select name="category" id="category" onchange="updateCategoryFilter()">
             <option value="">All Categories</option>

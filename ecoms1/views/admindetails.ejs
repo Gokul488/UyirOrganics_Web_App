@@ -245,6 +245,13 @@ form button:hover {
      min-width: 539px;
     }
 }
+#adminTable th:nth-child(3),
+#adminTable td:nth-child(3),
+#adminTable th:nth-child(4),
+#adminTable td:nth-child(4) {
+    text-align: left;
+    padding-left: 10px;
+}
 
 
     </style>
@@ -308,9 +315,9 @@ form button:hover {
 
         <label for="admincategory">Admin Category:</label>
    <select id="admincategory" name="admincategory" class="admincategory-dropdown">
-    <option value="UserAdmin" ${data.admincategory === 'UserAdmin' ? 'selected' : ''}>UserAdmin</option>
-    <option value="StockAdmin" ${data.admincategory === 'StockAdmin' ? 'selected' : ''}>StockAdmin</option>
-    <option value="SuperAdmin" ${data.admincategory === 'SuperAdmin' ? 'selected' : ''}>SuperAdmin</option>
+    <option value="UserAdmin" ${data.admincategory === 'UserAdmin' ? 'selected' : ''}>User Admin</option>
+    <option value="StockAdmin" ${data.admincategory === 'StockAdmin' ? 'selected' : ''}>Stock Admin</option>
+    <option value="SuperAdmin" ${data.admincategory === 'SuperAdmin' ? 'selected' : ''}>Super Admin</option>
 </select>
 
 
@@ -469,9 +476,9 @@ form button:hover {
 
         <label for="admincategory">Admin Category:</label>
   <select id="admincategory" name="admincategory" class="admincategory-dropdown">
-    <option value="UserAdmin">UserAdmin</option>
-    <option value="StockAdmin">StockAdmin</option>
-    <option value="SuperAdmin">SuperAdmin</option>
+    <option value="UserAdmin">User Admin</option>
+    <option value="StockAdmin">Stock Admin</option>
+    <option value="SuperAdmin">Super Admin</option>
 </select>
 
         <label for="mobileNumber">Mobile Number:</label>
