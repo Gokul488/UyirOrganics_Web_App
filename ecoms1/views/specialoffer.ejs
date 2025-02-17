@@ -11,8 +11,7 @@
       margin: 20px;
     }
     h2 {
-      color: #333;
-      margin-left: 60px;
+      margin-left: 40px;
     }
     h1 {
       order: 2;
@@ -93,7 +92,7 @@
       width: 90%;
       border-collapse: collapse;
       margin-top: 20px;
-      margin-left:60px;
+      margin-left:40px;
       margin-right: 50px;
       white-space:nowrap;
     }
@@ -104,7 +103,16 @@
       padding: 8px;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: #0A2472;
+      color: #fff;
+    }
+    td:nth-child(1){
+      max-width: 400px;
+      white-space: wrap;
+    }
+    td:nth-child(2),
+    td:nth-child(3) { 
+    text-align: right;
     }
     .back-button {
       display: inline-block;
@@ -169,18 +177,31 @@
 
       <div class="form-group">
         <label for="product">Product</label>
-        <select id="product" name="productId" required>
+        <select id="product" name="productId" required onchange="updateSalesPrice()">
           <% products.forEach(function(product) { %>
-            <option value="<%= product.productid %>">
+            <option value="<%= product.productid %>" data-salesprice="<%= product.salesprice %>">
               <%= product.productname %>
             </option>
           <% }); %>
         </select>
+        
       </div>
+
+      <div class="form-group">
+        <label for="salesPrice">Sales Price</label>
+        <input type="text" id="salesPrice" name="salesPrice" readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="discountPercentage">Discount %</label>
+        <input type="number" id="discountPercentage" name="discountPercentage" placeholder="Enter discount percentage" min="0" max="100" step="0.01" oninput="calculateDiscountPrice()">
+      </div>
+      
       <div class="form-group">
         <label for="discountPrice">Discount Price</label>
-        <input type="number" id="discountPrice" name="discountPrice" placeholder="Enter discount price" required>
+        <input type="number" id="discountPrice" name="discountPrice" placeholder="Enter discount price" min="0" step="0.01" oninput="calculateDiscountPercentage()">
       </div>
+      
       <div class="form-group">
         <label for="content">Offer Details</label>
         <textarea id="content" name="content" rows="2" required></textarea>
@@ -198,74 +219,74 @@
     </form>
   </div>
 
-  <h2>Special Offers</h2>
-  <table>
-    <thead>
+  <h2>SPECIAL OFFERS</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Product Name</th>
+      <th>Discount Price</th>
+      <th>Discount %</th> <!-- New Column for Discount Percentage -->
+      <th>Offer Details</th>
+      <th>Start Date</th>
+      <th>Expiry Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% specialOffers.forEach(function(offer) { %>
       <tr>
-        <th>Product Name</th>
-        <th>Discount Price</th>
-        <th>Offer Details</th>
-        <th>Start Date</th>
-        <th>Expiry Date</th>
-        <th>Actions</th>
+        <td>
+          <% 
+            const product = products.find(p => p.productid === offer.productid);
+            if (product) { 
+          %>
+            <%= product.productname %>
+          <% } else { %>
+            Unknown Product
+          <% } %>
+        </td>
+        <td><%= offer.discountprice %></td>
+        <td><%= offer.discountpercentage %>%</td> <!-- Display Discount Percentage -->
+        <td><%= offer.content %></td>
+        <td>
+          <% if (offer.startdate) { %>
+            <%= new Date(offer.startdate).toLocaleString('en-GB', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit', 
+              hour12: true 
+            }) %>
+          <% } else { %>
+            No Start Date
+          <% } %>
+        </td>
+        <td>
+          <% if (offer.expirydate) { %>
+            <%= new Date(offer.expirydate).toLocaleString('en-GB', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit', 
+              hour12: true 
+            }) %>
+          <% } else { %>
+            No Expiry Date
+          <% } %>
+        </td>
+        <td>
+          <a href="/editOffer/<%= offer.offerid %>">Edit</a> |
+          <a href="#" onclick="openConfirmationDialog('<%= offer.offerid %>')">Delete</a>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% specialOffers.forEach(function(offer) { %>
-        <tr>
-          <td>
-            <% 
-              const product = products.find(p => p.productid === offer.productid);
-              if (product) { 
-            %>
-              <%= product.productname %>
-            <% } else { %>
-              Unknown Product
-            <% } %>
-          </td>
-          
-          <td><%= offer.discountprice %></td>
-          <td><%= offer.content %></td>
-          <td>
-            <% if (offer.startdate) { %>
-              <%= new Date(offer.startdate).toLocaleString('en-GB', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: true 
-              }) %>
-            <% } else { %>
-              No Start Date
-            <% } %>
-          </td>
-          <td>
-            <% if (offer.expirydate) { %>
-              <%= new Date(offer.expirydate).toLocaleString('en-GB', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: true 
-              }) %>
-            <% } else { %>
-              No Expiry Date
-            <% } %>
-          </td>
-          
-          <td>
-            <a href="/editOffer/<%= offer.offerid %>">Edit</a> |
-            <a href="#" onclick="openConfirmationDialog('<%= offer.offerid %>')">Delete</a>
-          </td>
-        </tr>
-      <% }); %>
-    </tbody>
-    
-  </table>
+    <% }); %>
+  </tbody>
+</table>
+
 
   <div class="overlay" id="confirmationOverlay"></div>
   <div class="modal" id="confirmationModal">
@@ -299,6 +320,7 @@ document.getElementById('offerForm').addEventListener('submit', function (event)
           row.innerHTML = `
             <td>${newOffer.productname}</td>
             <td>${newOffer.discountprice}</td>
+            <td>${newOffer.discountpercentage}%</td>  <!-- Fix: Include discount percentage -->
             <td>${newOffer.content}</td>
             <td>${new Date(newOffer.startdate).toLocaleString()}</td>
             <td>${new Date(newOffer.expirydate).toLocaleString()}</td>
@@ -329,7 +351,24 @@ document.getElementById('offerForm').addEventListener('submit', function (event)
     });
 });
 
+function updateSalesPrice() {
+  const productSelect = document.getElementById("product");
+  const selectedOption = productSelect.options[productSelect.selectedIndex];
+  const salesPrice = selectedOption.getAttribute("data-salesprice");
 
+  document.getElementById("salesPrice").value = salesPrice ? salesPrice : "N/A";
+  
+  // Reset discount fields when sales price changes
+  document.getElementById("discountPercentage").value = "";
+  document.getElementById("discountPrice").value = "";
+}
+
+// Set the initial value on page load
+document.addEventListener("DOMContentLoaded", updateSalesPrice);
+
+
+  // Set the initial value on page load
+  document.addEventListener("DOMContentLoaded", updateSalesPrice);
     
     function openConfirmationDialog(offerId) {
       Swal.fire({
@@ -406,6 +445,27 @@ document.getElementById('offerForm').addEventListener('submit', function (event)
         }
     });
 }
+
+function calculateDiscountPrice() {
+  const salesPrice = parseFloat(document.getElementById("salesPrice").value);
+  const discountPercentage = parseFloat(document.getElementById("discountPercentage").value);
+
+  if (!isNaN(salesPrice) && !isNaN(discountPercentage)) {
+    const discountAmount = (discountPercentage / 100) * salesPrice;
+    document.getElementById("discountPrice").value = (salesPrice - discountAmount).toFixed(2);
+  }
+}
+
+function calculateDiscountPercentage() {
+  const salesPrice = parseFloat(document.getElementById("salesPrice").value);
+  const discountPrice = parseFloat(document.getElementById("discountPrice").value);
+
+  if (!isNaN(salesPrice) && !isNaN(discountPrice) && discountPrice <= salesPrice) {
+    const discountPercentage = ((salesPrice - discountPrice) / salesPrice) * 100;
+    document.getElementById("discountPercentage").value = discountPercentage.toFixed(2);
+  }
+}
+
     function goBack() {
       window.history.back();
     }

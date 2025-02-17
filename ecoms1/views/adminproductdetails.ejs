@@ -520,6 +520,7 @@ table.list-view th.sortable-column {
             Qty <span class="sort-icon <%= sortKey === 'qty' && !isAscending ? 'desc' : '' %>"></span>
           </a>
         </th>
+        <th>Min Qty</th>
       </tr>
     </thead>
     
@@ -544,6 +545,9 @@ table.list-view th.sortable-column {
           </td>
           <td data-column="qty" class="text-right">
             <%= product.producttype === 'productfamily' ? '--' : product.qty %>
+          </td>
+          <td data-column="count" class="text-right">
+            <%= product.producttype === 'productfamily' ? '--' : product.count %>
           </td>
         </tr>
       <% }); %>
@@ -800,3 +804,4 @@ table.list-view th.sortable-column {
     </script>
 </body>
 </html>
+

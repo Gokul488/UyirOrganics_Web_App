@@ -230,7 +230,13 @@ button {
         </div>
 
         <div class="input">
-          <label for="storepincode" class="label">Store Pincode</label>
+          <label for="addresspincode" class="label">Address pincode</label>
+          <input type="text" name="addresspincode" id="addresspincode" placeholder="Enter addresspincode" class="input-field" />
+          <span id="addresspincodeError" class="error-message"></span>
+        </div>
+
+        <div class="input">
+          <label for="storepincode" class="label">Store Pincode Coverage</label>
           <input type="text" name="storepincode" id="storepincode" 
                  pattern="\d{6}" required 
                  placeholder="Enter Store Pin code" 
@@ -303,6 +309,9 @@ button {
     var addressInput = document.getElementById("address");
     var addressError = document.getElementById("addressError");
 
+    var addresspincodeInput = document.getElementById("addresspincode");
+    var addresspincodeError = document.getElementById("addresspincodeError");
+
     var pincodeInput = document.getElementById("pincode");
     var pincodeError = document.getElementById("pincodeError");
 
@@ -318,6 +327,7 @@ button {
     contactnameError.textContent = "";
     mobileNumberError.textContent = "";
     addressError.textContent = "";
+    addresspincodeError.textContent = "";
     pincodeError.textContent = "";
     gstnumberError.textContent = "";
     passwordError.textContent = "";
@@ -340,6 +350,10 @@ button {
 
       if (addressInput.value.trim() === "") {
         addressError.textContent = "Address is required";
+        return false; 
+      }
+      if (addresspincodeInput.value.trim() === "") {
+        addresspincodeError.textContent = "Addresspincode is required";
         return false; 
       }
 

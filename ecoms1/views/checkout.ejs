@@ -18,17 +18,7 @@
        padding: 20px;
      }
  
-     h1 {
-      text-align: center; 
-  margin: 0 auto; 
-  order: 2;
-  font-size: 30px;
-  font-weight: bold;
-  margin-left: 560px;
- 
-    }
-
-       h4{
+      h4{
           font-size:21px;
           color:white;
           text-align: center;
@@ -89,7 +79,6 @@ background-color: #0d5dbb;
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        margin-left: 10px;
     }
 
     .back-button::before {
@@ -108,12 +97,28 @@ background-color: #0d5dbb;
     .back-button:hover{
   background-color: #0d5dbb;
 }
-    .first {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
-  }
+.first {
+  display: flex;
+  align-items: center;
+  padding: 10px; 
+}
+
+.first h1 {
+  order: 2; 
+  font-size: 30px;
+  font-weight: bold;
+  margin-right:50px;
+  margin-left: 600px; 
+}
+@media (max-width: 1464px) {
+  .first h1 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-right:50px;
+  margin-left: 600px;
+  white-space: nowrap; 
+}
+        } 
       
   @media (max-width: 1043px) {
             .app-bar {
@@ -131,99 +136,96 @@ background-color: #0d5dbb;
 
   <div class="first">
     <button onclick="goBack()" class="back-button">Back</button>
-
-     <h1>CHECKOUT</h1> 
-     </div>
-
-     <div class="container">
-      <div class="cart-total">
-          Total Amount: ₹<%= totalPrice.toFixed(2) %>
-      </div>
-  
-      <div class="cart-container">
-          <% if (cartItems.length > 0) { %>
-          <table>
-              <thead>
-                  <tr>
-                      <th>S.No.</th>
-                      <th>Product Name</th>
-                      <th>Qty</th>
-                      <th>Unit Price</th>
-                      <th>Price</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <% cartItems.forEach(function(item, index) { %>
-                  <tr>
-                      <td><%= index + 1 %></td>
-                      <td><%= item.productname %></td>
-                      <td><%= item.quantity %></td>
-                      <td>₹<%= (parseFloat(item.finalPrice) || 0).toFixed(2) %></td>
-                      <td>₹<%= (parseFloat(item.finalPrice) * item.quantity || 0).toFixed(2) %></td>
-                      
-                  </tr>
-                  <% }); %>
-              </tbody>
-          </table>
-          <form action="/placeorder" method="POST">
-              <input type="hidden" name="cartItems" value='<%= JSON.stringify(cartItems) %>'>
-              <input type="hidden" name="totalPrice" value="₹<%= totalPrice.toFixed(2) %>">
-              <div class="user-details1">
-                  <h2>User Details</h2>
-                  <p>Name: <%= user.name %></p>
-                  <p>Address: <%= user.address %></p>
-                  <p>Phone Number: <%= user.phoneNumber %></p>
-              </div>
-              <input id="checkbutton" type="submit" value="Proceed to Checkout">
-          </form>
-          <% } else { %>
-          <p class="empty-cart-message">Your cart is empty.</p>
-          <% } %>
-      </div>
+    <h1>CHECKOUT</h1> 
   </div>
-  
-  </body>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-  <script>
-  function toggleDropdown() {
-      const dropdownContent = document.getElementById("dropdown");
-      const dropdownArrow = document.querySelector(".dropdown-arrow i");
-  
-      dropdownContent.classList.toggle("show");
-      dropdownArrow.classList.toggle("rotate-arrow");
-  }
-  
-  function showCustomAlert() {
-      Swal.fire({
-          title: "Are you sure you want to logout?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Logout",
-          cancelButtonText: "Cancel",
-          customClass: {
-              confirmButton: "action-button",
-              cancelButton: "action-button",
-          },
-      }).then((result) => {
-          if (result.isConfirmed) {
-              window.location.href = "http://localhost:7777";
-              history.replaceState(null, null, 'http://localhost:7777');
-          }
-      });
-  }
-  
-  document.addEventListener("click", function(event) {
-      const dropdownContent = document.getElementById("dropdown");
-      const dropdownArrow = document.querySelector(".dropdown-arrow i");
-  
-      if (!event.target.closest(".edit-profile-dropdown")) {
-          dropdownContent.classList.remove("show");
-          dropdownArrow.classList.remove("rotate-arrow");
-      }
-  });
-  
-  function goBack() {
-      window.history.back(); 
-  }
-  </script>
+
+  <div class="container">
+    <div class="cart-total">
+        Total Amount: ₹<%= totalPrice.toFixed(2) %>
+    </div>
+
+    <div class="cart-container">
+        <% if (cartItems.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Product Name</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Price(tax)</th>
+                  </tr>
+            </thead>
+            <tbody>
+                <% cartItems.forEach(function(item, index) { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= item.productname %></td>
+                    <td><%= item.quantity %></td>
+                    <td>₹<%= (parseFloat(item.finalPrice) || 0).toFixed(2) %></td>
+                    <td>₹<%= ((parseFloat(item.finalPrice) * item.quantity) || 0).toFixed(2) %> (<%= item.GST %>)</td>
+                  </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <form action="/placeorder" method="POST">
+            <input type="hidden" name="cartItems" value='<%= JSON.stringify(cartItems) %>'>
+            <input type="hidden" name="totalPrice" value="₹<%= totalPrice.toFixed(2) %>">
+            <div class="user-details1">
+                <h2>User Details</h2>
+                <p>Name: <%= user.name %></p>
+                <p>Address: <%= user.address %></p>
+                <p>Phone Number: <%= user.phoneNumber %></p>
+            </div>
+            <input id="checkbutton" type="submit" value="Proceed to Checkout">
+        </form>
+        <% } else { %>
+        <p class="empty-cart-message">Your cart is empty.</p>
+        <% } %>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+<script>
+function toggleDropdown() {
+    const dropdownContent = document.getElementById("dropdown");
+    const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+    dropdownContent.classList.toggle("show");
+    dropdownArrow.classList.toggle("rotate-arrow");
+}
+
+function showCustomAlert() {
+    Swal.fire({
+        title: "Are you sure you want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+        customClass: {
+            confirmButton: "action-button",
+            cancelButton: "action-button",
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "http://localhost:7777";
+            history.replaceState(null, null, 'http://localhost:7777');
+        }
+    });
+}
+
+document.addEventListener("click", function(event) {
+    const dropdownContent = document.getElementById("dropdown");
+    const dropdownArrow = document.querySelector(".dropdown-arrow i");
+
+    if (!event.target.closest(".edit-profile-dropdown")) {
+        dropdownContent.classList.remove("show");
+        dropdownArrow.classList.remove("rotate-arrow");
+    }
+});
+
+function goBack() {
+    window.history.back(); 
+}
+</script>
 </html>

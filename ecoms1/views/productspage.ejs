@@ -215,21 +215,36 @@
       display: flex;
       text-align: center;
     }
+
     .back-button {
-  margin: 0;
-  padding: 7px 9px;
+  display: inline-block;
+  padding: 7px 9px; 
   background-color: #0A2472;
   color: #fff;
   border: none;
   border-radius: 5px;
-  font-size: 13px;
   cursor: pointer;
+  font-size: 13px;
+  position: relative;
+  overflow: hidden;
 }
 
+.back-button::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: #0056b3;
+  z-index: 0; 
+}
+
+.back-button:hover::before {
+  width: 100%;
+}
 .back-button:hover {
   background-color: #0d5dbb;
 }
-
     .description-list {
       list-style-type: none !important;
       padding-left: 0;
@@ -300,7 +315,7 @@
             <p>
                 Sales Price: <span style="text-decoration: line-through;">₹<%= product.salesprice %></span><br>
                 Offer Price: ₹<%= specialOfferDiscountPrice %><br><br>
-                <span style="color: green; font-weight: bold;">You Saved: <%= percentageReduction %>%</span>
+                <span style="color: green; font-weight: bold;">You Saved: <%= specialOfferDiscountPercentage %>%</span>
             </p>
             <% } %>
             <% if (specialOfferExpiryDate) { %>
@@ -422,21 +437,21 @@
     });
 
     function checkQuantity(input) {
-        var quantity = parseInt(input.value);
-        var maxQuantity = parseInt(input.max);
+    var quantity = parseInt(input.value);
+    var maxQuantity = parseInt(input.max);
 
-        if (quantity >= maxQuantity) {
-            Swal.fire({
-                title: 'Quantity Reached Maximum Stock Value',
-                text: 'You have reached the maximum limit for this product.',
-                icon: 'warning',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'action-button'
-                }
-            });
-        }
+    if (quantity >= maxQuantity) {
+        Swal.fire({
+            title: 'Quantity Reached Maximum Stock Value',
+            text: `You have reached the maximum limit for this product. Maximum available stock: ${maxQuantity}.`,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'action-button'
+            }
+        });
     }
+}
 
       document.addEventListener("DOMContentLoaded", function() {
           calculateTotalPrice(); 

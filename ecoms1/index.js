@@ -282,11 +282,11 @@ app.post('/userlogin', (req, res) => {
                       }
 
                       let redirectUrl;
-                      if (admincategory === 'UserAdmin') {
+                      if (admincategory === 'User Admin') {
                           redirectUrl = `/useradmin?adminid=${adminId}`;
-                      } else if (admincategory === 'StockAdmin') {
+                      } else if (admincategory === 'Stock Admin') {
                           redirectUrl = `/adminupdatestock?adminid=${adminId}`;
-                      } else if (admincategory === 'SuperAdmin') {
+                      } else if (admincategory === 'Super Admin') {
                           redirectUrl = `/adminproductdetails?adminid=${adminId}`;
                       } else {
                           return res.status(400).json({ error: 'Invalid category' });
@@ -515,20 +515,30 @@ app.get('/adminstoredetails', (req, res) => {
     res.status(400).send('Invalid adminid');
     return;
   }
-  req.session.adminId = adminId; 
+  req.session.adminId = adminId;
 
-  const page = req.query.page || 1;
+  const page = parseInt(req.query.page) || 1;
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
+  // Query to get store details and individual total stock values
   const storeQuery = `
-    SELECT *
-    FROM storesignin
-    ORDER BY name
+    SELECT s.*, COALESCE(SUM(sp.qty * p.salesprice), 0) AS totalStockValue
+    FROM storesignin s
+    LEFT JOIN storeproducts sp ON s.storeid = sp.storeid
+    LEFT JOIN products p ON sp.productid = p.productid
+    GROUP BY s.storeid
+    ORDER BY s.name
     LIMIT ? OFFSET ?;
   `;
 
-  connection.query(storeQuery, [pageSize, offset], (error, results) => {
+  // Query to calculate the **total warehouse stock value from the products table**
+  const totalWarehouseStockValueQuery = `
+    SELECT COALESCE(SUM(salesprice * qty), 0) AS totalWarehouseStockValue
+    FROM products;
+  `;
+
+  connection.query(storeQuery, [pageSize, offset], (error, storeResults) => {
     if (error) {
       console.error('Error fetching store details: ' + error);
       res.status(500).send('Internal Server Error');
@@ -545,29 +555,43 @@ app.get('/adminstoredetails', (req, res) => {
       const totalStoresCount = countResult[0].storeCount;
       const totalPages = Math.ceil(totalStoresCount / pageSize);
 
-      const adminNameQuery = 'SELECT adminname, admincategory FROM admin WHERE adminid = ?';
-      connection.query(adminNameQuery, [adminId], (adminError, adminResult) => {
-        if (adminError) {
-          console.error('Error fetching admin details: ' + adminError);
+      // Fetch total warehouse stock value (from `products` table)
+      connection.query(totalWarehouseStockValueQuery, (warehouseStockError, warehouseStockResult) => {
+        if (warehouseStockError) {
+          console.error('Error fetching total warehouse stock value: ' + warehouseStockError);
           res.status(500).send('Internal Server Error');
           return;
         }
 
-        res.render('adminstoredetails', {
-          hideDropdownItems: false,
-          storeDetails: results,
-          storeCount: totalStoresCount,
-          adminName: adminResult[0] ? adminResult[0].adminname : 'Admin Name not found',
-          admincategory: adminResult[0] ? adminResult[0].admincategory : 'Category not found',
-          adminId: adminId,
-          totalPages: totalPages,
-          currentPage: page,
-          pageSize: pageSize,
+        const totalWarehouseStockValue = warehouseStockResult[0].totalWarehouseStockValue || 0;
+
+        // Fetch admin details
+        const adminNameQuery = 'SELECT adminname, admincategory FROM admin WHERE adminid = ?';
+        connection.query(adminNameQuery, [adminId], (adminError, adminResult) => {
+          if (adminError) {
+            console.error('Error fetching admin details: ' + adminError);
+            res.status(500).send('Internal Server Error');
+            return;
+          }
+
+          res.render('adminstoredetails', {
+            hideDropdownItems: false,
+            storeDetails: storeResults,
+            storeCount: totalStoresCount,
+            totalWarehouseStockValue: totalWarehouseStockValue, // ✅ Uses `products` table now
+            adminName: adminResult[0] ? adminResult[0].adminname : 'Admin Name not found',
+            admincategory: adminResult[0] ? adminResult[0].admincategory : 'Category not found',
+            adminId: adminId,
+            totalPages: totalPages,
+            currentPage: page,
+            pageSize: pageSize,
+          });
         });
       });
     });
   });
 });
+
 
 
 app.get('/addpincode/:storeid', (req, res) => {
@@ -804,7 +828,7 @@ app.get('/admineditstore/:storeid', (req, res) => {
 
 app.post('/admineditstore/:storeid', (req, res) => {
   const storeId = req.params.storeid;
-  const { name, contactname, place, gstnumber, mobilenumber, storepincode, password, adminId } = req.body;
+  const { name, contactname, place, gstnumber, mobilenumber, addresspincode, storepincode, password, adminId } = req.body;
 
   connection.query('SELECT GROUP_CONCAT(storepincode) AS allPincodes FROM storesignin WHERE storeid != ?', [storeId], (error, results) => {
     if (error) {
@@ -827,8 +851,8 @@ app.post('/admineditstore/:storeid', (req, res) => {
       
       const updatedPincode = storepincode || store.storepincode;
 
-      const updateQuery = 'UPDATE storesignin SET name = ?, contactname = ?, place = ?, gstnumber = ?, mobilenumber = ?, storepincode = ?, password = ? WHERE storeId = ?';
-      connection.query(updateQuery, [name, contactname, place, gstnumber, mobilenumber, updatedPincode, password, storeId], (error, results) => {
+      const updateQuery = 'UPDATE storesignin SET name = ?, contactname = ?, place = ?, addresspincode = ?, gstnumber = ?, mobilenumber = ?, storepincode = ?, password = ? WHERE storeId = ?';
+      connection.query(updateQuery, [name, contactname, place, addresspincode, gstnumber, mobilenumber, updatedPincode, password, storeId], (error, results) => {
         if (error) {
           console.error('Error updating store details: ' + error);
           res.status(500).json({ error: 'Internal Server Error' });
@@ -900,16 +924,19 @@ app.get('/storesignup', (req, res) => {
 
 
 app.post('/storeregister', (req, res) => {
-  const { name, contactname, place, gstnumber, mobilenumber, storepincode, password, adminId } = req.body;
+  const { name, contactname, place, gstnumber, mobilenumber, addresspincode, storepincode, password, adminId } = req.body;
 
   if (!adminId) {
     res.status(400).send('Invalid adminid');
     return;
   }
 
-  const mobileNumberQuery = 'SELECT mobilenumber FROM storesignin WHERE mobilenumber = ? ' +
-                           'UNION SELECT mobilenumber FROM usersignin WHERE mobilenumber = ? ' +
-                           'UNION SELECT mobilenumber FROM admin WHERE mobilenumber = ?';
+  const mobileNumberQuery = `
+    SELECT mobilenumber FROM storesignin WHERE mobilenumber = ? 
+    UNION 
+    SELECT mobilenumber FROM usersignin WHERE mobilenumber = ? 
+    UNION 
+    SELECT mobilenumber FROM admin WHERE mobilenumber = ?`;
 
   const queryParams = [mobilenumber, mobilenumber, mobilenumber];
 
@@ -926,20 +953,23 @@ app.post('/storeregister', (req, res) => {
     }
 
     const pincodeQuery = 'SELECT * FROM storesignin WHERE storepincode = ?';
-connection.query(pincodeQuery, [storepincode], (err, pincodeResults) => {
-  if (err) {
-    console.error('Error querying the database for pincode: ', err);
-    res.status(500).send('Internal Server Error');
-    return;
-  }
+    connection.query(pincodeQuery, [storepincode], (err, pincodeResults) => {
+      if (err) {
+        console.error('Error querying the database for pincode: ', err);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+
       if (pincodeResults.length > 0) {
         res.render('storepincodeerror', { adminId });
         return;
       }
 
+      const insertQuery = `
+        INSERT INTO storesignin (name, contactname, place, gstnumber, mobilenumber, addresspincode, storepincode, password) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-      const insertQuery = 'INSERT INTO storesignin (name, contactname, place, gstnumber, mobilenumber, storepincode, password) VALUES (?, ?, ?, ?, ?, ?, ?)';
-      connection.query(insertQuery, [name, contactname, place, gstnumber, mobilenumber, storepincode, password], (err, result) => {
+      connection.query(insertQuery, [name, contactname, place, gstnumber, mobilenumber, addresspincode, storepincode, password], (err, result) => {
         if (err) {
           console.error('Error inserting data into the database: ', err);
           res.status(500).send('Internal Server Error');
@@ -951,6 +981,7 @@ connection.query(pincodeQuery, [storepincode], (err, pincodeResults) => {
     });
   });
 });
+
 
 
 app.get('/createcategory', (req, res) => {
@@ -1219,7 +1250,7 @@ app.get('/createproduct', async (req, res) => {
 
 
 app.post('/createproduct', dynamicUpload, (req, res) => {
-  const { productname, producttype, category, code, hsn, salesprice, gst, weight, qty, description, adminid } = req.body;
+  const { productname, producttype, category, code, hsn, salesprice, gst, weight, qty, description, count, adminid } = req.body;
 
   console.log('Received adminId:', adminid);
   console.log('Received files:', req.files);
@@ -1232,10 +1263,11 @@ app.post('/createproduct', dynamicUpload, (req, res) => {
     gst,
     weight,
     qty,
-    description
+    description,
+    count
   });
 
-  const productQuery = 'INSERT INTO products (productname, producttype, category, code, hsn, salesprice, gst, weight, qty, description, parentid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const productQuery = 'INSERT INTO products (productname, producttype, category, code, hsn, salesprice, gst, weight, qty, description, minimum_stock_count, parentid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   const productValues = [
     productname,
     producttype,
@@ -1247,6 +1279,7 @@ app.post('/createproduct', dynamicUpload, (req, res) => {
     weight[0],
     qty[0],
     description,
+    count[0],
     -1
   ];
 
@@ -1554,8 +1587,8 @@ app.get('/editadmin/:adminId', (req, res) => {
 
 
 app.post('/updateadmin', async (req, res) => {
-  const { adminId, mobileNumber, password, adminName } = req.body;
-  console.log('Received update admin:', adminId, mobileNumber, password, adminName );
+  const { adminId, mobileNumber, password, adminName, admincategory } = req.body;
+  console.log('Received update admin:', adminId, mobileNumber, password, adminName, admincategory);
 
   try {
       let query;
@@ -1563,11 +1596,11 @@ app.post('/updateadmin', async (req, res) => {
 
       if (password) {
           const hashedPassword = await bcrypt.hash(password, 10);
-          query = 'UPDATE admin SET mobilenumber = ?, password = ?, adminname = ? WHERE adminid = ?';
-          values = [mobileNumber, hashedPassword, adminName, adminId];
+          query = 'UPDATE admin SET mobilenumber = ?, password = ?, adminname = ?, admincategory = ? WHERE adminid = ?';
+          values = [mobileNumber, hashedPassword, adminName, admincategory, adminId];
       } else {
-          query = 'UPDATE admin SET mobilenumber = ?, adminname = ? WHERE adminid = ?';
-          values = [mobileNumber, adminName, adminId];
+          query = 'UPDATE admin SET mobilenumber = ?, adminname = ?, admincategory = ? WHERE adminid = ?';
+          values = [mobileNumber, adminName, admincategory, adminId];
       }
 
       connection.query(query, values, (error, results) => {
@@ -1610,7 +1643,6 @@ app.post('/createadmin', async (req, res) => {
       res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
-
 
 
 
@@ -2227,7 +2259,7 @@ app.get('/adminproductdetails', (req, res) => {
   req.session.adminId = adminId;
 
   console.log('adminId:', adminId);
-  
+
   const countQuery = 'SELECT COUNT(DISTINCT p.productid) AS totalProductsCount FROM products p';
   connection.query(countQuery, (countError, countResults) => {
     if (countError) {
@@ -2255,141 +2287,139 @@ app.get('/adminproductdetails', (req, res) => {
       const admincategory = adminResult[0].admincategory;
 
       const searchTerm = req.query.search || '';
-      let sort = req.query.sort || 'default';
-      let isAscending = req.query.isAscending === 'true'; 
-      let sortKey = req.query.sortKey || 'productid'; 
+      let sortKey = req.query.sortKey || 'productid';
+      let isAscending = req.query.isAscending === 'true';
 
       let query = `
-      SELECT p.*, pi.imagepath
-      FROM products p
-      LEFT JOIN (
-        SELECT productid, imagepath
-        FROM (
-          SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
-          FROM productimages
-        ) ranked_images
-        WHERE row_num = 1
-      ) pi ON p.productid = pi.productid
-    `;
-    
-    const queryParams = [];
-    
-    if (searchTerm) {
-      query += ` WHERE p.productname LIKE ? `;
-      queryParams.push(`%${searchTerm}%`);
-    }
-    
-    if (category) {
-      query += searchTerm ? ` AND ` : ` WHERE `;
-      query += ` p.category = ? `;
-      queryParams.push(category);
-    }
-    
-    if (sortKey === 'productname') {
-      query += isAscending ? ' ORDER BY p.productname ASC' : ' ORDER BY p.productname DESC';
-    } else if (sortKey === 'category') {
-      query += isAscending ? ' ORDER BY p.category ASC' : ' ORDER BY p.category DESC';
-    } else if (sortKey === 'salesprice') {
-      query += isAscending ? ' ORDER BY p.salesprice ASC' : ' ORDER BY p.salesprice DESC';
-    } else if (sortKey === 'qty') {
-      query += isAscending ? ' ORDER BY p.qty ASC' : ' ORDER BY p.qty DESC';
-    } else {
-      query += ' ORDER BY p.productid'; 
-    }
-    
-    const page = req.query.page || 1;
-    const pageSize = 16;
-    const offset = (page - 1) * pageSize;
-    
-    query += ` LIMIT ? OFFSET ?; `;
-    queryParams.push(pageSize, offset);
+        SELECT p.*, p.minimum_stock_count AS count, pi.imagepath
+        FROM products p
+        LEFT JOIN (
+          SELECT productid, imagepath
+          FROM (
+            SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
+            FROM productimages
+          ) ranked_images
+          WHERE row_num = 1
+        ) pi ON p.productid = pi.productid
+      `;
 
-    const allProductsQuery = `
-      SELECT p.salesprice, p.qty
-      FROM products p
-      LEFT JOIN (
-        SELECT productid, imagepath
-        FROM (
-          SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
-          FROM productimages
-        ) ranked_images
-        WHERE row_num = 1
-      ) pi ON p.productid = pi.productid
-      ${searchTerm ? 'WHERE p.productname LIKE ? ' : ''}
-      ${category ? (searchTerm ? 'AND ' : 'WHERE ') + 'p.category = ? ' : ''}
-    `;
-    
-    const allQueryParams = [];
-    if (searchTerm) allQueryParams.push(`%${searchTerm}%`);
-    if (category) allQueryParams.push(category);
-    
-    connection.query(allProductsQuery, allQueryParams, (allProductsError, allProductsResults) => {
-      if (allProductsError) {
-        console.error('Error fetching all product details: ' + allProductsError);
-        res.status(500).send('Internal Server Error');
-        return;
+      const queryParams = [];
+
+      if (searchTerm) {
+        query += ` WHERE p.productname LIKE ? `;
+        queryParams.push(`%${searchTerm}%`);
       }
 
-      const overallStockValue = allProductsResults.reduce((total, product) => {
-        return total + (product.salesprice * product.qty);
-      }, 0);
+      if (category) {
+        query += searchTerm ? ` AND ` : ` WHERE `;
+        query += ` p.category = ? `;
+        queryParams.push(category);
+      }
 
-      connection.query(query, queryParams, (error, results) => {
-        if (error) {
+      if (sortKey === 'productname') {
+        query += isAscending ? ' ORDER BY p.productname ASC' : ' ORDER BY p.productname DESC';
+      } else if (sortKey === 'category') {
+        query += isAscending ? ' ORDER BY p.category ASC' : ' ORDER BY p.category DESC';
+      } else if (sortKey === 'salesprice') {
+        query += isAscending ? ' ORDER BY p.salesprice ASC' : ' ORDER BY p.salesprice DESC';
+      } else if (sortKey === 'qty') {
+        query += isAscending ? ' ORDER BY p.qty ASC' : ' ORDER BY p.qty DESC';
+      } else {
+        query += ' ORDER BY p.productid';
+      }
+
+      const page = req.query.page || 1;
+      const pageSize = 16;
+      const offset = (page - 1) * pageSize;
+
+      query += ` LIMIT ? OFFSET ?; `;
+      queryParams.push(pageSize, offset);
+
+      const allProductsQuery = `
+        SELECT p.salesprice, p.qty, p.minimum_stock_count AS count
+        FROM products p
+        LEFT JOIN (
+          SELECT productid, imagepath
+          FROM (
+            SELECT productid, imagepath, ROW_NUMBER() OVER (PARTITION BY productid ORDER BY image_order) as row_num
+            FROM productimages
+          ) ranked_images
+          WHERE row_num = 1
+        ) pi ON p.productid = pi.productid
+        ${searchTerm ? 'WHERE p.productname LIKE ? ' : ''}
+        ${category ? (searchTerm ? 'AND ' : 'WHERE ') + 'p.category = ? ' : ''}
+      `;
+
+      const allQueryParams = [];
+      if (searchTerm) allQueryParams.push(`%${searchTerm}%`);
+      if (category) allQueryParams.push(category);
+
+      connection.query(allProductsQuery, allQueryParams, (allProductsError, allProductsResults) => {
+        if (allProductsError) {
+          console.error('Error fetching all product details: ' + allProductsError);
+          res.status(500).send('Internal Server Error');
+          return;
+        }
+
+        const overallStockValue = allProductsResults.reduce((total, product) => {
+          return total + (product.salesprice * product.qty);
+        }, 0);
+
+        connection.query(query, queryParams, (error, results) => {
+          if (error) {
             console.error('Error fetching product details: ' + error);
             res.status(500).send('Internal Server Error');
             return;
-        }
-    
-        const productsWithImages = results.map(product => {
+          }
+
+          const productsWithImages = results.map(product => {
             const imageBase64 = product.imagepath && Buffer.isBuffer(product.imagepath)
-                ? product.imagepath.toString('base64') 
-                : null; 
-    
+              ? product.imagepath.toString('base64')
+              : null;
+
             let decodedImagePath;
             if (imageBase64) {
-                decodedImagePath = Buffer.from(imageBase64, 'base64');
+              decodedImagePath = Buffer.from(imageBase64, 'base64');
             }
             return {
-                ...product,
-                imagepath: decodedImagePath
-                    ? `data:image/jpeg;base64,${decodedImagePath}`  
-                    : '/images/default-product.jpg' 
+              ...product,
+              imagepath: decodedImagePath
+                ? `data:image/jpeg;base64,${decodedImagePath}`
+                : '/images/default-product.jpg'
             };
-        });
-    
-        const totalPages = Math.ceil(totalProductsCount / pageSize);
-        const startSerialNumber = (page - 1) * pageSize + 1;
-    
-        const categoryQuery = 'SELECT DISTINCT category FROM products';
-        connection.query(categoryQuery, (categoryError, categoryResults) => {
+          });
+
+          const totalPages = Math.ceil(totalProductsCount / pageSize);
+          const startSerialNumber = (page - 1) * pageSize + 1;
+
+          const categoryQuery = 'SELECT DISTINCT category FROM products';
+          connection.query(categoryQuery, (categoryError, categoryResults) => {
             if (categoryError) {
-                console.error('Error fetching categories: ' + categoryError);
-                res.status(500).send('Internal Server Error');
-                return;
+              console.error('Error fetching categories: ' + categoryError);
+              res.status(500).send('Internal Server Error');
+              return;
             }
-    
+
             const categories = categoryResults.map(category => category.category);
             const selectedCategory = category;
-    
+
             res.render('adminproductdetails', {
-                hideDropdownItems: false,
-                productDetails: productsWithImages,
-                totalPages: totalPages,
-                currentPage: page,
-                pageSize: pageSize,
-                totalProductsCount: totalProductsCount,
-                totalStockValue: overallStockValue, 
-                adminId: adminId,
-                adminName: adminName,
-                admincategory: admincategory,
-                startSerialNumber: startSerialNumber,
-                search: search,
-                sort: sort,
-                isAscending: isAscending,
-                sortKey: sortKey,
-                categories: categories,
-                selectedCategory: selectedCategory   
+              hideDropdownItems: false,
+              productDetails: productsWithImages,
+              totalPages: totalPages,
+              currentPage: page,
+              pageSize: pageSize,
+              totalProductsCount: totalProductsCount,
+              totalStockValue: overallStockValue,
+              adminId: adminId,
+              adminName: adminName,
+              admincategory: admincategory,
+              startSerialNumber: startSerialNumber,
+              search: search,
+              isAscending: isAscending,
+              sortKey: sortKey,
+              categories: categories,
+              selectedCategory: selectedCategory
             });
           });
         });
@@ -2397,7 +2427,6 @@ app.get('/adminproductdetails', (req, res) => {
     });
   });
 });
-
 
 
 app.get('/getFilteredProductCount', (req, res) => {
@@ -2709,7 +2738,9 @@ app.post(
         GST: req.body.gst,
         qty: req.body.quantity,
         description: req.body.description,
-        weight: req.body.weight
+        weight: req.body.weight,
+        minimum_stock_count: req.body.count,
+
       };
 
       const updateQuery = 'UPDATE products SET ? WHERE productid = ?';
@@ -2731,6 +2762,8 @@ app.post(
     }
   }
 );
+
+
 
 app.delete('/admindeleteproduct', (req, res) => {
   const productID = req.query.productid;
@@ -2819,7 +2852,7 @@ app.get('/userstoredetails/:storeid', (req, res) => {
   const itemsPerPage = 16;
   const selectedCategory = req.query.category || '';
   const searchKeyword = req.query.search || '';
-
+  const showSpecialOffers = req.query.specialOffers === 'true';
   const userQuery = `
     SELECT usersignin.name AS userName, storesignin.name AS storeName, storesignin.mobilenumber
     FROM usersignin
@@ -2985,7 +3018,10 @@ app.get('/userstoredetails/:storeid', (req, res) => {
           productsQuery += ' AND p.productname LIKE ?';
           queryParams.push(`%${searchKeyword}%`);
         }
-
+        if (showSpecialOffers) {
+          productsQuery += ' AND s.offerid IS NOT NULL';
+      }
+      
         productsQuery += `
           GROUP BY p.productid, p.productname, p.category, p.code, p.hsn, p.salesprice, p.GST, s.qty, p.description, pi.imagepath, so.content, so.discountprice, so.expirydate
           LIMIT ?, ?`;
@@ -3028,6 +3064,7 @@ app.get('/userstoredetails/:storeid', (req, res) => {
               selectedCategory,
               searchKeyword,  
               categories: uniqueCategories,
+              specialOffer: showSpecialOffers,
             });            
           });
         });
@@ -3064,7 +3101,8 @@ app.get('/productspage/:productid', (req, res) => {
       p.*, 
       so.content AS specialOfferContent,
       so.discountprice AS specialOfferDiscountPrice,
-      so.expirydate AS specialOfferExpiryDate
+      so.expirydate AS specialOfferExpiryDate,
+      so.discountpercentage AS specialOfferDiscountPercentage
     FROM 
       products p
     LEFT JOIN 
@@ -3096,14 +3134,15 @@ app.get('/productspage/:productid', (req, res) => {
                 console.error('Error fetching images:', error);
                 res.render('productspage', { product, images: [], userName: null, storeName: null, qty });
               } else {
-          const  images = imageResults.map(image => ({
-              imagepath: image.imagepath
-                ? `data:image/jpeg;base64,${image.imagepath}`  
-                : '', 
+                const images = imageResults.map(image => ({
+                  imagepath: image.imagepath
+                    ? `data:image/jpeg;base64,${image.imagepath}`  
+                    : '', 
                 }));
 
                 const isOfferValid = product.specialOfferExpiryDate >= new Date();
                 const specialOfferDiscountPrice = isOfferValid ? product.specialOfferDiscountPrice : null;
+                const specialOfferDiscountPercentage = isOfferValid ? product.specialOfferDiscountPercentage : null;
 
                 res.render('productspage', {
                   product,
@@ -3115,6 +3154,7 @@ app.get('/productspage/:productid', (req, res) => {
                   qty,
                   specialOfferContent: isOfferValid ? product.specialOfferContent : null,
                   specialOfferDiscountPrice,
+                  specialOfferDiscountPercentage,
                   specialOfferExpiryDate: isOfferValid ? product.specialOfferExpiryDate : null
                 });
               }
@@ -3330,6 +3370,7 @@ app.get('/checkout', (req, res) => {
       products.productid, 
       products.productname, 
       products.salesprice, 
+      products.GST,
       cart.quantity, 
       COALESCE(specialoffers.discountprice, products.salesprice) AS finalPrice
     FROM 
@@ -3405,6 +3446,7 @@ app.get('/checkout', (req, res) => {
     });
   });
 });
+
 
 
 app.post('/checkout', (req, res) => {
@@ -3732,115 +3774,16 @@ app.get('/storedetails/:storeid', (req, res) => {
   const itemsPerPage = 25;
   const sortKey = req.query.sortKey || 'productname';
   const sortOrder = req.query.sortOrder || 'asc';
-  
   const searchQuery = req.query.search || '';
 
   const storeQuery = 'SELECT storeid, name, contactname FROM storesignin WHERE storeid = ?';
-
   connection.query(storeQuery, [storeId], (error, storeResults) => {
     if (error) {
       console.error('Error fetching store:', error);
       return res.status(500).send('Internal Server Error');
     }
 
-    if (storeResults.length > 0) {
-      const storeData = storeResults[0];
-      const { storeid, name, contactname } = storeData;
-
-      let productsQuery = `
-        SELECT p.productid, p.productname, p.category, p.code, p.hsn, p.salesprice, p.GST, p.description,
-               IFNULL(s.storeproductid, 0) AS storeproductid, IFNULL(s.qty, 0) AS qty
-        FROM products AS p
-        LEFT JOIN storeproducts AS s ON p.productid = s.productid AND s.storeid = ?
-        WHERE p.producttype != 'productfamily'`;
-
-      if (searchQuery) {
-        productsQuery += ` AND p.productname LIKE ?`;
-      }
-      if (sortKey === 'productname') {
-        productsQuery += ` ORDER BY p.productname ${sortOrder}`;
-      } else if (sortKey === 'qty') {
-        productsQuery += ` ORDER BY s.qty ${sortOrder}`;
-      } else if (sortKey === 'salesprice') {
-        productsQuery += ` ORDER BY p.salesprice ${sortOrder}`;
-      } else if (sortKey === 'category') {
-        productsQuery += ` ORDER BY p.category ${sortOrder}`;
-      } else {
-        productsQuery += ' ORDER BY p.productname ASC'; 
-      }
-      
-
-      connection.query(productsQuery, [storeId, `%${searchQuery}%`], (error, productsResults) => {
-        if (error) {
-          console.error('Error fetching products:', error);
-          return res.status(500).send('Internal Server Error');
-        }
-
-        const products = productsResults;
-        const totalProducts = products.length;
-        const totalStockValue = products.reduce((total, product) => total + (product.qty * product.salesprice), 0);
-
-        const productIdsToInsert = products
-          .filter(product => product.storeproductid === 0)
-          .map(product => product.productid);
-
-        if (productIdsToInsert.length > 0) {
-          const insertQuery = 'INSERT INTO storeproducts (storeid, productid, qty) VALUES (?, ?, 0)';
-          productIdsToInsert.forEach(productId => {
-            connection.query(insertQuery, [storeId, productId], (error) => {
-              if (error) {
-                console.error('Error inserting product into storeproducts:', error);
-              }
-            });
-          });
-        }
-
-        const productIds = products.map(product => product.productid);
-        let images = [];
-
-        if (productIds.length > 0) {
-          const imageQuery = `SELECT imagepath, productid FROM productimages WHERE productid IN (?)`;
-          connection.query(imageQuery, [productIds], (error, imageResults) => {
-            if (error) {
-              console.error('Error fetching images:', error);
-              return res.status(500).send('Internal Server Error');
-            }
-
-            images = imageResults.map(image => ({
-              imagepath: image.imagepath ? `data:image/jpeg;base64,${image.imagepath}` : '',
-              productid: image.productid,
-            }));
-
-            renderPage(products, images);
-          });
-        } else {
-          renderPage(products, images);
-        }
-
-        function renderPage(products, images) {
-          const startIndex = (currentPage - 1) * itemsPerPage;
-          const endIndex = startIndex + itemsPerPage;
-          const paginatedProducts = products.slice(startIndex, endIndex);
-          const totalPages = Math.ceil(products.length / itemsPerPage);
-
-          res.render('storedetails', {
-            storeId,
-            name,
-            contactname,
-            products: paginatedProducts,
-            images,
-            currentPage,
-            totalPages,
-            totalProducts,
-            totalStockValue,
-            sortKey,
-            sortOrder,
-            itemsPerPage,
-            searchQuery 
-          });
-        }
-      });
-    } else {
+    if (storeResults.length === 0) {
       return res.render('storedetails', {
         storeId,
         name: '',
@@ -3854,9 +3797,113 @@ app.get('/storedetails/:storeid', (req, res) => {
         sortKey,
         sortOrder,
         itemsPerPage,
-        searchQuery 
+        searchQuery,
+        orderedCount: 0 // Default to 0 if no store is found
       });
     }
+
+    const { storeid, name, contactname } = storeResults[0];
+
+    let productsQuery = `
+      SELECT p.productid, p.productname, p.category, p.code, p.hsn, p.salesprice, p.GST, p.description, p.minimum_stock_count as count, 
+             IFNULL(s.storeproductid, 0) AS storeproductid, IFNULL(s.qty, 0) AS qty
+      FROM products AS p
+      LEFT JOIN storeproducts AS s ON p.productid = s.productid AND s.storeid = ?
+      WHERE p.producttype != 'productfamily'`;
+
+    if (searchQuery) {
+      productsQuery += ` AND p.productname LIKE ?`;
+    }
+    productsQuery += ` ORDER BY ${sortKey} ${sortOrder}`;
+
+    connection.query(productsQuery, [storeId, `%${searchQuery}%`], (error, productsResults) => {
+      if (error) {
+        console.error('Error fetching products:', error);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      const products = productsResults;
+      const totalProducts = products.length;
+      const totalStockValue = products.reduce((total, product) => total + (product.qty * product.salesprice), 0);
+
+      const productIdsToInsert = products.filter(product => product.storeproductid === 0).map(product => product.productid);
+
+      if (productIdsToInsert.length > 0) {
+        const insertQuery = 'INSERT INTO storeproducts (storeid, productid, qty) VALUES (?, ?, 0)';
+        productIdsToInsert.forEach(productId => {
+          connection.query(insertQuery, [storeId, productId], (error) => {
+            if (error) {
+              console.error('Error inserting product into storeproducts:', error);
+            }
+          });
+        });
+      }
+
+      const productIds = products.map(product => product.productid);
+      let images = [];
+
+      if (productIds.length > 0) {
+        const imageQuery = `SELECT imagepath, productid FROM productimages WHERE productid IN (?)`;
+        connection.query(imageQuery, [productIds], (error, imageResults) => {
+          if (error) {
+            console.error('Error fetching images:', error);
+            return res.status(500).send('Internal Server Error');
+          }
+
+          images = imageResults.map(image => ({
+            imagepath: image.imagepath ? `data:image/jpeg;base64,${image.imagepath}` : '',
+            productid: image.productid,
+          }));
+
+          fetchOrderCount();
+        });
+      } else {
+        fetchOrderCount();
+      }
+
+      function fetchOrderCount() {
+        const countOrderedQuery = `
+          SELECT COUNT(DISTINCT orderid) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = ? AND overallstatus = 'Ordered'
+        `;
+
+        connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+          if (countError) {
+            console.error('Error counting ordered orders:', countError);
+            return res.status(500).send('Internal Server Error');
+          }
+
+          const orderedCount = countResults[0]?.orderedCount || 0;
+
+          renderPage(products, images, orderedCount);
+        });
+      }
+
+      function renderPage(products, images, orderedCount) {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedProducts = products.slice(startIndex, endIndex);
+        const totalPages = Math.ceil(products.length / itemsPerPage);
+
+        res.render('storedetails', {
+          storeId,
+          name,
+          contactname,
+          products: paginatedProducts,
+          images,
+          currentPage,
+          totalPages,
+          totalProducts,
+          totalStockValue,
+          sortKey,
+          sortOrder,
+          itemsPerPage,
+          searchQuery,
+          orderedCount // Pass `orderedCount` to the view
+        });
+      }
+    });
   });
 });
 
@@ -3889,15 +3936,16 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
         res.status(500).send('Internal Server Error');
         return;
       }
+
       connection.query(storeProductsQuery, [storeId], (err, storeProductsResult) => {
         if (err) {
           console.error('Error fetching store products:', err);
           res.status(500).send('Internal Server Error');
           return;
         }
-      
+
         const productIds = storeProductsResult.map(product => product.productid);
-      
+
         // Check if productIds is empty before proceeding with the query
         if (productIds.length === 0) {
           res.render('specialoffer', {
@@ -3905,27 +3953,45 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
             name: name,
             contactname: contactname,
             specialOffers: specialOffersResult,
-            products: [] // Send an empty array to prevent errors
+            products: [], // Send an empty array to prevent errors
+            orderedCount: 0 // Send orderedCount as 0 when no products are found
           });
           return;
         }
-        
-      
-        const productsQuery = 'SELECT productid, productname FROM products WHERE productid IN (?)';
+
+        const productsQuery = 'SELECT productid, productname, salesprice FROM products WHERE productid IN (?)';
         connection.query(productsQuery, [productIds], (err, productsResult) => {
-        
+
           if (err) {
             console.error('Error fetching products:', err);
             res.status(500).send('Internal Server Error');
             return;
           }
-      
-          res.render('specialoffer', {
-            storeId: storeId,
-            name: name,
-            contactname: contactname,
-            specialOffers: specialOffersResult,
-            products: productsResult  // Products found, pass to the view
+
+          // Query to get the ordered count
+          const countOrderedQuery = `
+            SELECT COUNT(distinct(orderid)) AS orderedCount
+            FROM mytestdb.order
+            WHERE storeid = ? AND overallstatus = 'Ordered'
+          `;
+
+          connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+            if (countError) {
+              console.error('Error counting ordered orders:', countError);
+              return res.status(500).send('Internal Server Error');
+            }
+
+            const orderedCount = countResults[0].orderedCount;
+
+            // Now render the specialoffer page with orderedCount and all the data
+            res.render('specialoffer', {
+              storeId: storeId,
+              name: name,
+              contactname: contactname,
+              specialOffers: specialOffersResult,
+              products: productsResult,  // Products found, pass to the view
+              orderedCount: orderedCount  // Pass orderedCount to the view
+            });
           });
         });
       });
@@ -3936,7 +4002,7 @@ app.get('/addSpecialOfferForm/:storeid', (req, res) => {
 
 app.post('/uploadOffer', (req, res) => {
   console.log(req.body);
-  let { storeId, productId, content, startDate, expiryDate, discountPrice } = req.body;
+  let { storeId, productId, content, startDate, expiryDate, discountPrice, discountPercentage } = req.body;
   if (!productId) {
     res.status(400).json({ message: 'Product ID is required' });
     return;
@@ -3978,20 +4044,20 @@ app.post('/uploadOffer', (req, res) => {
   });
 
   function insertOrUpdateSpecialOffer() {
-    const insertSql = `INSERT INTO specialoffers (storeid, productid, content, discountprice, startdate, expirydate) 
-                       VALUES (?, ?, ?, ?, ?, ?)
-                       ON DUPLICATE KEY UPDATE content = VALUES(content), 
-                                               discountprice = VALUES(discountprice), 
-                                               startdate = VALUES(startdate), 
-                                               expirydate = VALUES(expirydate);`;
-    
-    connection.query(insertSql, [storeId, productId, content, discountPrice, startDate, expiryDate], (insertErr, insertResult) => {
-      if (insertErr) {
-        console.error('Error inserting or updating store product offer:', insertErr);
-        res.status(500).json({ message: 'Internal Server Error' });
-      } else {
-        const offerId = insertResult.insertId || null;
+    const insertSql = `INSERT INTO specialoffers (storeid, productid, content, discountprice, discountpercentage, startdate, expirydate) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)
+                   ON DUPLICATE KEY UPDATE content = VALUES(content), 
+                                           discountprice = VALUES(discountprice), 
+                                           discountpercentage = VALUES(discountpercentage), 
+                                           startdate = VALUES(startdate), 
+                                           expirydate = VALUES(expirydate);`;
 
+connection.query(insertSql, [storeId, productId, content, discountPrice, discountPercentage, startDate, expiryDate], (insertErr, insertResult) => {
+  if (insertErr) {
+    console.error('Error inserting or updating store product offer:', insertErr);
+    res.status(500).json({ message: 'Internal Server Error' });
+  } else {
+    const offerId = insertResult.insertId || null;
         const updateStoreProductsSql = `UPDATE storeproducts SET offerid = ? WHERE storeid = ? AND productid = ?`;
         connection.query(updateStoreProductsSql, [offerId, storeId, productId], (updateErr) => {
           if (updateErr) {
@@ -4000,28 +4066,28 @@ app.post('/uploadOffer', (req, res) => {
           } else {
             // Fetch the new offer details along with product name
             const fetchNewOfferQuery = `
-              SELECT so.offerid, so.productid, so.content, so.discountprice, so.startdate, so.expirydate, p.productname 
-              FROM specialoffers so 
-              JOIN products p ON so.productid = p.productid 
-              WHERE so.storeid = ? AND so.productid = ? 
-              ORDER BY so.offerid DESC LIMIT 1`;
-
-            connection.query(fetchNewOfferQuery, [storeId, productId], (err, offerResult) => {
-              if (err) {
-                console.error('Error fetching new offer details:', err);
-                res.status(500).json({ message: 'Internal Server Error' });
-                return;
-              }
-
-              if (offerResult.length > 0) {
-                res.json({
-                  message: 'Offer added successfully',
-                  newOffer: offerResult[0]
-                });
-              } else {
-                res.json({ message: 'Offer added, but could not fetch details' });
-              }
-            });
+            SELECT so.offerid, so.productid, so.content, so.discountprice, so.discountpercentage, so.startdate, so.expirydate, p.productname 
+            FROM specialoffers so 
+            JOIN products p ON so.productid = p.productid 
+            WHERE so.storeid = ? AND so.productid = ? 
+            ORDER BY so.offerid DESC LIMIT 1`;
+          
+          connection.query(fetchNewOfferQuery, [storeId, productId], (err, offerResult) => {
+            if (err) {
+              console.error('Error fetching new offer details:', err);
+              res.status(500).json({ message: 'Internal Server Error' });
+              return;
+            }
+          
+            if (offerResult.length > 0) {
+              res.json({
+                message: 'Offer added successfully',
+                newOffer: offerResult[0]
+              });
+            } else {
+              res.json({ message: 'Offer added, but could not fetch details' });
+            }
+          });          
           }
         });
       }
@@ -4055,12 +4121,30 @@ app.get('/editOffer/:offerid', (req, res) => {
 
     const offer = result[0];
 
-    res.render('editOffer', {
-      offerId: offerId,
-      storeId: offer.storeid,
-      name: offer.name,
-      contactname: offer.contactname,
-      offer: offer 
+    // Query to get the ordered count
+    const countOrderedQuery = `
+      SELECT COUNT(distinct(orderid)) AS orderedCount
+      FROM mytestdb.order
+      WHERE storeid = ? AND overallstatus = 'Ordered'
+    `;
+
+    connection.query(countOrderedQuery, [offer.storeid], (countError, countResults) => {
+      if (countError) {
+        console.error('Error counting ordered orders:', countError);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      const orderedCount = countResults[0].orderedCount;
+
+      // Now render the editOffer page with orderedCount and all the data
+      res.render('editOffer', {
+        offerId: offerId,
+        storeId: offer.storeid,
+        name: offer.name,
+        contactname: offer.contactname,
+        offer: offer,
+        orderedCount: orderedCount  // Pass orderedCount to the view
+      });
     });
   });
 });
@@ -4069,24 +4153,56 @@ app.get('/editOffer/:offerid', (req, res) => {
 
 app.post('/updateOffer1/:offerid', (req, res) => {
   const offerId = req.params.offerid;
-  const { productId, content, discountPrice, startDate, expiryDate } = req.body;
+  const { productId, content, discountPrice, discountPercentage, startDate, expiryDate } = req.body;
 
-  const sql = `
-    UPDATE specialoffers 
-    SET productid = ?, content = ?, discountprice = ?, startdate = ?, expirydate = ?
-    WHERE offerid = ?
-  `;
+  // Fetch the sales price from the products table using the product ID
+  const fetchSalesPriceQuery = `
+    SELECT p.salesprice, s.productid
+    FROM specialoffers s
+    JOIN products p ON s.productid = p.productid
+    WHERE s.offerid = ?`;
 
-  connection.query(sql, [productId, content, discountPrice, startDate, expiryDate, offerId], (err, result) => {
+  connection.query(fetchSalesPriceQuery, [offerId], (err, result) => {
     if (err) {
-      console.error('Error updating special offer:', err);
-      res.status(500).send('Internal Server Error');
-      return;
+      console.error('Error fetching sales price:', err);
+      return res.status(500).send('Internal Server Error');
     }
 
-    res.json({ message: 'Offer details updated successfully' });
+    if (result.length === 0) {
+      return res.status(404).send('Offer not found');
+    }
+
+    const salesPrice = result[0].salesprice;
+    let updatedDiscountPrice = discountPrice;
+    let updatedDiscountPercentage = discountPercentage;
+
+    // If discount price is provided, calculate discount percentage
+    if (updatedDiscountPrice && updatedDiscountPrice !== '') {
+      updatedDiscountPercentage = ((salesPrice - updatedDiscountPrice) / salesPrice) * 100;
+    }
+
+    // If discount percentage is provided, calculate discount price
+    if (updatedDiscountPercentage && updatedDiscountPercentage !== '') {
+      updatedDiscountPrice = salesPrice - (salesPrice * (updatedDiscountPercentage / 100));
+    }
+
+    const sql = `
+      UPDATE specialoffers 
+      SET productid = ?, content = ?, discountprice = ?, startdate = ?, expirydate = ?, discountpercentage = ?
+      WHERE offerid = ?`;
+
+    connection.query(sql, [productId, content, updatedDiscountPrice, startDate, expiryDate, updatedDiscountPercentage, offerId], (err, result) => {
+      if (err) {
+        console.error('Error updating special offer:', err);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+
+      res.json({ message: 'Offer details updated successfully' });
+    });
   });
 });
+
 
 
 
@@ -4169,28 +4285,50 @@ app.get('/addproduct/:storeid', (req, res) => {
       const name = storeResults[0].name;
       const contactname = storeResults[0].contactname;
 
-      const productsQuery = 'SELECT * FROM products WHERE qty > 0';
-      const storeProductsQuery = 'SELECT productid FROM storeproducts WHERE storeid = ?';
+      // Query to get the ordered count
+      const orderedCountQuery = `
+           SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = 195 AND overallstatus = 'Ordered'`;
 
-      connection.query(productsQuery, (error, products) => {
+      connection.query(orderedCountQuery, [storeId], (error, orderedCountResults) => {
         if (error) {
-          console.error('Error fetching products:', error);
+          console.error('Error fetching ordered count:', error);
           res.status(500).send('Internal Server Error');
           return;
         }
 
-        connection.query(storeProductsQuery, [storeId], (error, storeProducts) => {
+        const orderedCount = orderedCountResults[0].orderedCount;
+
+        const productsQuery = 'SELECT * FROM products WHERE qty > 0';
+        const storeProductsQuery = 'SELECT productid FROM storeproducts WHERE storeid = ?';
+
+        connection.query(productsQuery, (error, products) => {
           if (error) {
-            console.error('Error fetching store products:', error);
+            console.error('Error fetching products:', error);
             res.status(500).send('Internal Server Error');
             return;
           }
 
-          const availableProductIds = storeProducts.map(p => p.productid);
+          connection.query(storeProductsQuery, [storeId], (error, storeProducts) => {
+            if (error) {
+              console.error('Error fetching store products:', error);
+              res.status(500).send('Internal Server Error');
+              return;
+            }
 
-          console.log('Available Product IDs:', availableProductIds);
+            const availableProductIds = storeProducts.map(p => p.productid);
 
-          res.render('addproduct', { storeId, name, contactname, products, availableProductIds });
+            // Now render the page with orderedCount included
+            res.render('addproduct', {
+              storeId,
+              name,
+              contactname,
+              products,
+              availableProductIds,
+              orderedCount, // Pass the orderedCount to the view
+            });
+          });
         });
       });
     } else {
@@ -4300,8 +4438,8 @@ app.post('/addselectedproducts/:storeid', (req, res) => {
 
 app.get('/storeuserdetails/:storeid', (req, res) => {
   const storeId = req.params.storeid;
-  const currentPage = parseInt(req.query.page) || 1; 
-  const itemsPerPage = 25; 
+  const currentPage = parseInt(req.query.page) || 1;
+  const itemsPerPage = 25;
 
   const storeQuery = 'SELECT name, contactname, storepincode FROM storesignin WHERE storeid = ?';
 
@@ -4317,30 +4455,49 @@ app.get('/storeuserdetails/:storeid', (req, res) => {
       const contactname = storeResults[0].contactname;
       const storePincode = storeResults[0].storepincode;
 
-      const query = `
-        SELECT u.*, s.name AS storeName, s.place AS storePlace
-        FROM usersignin u
-        LEFT JOIN storesignin s ON FIND_IN_SET(u.pincode, s.storepincode) > 0
-        WHERE s.storeid = ?
-        LIMIT ? OFFSET ?;
-      `;
+      // Query to get the ordered count
+      const orderedCountQuery = `
+    SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = 195 AND overallstatus = 'Ordered'`;
 
-      const offset = (currentPage - 1) * itemsPerPage;
-
-      connection.query(query, [storeId, itemsPerPage, offset], (error, results) => {
+      connection.query(orderedCountQuery, [storeId], (error, orderedCountResults) => {
         if (error) {
-          console.error('Error fetching users:', error);
+          console.error('Error fetching ordered count:', error);
           res.status(500).send('Internal Server Error');
           return;
         }
-        res.render('storeuserdetails', {
-          storeId,
-          name,
-          contactname,
-          users: results,
-          currentPage,
-          totalPages: Math.ceil(results.length / itemsPerPage),
-          itemsPerPage 
+
+        const orderedCount = orderedCountResults[0].orderedCount;
+
+        const query = `
+          SELECT u.*, s.name AS storeName, s.place AS storePlace
+          FROM usersignin u
+          LEFT JOIN storesignin s ON FIND_IN_SET(u.pincode, s.storepincode) > 0
+          WHERE s.storeid = ?
+          LIMIT ? OFFSET ?;
+        `;
+
+        const offset = (currentPage - 1) * itemsPerPage;
+
+        connection.query(query, [storeId, itemsPerPage, offset], (error, results) => {
+          if (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).send('Internal Server Error');
+            return;
+          }
+
+          // Render the page with orderedCount included
+          res.render('storeuserdetails', {
+            storeId,
+            name,
+            contactname,
+            users: results,
+            currentPage,
+            totalPages: Math.ceil(results.length / itemsPerPage),
+            itemsPerPage,
+            orderedCount, // Include orderedCount here
+          });
         });
       });
     } else {
@@ -4461,7 +4618,19 @@ app.get('/storeorder/:storeid', (req, res) => {
           }
 
           const storeData = storeInfo[0];
-
+          const countOrderedQuery = `
+          SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = ? AND overallstatus = 'Ordered'
+        `;
+        
+        connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+          if (countError) {
+            console.error('Error counting ordered orders:', countError);
+            return res.status(500).send('Internal Server Error');
+          }
+        
+          const orderedCount = countResults[0].orderedCount;
           res.render('storeorder', {
             storeName: storeData.storeName,
             contactName: storeData.contactname,
@@ -4471,21 +4640,22 @@ app.get('/storeorder/:storeid', (req, res) => {
             totalOrdersCount,
             totalOrderedItems,
             openOrdersCount,
+            orderedCount
           });
         });
       });
     });
   });
 });
-
+});
 
 app.get('/storeorderdetails/:orderid', (req, res) => {
   let orderId = req.params.orderid.padStart(4, '0');
   const storeId = req.session.storeId;
   console.log('storeid for check:', storeId);
-
   console.log('orderId:', orderId); 
   console.log('storeId:', storeId); 
+
   const productsQuery = `
     SELECT productid, productname, price, quantity, orderdate, totalprice, status, overallstatus, userid
     FROM \`order\`
@@ -4503,9 +4673,7 @@ app.get('/storeorderdetails/:orderid', (req, res) => {
     }
 
     const products = productsResults; 
-
     const userId = products[0].userid;
-
     console.log('userId:', userId); 
 
     const userQuery = `
@@ -4521,7 +4689,6 @@ app.get('/storeorderdetails/:orderid', (req, res) => {
       }
 
       const user = userResult[0]; 
-
       console.log('user:', user); 
 
       const storeInfoQuery = `
@@ -4537,23 +4704,41 @@ app.get('/storeorderdetails/:orderid', (req, res) => {
         }
 
         const storeData = storeInfo[0]; 
-
         console.log('storeData:', storeData); 
 
-        res.render('storeorderdetails', {
-          products,
-          overallStatus: products[0].overallstatus,
-          orderId,
-          user,
-          name: storeData ? storeData.storeName : '', 
-          contactname: storeData ? storeData.contactname : '',
-          storeData,
-          storeId, 
+        // Query to get the ordered count
+        const countOrderedQuery = `
+          SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = ? AND overallstatus = 'Ordered'
+        `;
+
+        connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+          if (countError) {
+            console.error('Error counting ordered orders:', countError);
+            return res.status(500).send('Internal Server Error');
+          }
+
+          const orderedCount = countResults[0].orderedCount;
+
+          // Now render the storeorderdetails page with orderedCount and all other data
+          res.render('storeorderdetails', {
+            products,
+            overallStatus: products[0].overallstatus,
+            orderId,
+            user,
+            name: storeData ? storeData.storeName : '', 
+            contactname: storeData ? storeData.contactname : '',
+            storeData,
+            storeId,
+            orderedCount  // Pass orderedCount to the view
+          });
         });
       });
     });
   });
 });
+
 
 app.post('/updateOrderStatus/:orderid/:productid?', (req, res) => {
   const orderId = req.params.orderid;
@@ -4642,11 +4827,33 @@ app.get('/editstore/:storeid', (req, res) => {
 
     if (storeResults.length > 0) {
       const store = storeResults[0];
-      
       const name = store.name;
       const contactname = store.contactname;
 
-      res.render('editstore', { store, storeId, name, contactname });
+      // Query to get the ordered count
+      const countOrderedQuery = `
+          SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = 195 AND overallstatus = 'Ordered'
+      `;
+
+      connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+        if (countError) {
+          console.error('Error counting ordered orders:', countError);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        const orderedCount = countResults[0].orderedCount;
+
+        // Render the editstore page with the store details and ordered count
+        res.render('editstore', { 
+          store, 
+          storeId, 
+          name, 
+          contactname, 
+          orderedCount  // Pass orderedCount to storeappbar.ejs
+        });
+      });
 
     } else {
       res.status(404).send('Store not found');
@@ -4911,6 +5118,7 @@ app.get('/update-stock/:storeid', (req, res) => {
     return res.status(400).send('Bad Request: storeId is undefined or missing');
   }
 
+  // Query to get store details
   const storeQuery = 'SELECT storeid, name, contactname FROM storesignin WHERE storeid = ?';
 
   connection.query(storeQuery, [storeId], (error, storeResults) => {
@@ -4922,13 +5130,37 @@ app.get('/update-stock/:storeid', (req, res) => {
     if (storeResults.length > 0) {
       const name = storeResults[0].name;
       const contactname = storeResults[0].contactname;
-      res.render('update-Stock', { storeId, name, contactname });
+
+      // Query to get the ordered count
+      const countOrderedQuery = `
+          SELECT COUNT(distinct(orderid)) AS orderedCount
+          FROM mytestdb.order
+          WHERE storeid = 195 AND overallstatus = 'Ordered'
+      `;
+
+      connection.query(countOrderedQuery, [storeId], (countError, countResults) => {
+        if (countError) {
+          console.error('Error counting ordered orders:', countError);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        const orderedCount = countResults[0].orderedCount;
+
+        // Render the update-stock page with orderedCount and store details
+        res.render('update-Stock', { 
+          storeId, 
+          name, 
+          contactname, 
+          orderedCount  // Pass orderedCount to the view
+        });
+      });
     } else {
       console.error('Store not found');
       res.status(404).send('Store not found');
     }
   });
 });
+
 
 
 app.post('/update-stock/upload', uploadDisk.single('excelFile'), (req, res) => {

@@ -7,7 +7,10 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=refresh" />
+
+ 
+ <style>
     body, html {
         margin: 0;
         padding: 0;
@@ -180,7 +183,7 @@
             font-size: 10px; 
             padding: 5px;
         }
-
+ 
         #list {
             font-size: 18px;
         }
@@ -190,6 +193,26 @@
             font-size: 12px;
         }
     }
+
+    .reset-button .material-symbols-outlined {
+    font-size: 12px; 
+    color: #fff;
+}
+.reset-button{
+    background-color: #0A2472;
+    border: 2px solid #0A2472;
+}
+.reset-button:hover{
+    background-color: #0d5dbb;
+}
+.search-button{
+    background-color: #0A2472;
+    color: #fff;
+    border: 2px solid #0A2472;
+}
+.search-button:hover{
+    background-color: #0d5dbb;
+}
 </style>
 
 </head>
@@ -198,6 +221,13 @@
 
   <div class="header">
     <button onclick="goBack()" class="back-button">Back</button>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by Name, Mobile, or Store Name">
+      <button onclick="resetSearch()" class="reset-button"><span class="material-symbols-outlined">refresh</span></button>
+      <button onclick="searchUsers()" class="search-button">Search</button>
+    </div>
+
+    <h1 style="text-align:center" id="list">USERS LIST</h1>
     <div class="filter">
       <label for="filter">Filter by Access:</label>
       <select id="filter">
@@ -205,8 +235,7 @@
         <option value="yes" <% if (filter === 'yes') { %>selected<% } %>>Yes</option>
         <option value="no" <% if (filter === 'no') { %>selected<% } %>>No</option>
       </select>
-    </div>
-    <h1 style="text-align:center" id="list">USERS LIST</h1>    
+    </div>    
     <p id="total-users" class="total">Total Users: <%= totalUsersCount %></p>
     <a href="http://localhost:7777/adminusersignup?adminid=<%= adminId %>" class="creates">Create user</a>
   </div>
@@ -215,13 +244,13 @@
     <thead>
       <tr>
         <th>S.No</th>
-        <th>Name</th>
+        <th onclick="sortTable(1)">Name &#9662;</th>
         <th>Mobilenumber</th>
         <th>Address</th>
-        <th>Pincode</th>
+        <th onclick="sortTable(4)">Pincode &#9662;</th>
         <th>Email</th>
-        <th>Store Name</th>
-        <th>Store Place</th>
+        <th onclick="sortTable(6)">Store Name &#9662;</th>
+        <th onclick="sortTable(7)">Store Place &#9662;</th>
         <th>Access</th>
         <th>Actions</th>
       </tr>
@@ -299,6 +328,63 @@
   </div>
 
   <script>
+     // Filter Users Based on Search
+     function searchUsers() {
+      var searchValue = document.getElementById("searchInput").value.toLowerCase();
+      var rows = document.querySelectorAll(".user-row");
+
+      rows.forEach(function(row) {
+        var name = row.children[1].textContent.toLowerCase();
+        var mobile = row.children[2].textContent.toLowerCase();
+        var storeName = row.children[6].textContent.toLowerCase();
+
+        if (name.includes(searchValue) || mobile.includes(searchValue) || storeName.includes(searchValue)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+        // Reset Search
+        function resetSearch() {
+      document.getElementById("searchInput").value = "";
+      var rows = document.querySelectorAll(".user-row");
+      rows.forEach(row => row.style.display = "");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+  function sortTable(columnIndex) {
+    var table = document.querySelector("table"); // Select the table
+    var tbody = table.querySelector("tbody"); // Get the tbody
+    var rows = Array.from(tbody.querySelectorAll("tr")); // Convert rows to an array
+
+    var ascending = table.getAttribute("data-sort") !== "asc";
+
+    rows.sort(function (a, b) {
+      var valA = a.cells[columnIndex].textContent.trim().toLowerCase();
+      var valB = b.cells[columnIndex].textContent.trim().toLowerCase();
+
+      if (!isNaN(valA) && !isNaN(valB)) {
+        valA = parseFloat(valA);
+        valB = parseFloat(valB);
+      }
+
+      return ascending ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    });
+
+    table.setAttribute("data-sort", ascending ? "asc" : "desc");
+
+    rows.forEach(row => tbody.appendChild(row)); // Reorder rows in the table
+  }
+
+  document.querySelectorAll("th").forEach((header, index) => {
+    header.addEventListener("click", function () {
+      sortTable(index);
+    });
+  });
+});
+
     $(document).ready(function() {
     window.goBack = function() {
       window.history.back();

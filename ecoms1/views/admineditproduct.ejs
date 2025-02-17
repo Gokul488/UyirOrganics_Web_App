@@ -218,6 +218,7 @@ body {
     background-color: #0d5dbb;
 }
 
+/* Second Container Styles */
 .secondContainer {
     background-color: #eff3f4;
     border-radius: 5px;
@@ -510,6 +511,10 @@ h3 {
                             <img id="currentImage<%= index %>" src="<%= image || '/path/to/default/image.jpg' %>" alt="Current Image" style="max-width: 200px; height: auto;">
                         </div>
                     <% }); %>
+                </div>
+                <div class="form-group">
+                    <label for="count">Minimum Stock Count</label>
+                    <input type="number" id="count" name="count" value="<%= product.count || "0" %>" required>
                 </div>
     
                 <br>
@@ -867,3 +872,4 @@ function toggleForm() {
 </script>
 </body>
 </html>
+

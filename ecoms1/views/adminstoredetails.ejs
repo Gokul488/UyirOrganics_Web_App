@@ -32,7 +32,7 @@
       flex-grow: 1; 
       order: 2;
       margin: 0 auto;
-      margin-left: 200px;
+      margin-right: 230px;
     }
 
     a {
@@ -52,17 +52,18 @@
       border: 1px solid #ddd;
     }
 
+
     table th {
       color: #fff;
       border: 1px solid #fff;
         background-color: #0A2472;
       font-weight: bold;
+      white-space: nowrap;
     }
 
     table tr:hover {
       background-color: #f9f9f9;
     }
-
     .actions a {
       text-decoration: none;
       color: #007BFF;
@@ -89,7 +90,9 @@
       justify-content: space-between;
       align-items: center;
     }
-
+.total-stock-value{
+  margin-left: 150px;
+}
     .back-button {
       display: inline-block;
       padding: 9px 9px;
@@ -186,18 +189,54 @@
     .link:hover {
       color: #0056b3;
     }
+
+    th:nth-child(7),
+    td:nth-child(7) {
+      width: 150px; 
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      max-width: 150px; 
+    }
+
+@media(max-width:1178px){
+  h1, .total-stock-value, .store-count, .creates{
+    white-space: nowrap;
+
+  }
+  .total-stock-value, .store-count, .creates{
+    font-size: 12px;
+  }
+  .back-button{
+    width: 100%;
+    max-width:47px !important;
+  }
+}
+@media(max-width:1109px){
+  .app-bar{
+    width: 100%;
+    min-width: 1109px;
+  }
+    h1, .total-stock-value, .store-count, .creates{
+      margin-right: 50px;    
+  }
+}
+
   </style>
 </head>
 <body>
   <%- include('./adminappbar.ejs', { hideDropdownItems: false }) %>
 
-
   <div class="header" style="display: flex;">
     <button onclick="goBack()" class="back-button">Back</button>
+    <p class="total-stock-value" style="margin-right: 40px;">
+      <strong>Total Warehouse Stock Value:</strong> ₹<span id="totalStockValue" data-value="<%= totalWarehouseStockValue %>"></span>
+    </p>
     <h1>STORE LIST</h1>
     <a href="/storesignup?adminid=<%= adminId %>" class="creates">Create store</a>
     <p class="store-count" style="text-align: right; order: 3; margin-right: 40px;">Total Stores: <%= storeCount %></p>
   </div>
+  
 
   <table>
     <thead>
@@ -209,6 +248,7 @@
         <th>GST Number</th>
         <th>Mobile Number</th>
         <th>Store Pincode</th>
+        <th>Total Stock Value</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -227,6 +267,7 @@
           <td><%= store.gstnumber %></td>
           <td><%= store.mobilenumber %></td>
           <td><%= store.storepincode %></td>
+          <td>₹<span class="formatted-stock-value" data-value="<%= store.totalStockValue %>"></span></td>
           <td>
             <a href="/admineditstore/<%= store.storeid %>?adminid=<%= adminId %>">Edit</a>
           </td>
@@ -234,8 +275,8 @@
         <% serialNumber++; %>
       <% }); %>
     </tbody>
-  </table> 
-  
+</table> 
+
   <br><br><br>
   <div class="pagination">
     <% if (totalPages > 0) { %>
@@ -277,14 +318,45 @@
     <% } %>
 </div>
 
-  <script>
-    function navigateToUserDetails(storeId, adminId) {
-      window.location.href = `/userdetails?storeid=${storeId}&adminId=${adminId}`;
+<script>
+  function formatIndianNumber(value) {
+    if (isNaN(value) || value === null) return "0.00";
+
+    let numberParts = value.toFixed(2).split(".");
+    let integerPart = numberParts[0];
+    let decimalPart = numberParts[1];
+
+    let lastThree = integerPart.slice(-3);
+    let otherNumbers = integerPart.slice(0, -3);
+
+    if (otherNumbers !== '') {
+      lastThree = ',' + lastThree;
     }
 
-    function goBack() {
-window.history.back();    
-}
+    let formattedNumber = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+    return formattedNumber + "." + decimalPart;
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Format total stock value in the header
+    let totalStockValueElement = document.getElementById("totalStockValue");
+    let totalStockValue = parseFloat(totalStockValueElement.getAttribute("data-value"));
+    totalStockValueElement.textContent = formatIndianNumber(totalStockValue);
+
+    // Format individual store stock values
+    document.querySelectorAll(".formatted-stock-value").forEach(function (element) {
+      let value = parseFloat(element.getAttribute("data-value"));
+      element.textContent = formatIndianNumber(value);
+    });
+  });
+
+  function navigateToUserDetails(storeId, adminId) {
+    window.location.href = `/userdetails?storeid=${storeId}&adminId=${adminId}`;
+  }
+
+  function goBack() {
+    window.history.back();
+  }
   </script>
 </body>
 </html>

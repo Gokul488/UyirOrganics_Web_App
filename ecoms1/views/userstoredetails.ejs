@@ -5,6 +5,7 @@
         <title>User Product Details</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=refresh" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <style>
          body {
             font-family: Arial, sans-serif;
@@ -53,7 +54,7 @@
 
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(4, minmax(250px, 1fr));
             gap: 20px;
             justify-content: center;
         }
@@ -141,51 +142,72 @@
 
         .container {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
             width: 100%;
             padding: 10px;
             margin-top: 10px;
             margin-bottom: 10px;
             white-space: nowrap;
+            gap: 20px;
         }
-  
+
         .search-container {
-            order: 2;
             flex-grow: 1;
             display: flex;
-            justify-content: center;
-            margin-right: 500px;
+            justify-content: flex-start;
+            max-width: 40%;
+        }
+
+        .search-container form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .center {
-            order: 3;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            flex-grow: 1;
+            text-align: center;
             font-size: 30px;
             font-weight: bold;
-        }
+        }   
 
         .filter {
-            order: 4;
-            margin-right: 100px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .filter button {
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .special-offer-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        .filter button{
             background-color: #0A2472;
-            color: white;
+            color: #fff;
+            margin-right: 70px;
         }
         .filter button:hover{
             background-color: #0d5dbb;
         }
         .product-item {
-    position: relative;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px;
-    background-color: #fff;
-    transition: box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            background-color: #fff;
+            transition: box-shadow 0.3s ease;
 }
 
 .product-item:hover {
@@ -209,6 +231,10 @@ button[type="submit"]{
 }
 button[type="submit"]:hover{
     background-color: #0d5dbb;
+}
+#filtered-product-count-container, #filtered-product-count{
+    font-weight: bold;
+    margin-right: 20px;
 }
 .discount-badge {
     position: absolute;
@@ -239,19 +265,47 @@ button[type="submit"]:hover{
     }
 }
 
+    .reset-button i {
+    font-size: 12px;
+    color: #fff;
+}
+
+.special-offer-button {
+    display: flex;
+    align-items: center;
+    background-color: #0A2472;
+    color: #fff;
+    gap: 5px;
+    padding: 8px 8px;
+    font-size: 13px;
+    height: 25px;
+    min-width: 50px; 
+    border-radius: 5px; 
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.special-offer-button i {
+    font-size: 15px;
+}
+
+.special-offer-button span {
+    font-size: 14px;
+}
+
+.special-offer-button:hover {
+    background-color: #0d5dbb;
+}
+
   </style>
   <link rel="stylesheet" href="/path/to/your/css/styles.css">
   <script src="/path/to/your/fontawesome.js"></script>
 </head>
-<body>
-  
+<body> 
 <div class="app-bar">
     <%- include('./userappbar.ejs') %>
 </div>
-
-
   <div class="container">
- 
     <div class="search-container">
         <form action="/userstoredetails/<%= storeId %>?userId=<%= userId %>" method="get" id="searchForm">
             <input type="hidden" name="userId" value="<%= userId %>">
@@ -259,17 +313,21 @@ button[type="submit"]:hover{
             <input type="text" id="searchInput" name="search" placeholder="Search by product name" value="<%= searchKeyword %>">
     
             <button type="button" onclick="resetSearch()" class="reset-button">
-                <span class="material-symbols-outlined">refresh</span>
+                <i class="material-icons">refresh</i>
             </button>
     
             <button type="submit">Search</button>
         </form>
     </div>
+    <button class="special-offer-button" onclick="filterSpecialOffers()">
+        <i class="material-icons">redeem</i>
+        <p>Offers</p>
+        
+    </button>
     
- 
-    <h1 class="center">PRODUCTS</h1>
-    <div id="product-count" class="product-count">
-        Total Products: <span id="product-count-span"><%= products.length %></span>
+        <h1 class="center">PRODUCTS</h1>
+    <div id="filtered-product-count-container">
+        Filtered Products: <span id="filtered-product-count">-</span>
     </div>
     <div class="filter">
         <select name="category" id="category" onchange="updateCategoryFilter()">
@@ -285,10 +343,10 @@ button[type="submit"]:hover{
         </select>
         <button onclick="filterProducts()">Apply Filter</button>
     </div>
-    
 </div>
 
 <div class="product-grid">
+    <% let filteredCount = products && products.length ? products.length : 0; %>
     <% if (products && products.length > 0) { %>
         <% products.forEach(function(product) { %>
             <% const isOutOfStock = product.qty <= 0; %>
@@ -300,7 +358,6 @@ button[type="submit"]:hover{
                     <% if (product.imagepath) { %>
                         <a href="<%= '/productspage/' + product.productid %>" id="product-link-<%= product.productid %>">
                             <img src="<%= product.imagepath %>" alt="<%= product.productname %>" class="product-image" id="product-image-<%= product.productid %>">
-
                         </a>
                     <% } else { %>
                         <div class="no-image-placeholder">No Image</div>
@@ -313,7 +370,7 @@ button[type="submit"]:hover{
                             Weight: 
                             <select onchange="updatePrice(this, '<%= product.productid %>')" id="weight-select-<%= product.productid %>">
                                 <% product.weight_array.forEach(function(weight, index) { %>
-                                    <option 
+                                <option 
                                     value="<%= product.salesprice_array[index] %>" 
                                     data-qty="<%= product.qty_array[index] %>" 
                                     data-productid="<%= product.productid_array[index] %>" 
@@ -321,7 +378,7 @@ button[type="submit"]:hover{
                                     <%= index === 0 ? 'selected' : '' %>
                                   >
                                     <%= weight %>
-                                  </option>
+                                </option>
                                   
                                 <% }); %>
                             </select>
@@ -353,11 +410,11 @@ button[type="submit"]:hover{
 <div class="pagination">
     <% if (totalPages > 0) { %>
       <% if (currentPage > 1) { %>
-        <a href="?userId=<%= userId %>&page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>">&laquo; Previous</a>
+        <a href="?userId=<%= userId %>&page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>&specialOffers=<%= specialOffer %>">&laquo; Previous</a>
       <% } %>
   
       <% if (currentPage > 3) { %>
-        <a href="?userId=<%= userId %>&page=1&category=<%= selectedCategory %>&search=<%= searchKeyword %>">1</a>
+        <a href="?userId=<%= userId %>&page=1&category=<%= selectedCategory %>&search=<%= searchKeyword %>&specialOffers=<%= specialOffer %>">1</a>
         <% if (currentPage > 4) { %>
           <span>...</span>
         <% } %>
@@ -367,7 +424,7 @@ button[type="submit"]:hover{
         <% if (i === currentPage) { %>
           <span class="current-page"><%= i %></span>
         <% } else { %>
-          <a href="?userId=<%= userId %>&page=<%= i %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>"><%= i %></a>
+          <a href="?userId=<%= userId %>&page=<%= i %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>&specialOffers=<%= specialOffer %>"><%= i %></a>
         <% } %>
       <% } %>
   
@@ -375,24 +432,75 @@ button[type="submit"]:hover{
         <% if (currentPage < totalPages - 3) { %>
           <span>...</span>
         <% } %>
-        <% if (currentPage + 2 < totalPages) { %>
-          <a href="?userId=<%= userId %>&page=<%= totalPages %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>"><%= totalPages %></a>
-        <% } %>
+        <a href="?userId=<%= userId %>&page=<%= totalPages %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>&specialOffers=<%= specialOffer %>"><%= totalPages %></a>
       <% } %>
   
       <% if (currentPage < totalPages) { %>
-        <a href="?userId=<%= userId %>&page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>">Next &raquo;</a>
+        <a href="?userId=<%= userId %>&page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&search=<%= searchKeyword %>&specialOffers=<%= specialOffer %>">Next &raquo;</a>
       <% } %>
     <% } %>
-  </div>
-  
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 <script>
-function resetSearch() {
+        document.addEventListener("DOMContentLoaded", function () {
+        updateFilteredProductCount();
+        updateSpecialOfferCount();
+    });
+
+    function updateSpecialOfferCount() {
+        const specialOfferProducts = document.querySelectorAll('.discount-badge');
+        document.getElementById('special-offer-count').textContent = specialOfferProducts.length;
+    }
+
+    function filterSpecialOffers() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const specialOffersEnabled = urlParams.get('specialOffers') === 'true';
+    
+    urlParams.set('specialOffers', specialOffersEnabled ? 'false' : 'true');
+
+    urlParams.set('page', '1');
+
+    window.location.search = urlParams.toString();
+}
+
+
+       document.addEventListener("DOMContentLoaded", function () {
+        updateFilteredProductCount();
+    });
+
+    function updateFilteredProductCount() {
+        const productItems = document.querySelectorAll('.product-item');
+        const filteredCount = productItems.length;
+        document.getElementById('filtered-product-count').textContent = filteredCount > 0 ? filteredCount : '-';
+    }
+    function resetSearch() {
     document.getElementById('searchInput').value = '';
     document.getElementById('categoryInput').value = ''; 
-    document.getElementById('searchForm').submit();
+
+    // Remove search and category parameters from the URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete("search");
+    url.searchParams.delete("category");
+    window.location.href = url.toString();
 }
+function updateFilteredProductCount() {
+    const productItems = document.querySelectorAll('.product-item');
+    const searchInput = document.getElementById('searchInput').value.trim();
+    const categoryInput = document.getElementById('categoryInput').value.trim();
+    const countElement = document.getElementById('filtered-product-count');
+
+    // If no search or category is selected, set count to '-'
+    if (!searchInput && !categoryInput) {
+        countElement.textContent = '-';
+    } else {
+        countElement.textContent = productItems.length > 0 ? productItems.length : '-';
+    }
+}
+
+// Run this function after the page loads to update the count correctly
+document.addEventListener("DOMContentLoaded", updateFilteredProductCount);
+
 function updateCategoryFilter() {
     const categoryDropdown = document.getElementById("category");
     const selectedCategory = categoryDropdown.value;
@@ -547,8 +655,6 @@ window.onload = function() {
     window.location.href = url.toString();
 }
 
-
-
   document.addEventListener("click", function(event) {
       const dropdownContent = document.getElementById("dropdown");
       const dropdownArrow = document.querySelector(".dropdown-arrow i");
@@ -598,6 +704,5 @@ window.onload = function() {
       }
   }
 </script>
-
-</body> 
+</body>   
 </html>

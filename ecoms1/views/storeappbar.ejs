@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=orders" />
     <style>
                
 body {
@@ -179,6 +179,45 @@ body {
     gap: 3px;
     margin-left: 30px;
 }
+.order-icon-container {
+    display: flex;
+    align-items: center;
+    margin-right: -300px;
+    color:#fff;
+}
+
+.order-icon {
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+}
+.order-text{
+    color: #fff;
+}
+.icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.material-symbols-outlined {
+    font-size: 24px;
+    color: #fff;
+}
+
+.order-count {
+    position: absolute;
+    top: -8px; 
+    right: -8px; 
+    background-color: red; 
+    border-radius: 50%;
+    padding: 0 6px;
+    font-size: 12px; 
+    font-weight: bold;
+    color: #fff;
+}
+
 </style>
 </head>
 <body>
@@ -190,19 +229,35 @@ body {
         <div> 
             <h1 id="Backend">Uyir Store Management System</h1>
             <div class="flex-head">
-            <h4 id="common-name">Store Name:</h4>
-            <h4 id="sname"><%= name %></h4>
+                <h4 id="common-name">Store Name:</h4>
+                <h4 id="sname"><%= name %></h4>
             </div>
         </div> 
+        
+        <!-- Order Icon with Count -->
+        <div class="order-icon-container">
+            <a href="/storeorder/<%= storeId %>" class="order-icon">
+                     <span class="order-text">Orders</span> 
+                    <span class="icon-container">
+                    <span class="material-symbols-outlined">orders</span>
+                    <span class="order-count" id="orderCountBadge"><%= orderedCount %></span>
+                </span>
+            </a>
+        </div>
+        
+        
+        
+    
         <div class="dropdown">
-          <p class="name">Hi <%= contactname %> 
-          <button id="dropdownButton" class="dropdown-button">
-                <i class="fas fa-user"></i> 
-            </button></p>
+            <p class="name">Hi <%= contactname %> 
+                <button id="dropdownButton" class="dropdown-button">
+                    <i class="fas fa-user"></i> 
+                </button>
+            </p>
             <div class="dropdown-content">
                 <a class="dropdown-item" href="/storeuserdetails/<%= storeId%>">Users</a>
-                <a class ="dropdown-item" href="/storeorder/<%= storeId%>">Orders</a>
-                <a class ="dropdown-item" href="/update-stock/<%= storeId%>">Excel-Update Stock</a>
+                <a class="dropdown-item" href="/storeorder/<%= storeId%>">Orders</a>
+                <a class="dropdown-item" href="/update-stock/<%= storeId%>">Excel-Update Stock</a>
                 <a class="dropdown-item" href="/storedetails/<%= storeId %>">Products</a>
                 <a class="dropdown-item" href="/editstore/<%= storeId%>">Edit store</a>
                 <a class="dropdown-item" href="/addSpecialOfferForm/<%= storeId%>">Add Special Offer</a>
@@ -210,6 +265,7 @@ body {
             </div>
         </div>
     </div>
+    
 
 <script>
     const dropdownButton = document.getElementById("dropdownButton");
